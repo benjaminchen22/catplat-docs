@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.database.data.vasp &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../../about.html" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.database.data.vasp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.database.data.vasp</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module implements functions that processes vasp inputs and outputs to be written to or read from database.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+
+<span class="kn">from</span> <span class="nn">pyatoms.io.ase.atoms</span> <span class="kn">import</span> <span class="n">AtomsWrapper</span>
+<span class="kn">from</span> <span class="nn">pyatoms.jobs.job</span> <span class="kn">import</span> <span class="n">Procedure</span>
+<span class="kn">from</span> <span class="nn">pyatoms.optimization.dynamics</span> <span class="kn">import</span> <span class="n">Trajectory</span>
+<span class="kn">from</span> <span class="nn">pymatgen.electronic_structure.dos</span> <span class="kn">import</span> <span class="n">CompleteDos</span>
+<span class="kn">from</span> <span class="nn">pymatgen.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Incar</span><span class="p">,</span> <span class="n">Kpoints</span><span class="p">,</span> <span class="n">Potcar</span>
+
+<span class="kn">from</span> <span class="nn">catplat.database.data.data</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Step</span><span class="p">,</span> <span class="n">Substep</span><span class="p">,</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span>
+<span class="kn">from</span> <span class="nn">catplat.database.vaspinfo</span> <span class="kn">import</span> <span class="n">VaspInfo</span><span class="p">,</span> <span class="n">check_and_set_attr</span>
+
+
+<div class="viewcode-block" id="obj_to_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.obj_to_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">obj_to_dict</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;as_dict&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;to_dict&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+
+
+<div class="viewcode-block" id="dict_to_obj">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.dict_to_obj">[docs]</a>
+<span class="k">def</span> <span class="nf">dict_to_obj</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">clss</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="p">{}:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">clss</span><span class="p">,</span> <span class="s1">&#39;from_dict&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">clss</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+
+
+<div class="viewcode-block" id="VaspData">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspData">[docs]</a>
+<span class="k">class</span> <span class="nc">VaspData</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
+    <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;vasp&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;VASPData&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VaspData.to_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspData.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">steps_data_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">step</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="s1">&#39;steps&#39;</span><span class="p">:</span> <span class="n">steps_data_list</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="VaspData.from_job">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspData.from_job">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_job</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">read_dos</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">Procedure</span><span class="p">):</span>
+            <span class="n">stepjobs</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">steps</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stepjobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">job</span><span class="p">]</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">VaspStep</span><span class="o">.</span><span class="n">from_job</span><span class="p">(</span><span class="n">stepjob</span><span class="p">,</span> <span class="n">read_dos</span><span class="o">=</span><span class="n">read_dos</span><span class="p">)</span> <span class="k">for</span> <span class="n">stepjob</span> <span class="ow">in</span> <span class="n">stepjobs</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VaspData.from_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspData.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="n">REQUIRED_KEYS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;steps&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">REQUIRED_KEYS</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;input dictionary is not properly formatted&#39;</span><span class="p">)</span>
+
+        <span class="n">label</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">VaspStep</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;steps&#39;</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_converged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_converged</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_converged</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+<div class="viewcode-block" id="VaspData.summary">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspData.summary">[docs]</a>
+    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">calc_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TYPE</span>
+        <span class="n">num_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">)</span>
+        <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">   •  Num Steps: </span><span class="si">{</span><span class="n">num_steps</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                   <span class="sa">f</span><span class="s1">&#39;   •  Calculator: </span><span class="si">{</span><span class="n">calc_type</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="VaspStep">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspStep">[docs]</a>
+<span class="k">class</span> <span class="nc">VaspStep</span><span class="p">(</span><span class="n">Step</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">substeps</span><span class="p">,</span> <span class="n">stepname</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">substeps</span><span class="o">=</span><span class="n">substeps</span><span class="p">,</span> <span class="n">stepname</span><span class="o">=</span><span class="n">stepname</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VaspStep.to_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspStep.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">substeps_data_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">substep</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">substep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">substeps</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="s1">&#39;substeps&#39;</span><span class="p">:</span> <span class="n">substeps_data_list</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="VaspStep.from_job">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspStep.from_job">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_job</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">step_job</span><span class="p">,</span> <span class="n">read_dos</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">substep_jobs</span> <span class="o">=</span> <span class="n">step_job</span><span class="o">.</span><span class="n">_backup_jobs</span><span class="p">()</span> <span class="o">+</span> <span class="p">[</span><span class="n">step_job</span><span class="p">]</span>
+        <span class="n">substeps</span> <span class="o">=</span> <span class="p">[</span><span class="n">VaspSubstep</span><span class="o">.</span><span class="n">from_job</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">read_dos</span><span class="o">=</span><span class="n">read_dos</span><span class="p">)</span> <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">substep_jobs</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">substeps</span><span class="p">,</span> <span class="n">step_job</span><span class="o">.</span><span class="n">folder</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VaspStep.from_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspStep.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="n">REQUIRED_KEYS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;substeps&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">REQUIRED_KEYS</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;input dictionary is not properly formatted&#39;</span><span class="p">)</span>
+
+        <span class="n">label</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span>
+        <span class="n">substeps</span> <span class="o">=</span> <span class="p">[</span><span class="n">VaspSubstep</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">substep</span><span class="p">)</span> <span class="k">for</span> <span class="n">substep</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;substeps&#39;</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">substeps</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_converged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">substeps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_converged</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">substeps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_converged</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="VaspSubstep">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspSubstep">[docs]</a>
+<span class="k">class</span> <span class="nc">VaspSubstep</span><span class="p">(</span><span class="n">Substep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">jobname</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span> <span class="o">=</span> <span class="n">trajectory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="nb">input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">jobname</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;cont.&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobname</span><span class="p">):</span>
+            <span class="n">substep_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobname</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">substep_key</span> <span class="o">=</span> <span class="s1">&#39;final&#39;</span>
+        <span class="k">return</span> <span class="n">substep_key</span>
+
+<div class="viewcode-block" id="VaspSubstep.to_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspSubstep.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">atoms_dicts</span> <span class="o">=</span> <span class="p">[</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span> <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
+                <span class="s1">&#39;trajectory&#39;</span><span class="p">:</span> <span class="n">atoms_dicts</span><span class="p">,</span>
+                <span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+                <span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="VaspSubstep.from_job">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspSubstep.from_job">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_job</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">substep_job</span><span class="p">,</span> <span class="n">read_dos</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">substep_job</span><span class="o">.</span><span class="n">trajectory</span><span class="p">(),</span> <span class="n">VaspInput</span><span class="o">.</span><span class="n">from_job</span><span class="p">(</span><span class="n">substep_job</span><span class="p">),</span>
+                   <span class="n">VaspOutput</span><span class="o">.</span><span class="n">from_job</span><span class="p">(</span><span class="n">substep_job</span><span class="p">,</span> <span class="n">read_dos</span><span class="o">=</span><span class="n">read_dos</span><span class="p">),</span> <span class="n">substep_job</span><span class="o">.</span><span class="n">folder</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VaspSubstep.from_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspSubstep.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="n">REQUIRED_KEYS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;trajectory&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">REQUIRED_KEYS</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">d_keys</span> <span class="o">:=</span> <span class="nb">set</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Input dictionary is not properly formatted. Input keys: </span><span class="si">{</span><span class="n">d_keys</span><span class="si">}</span><span class="s1">, required keys: </span><span class="si">{</span><span class="n">REQUIRED_KEYS</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">traj</span> <span class="o">=</span> <span class="n">Trajectory</span><span class="p">([</span><span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">image_dict</span><span class="p">))</span> <span class="k">for</span> <span class="n">image_dict</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;trajectory&#39;</span><span class="p">]])</span>
+        <span class="n">inpt</span> <span class="o">=</span> <span class="n">dict_to_obj</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">],</span> <span class="n">VaspInput</span><span class="p">)</span>
+        <span class="n">otpt</span> <span class="o">=</span> <span class="n">dict_to_obj</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">],</span> <span class="n">VaspOutput</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">inpt</span><span class="p">,</span> <span class="n">otpt</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VaspSubstep.write">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspSubstep.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">FileExistsError</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;trajectory.traj&#39;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;POSCAR&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_converged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">vaspinfo</span><span class="o">.</span><span class="n">is_converged</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">vaspinfo</span><span class="o">.</span><span class="n">is_converged</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="VaspInput">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspInput">[docs]</a>
+<span class="k">class</span> <span class="nc">VaspInput</span><span class="p">(</span><span class="n">Input</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">incar</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">potcar</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">incar</span> <span class="o">=</span> <span class="n">incar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span> <span class="o">=</span> <span class="n">kpoints</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">potcar</span> <span class="o">=</span> <span class="n">potcar</span>
+
+    <span class="k">def</span> <span class="nf">_serialize_potcar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_get_potcar_hash</span><span class="p">(</span><span class="n">potcar_single</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">potcar_single</span><span class="p">,</span><span class="s1">&#39;get_potcar_hash&#39;</span><span class="p">):</span> <span class="c1"># for pymatgen &lt;= 2023.9.10</span>
+                <span class="k">return</span> <span class="n">potcar_single</span><span class="o">.</span><span class="n">get_potcar_hash</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">potcar_single</span><span class="o">.</span><span class="n">md5_header_hash</span>
+            
+        <span class="k">def</span> <span class="nf">_determine_functional</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="nb">hash</span><span class="p">,</span> <span class="n">functionals</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">functional</span> <span class="ow">in</span> <span class="n">functionals</span><span class="p">:</span>
+                <span class="n">potcar_single</span> <span class="o">=</span> <span class="n">Potcar</span><span class="p">(</span><span class="n">symbols</span><span class="o">=</span><span class="p">[</span><span class="n">symbol</span><span class="p">],</span> <span class="n">functional</span><span class="o">=</span><span class="n">functional</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">_get_potcar_hash</span><span class="p">(</span><span class="n">potcar_single</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">hash</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">functional</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;POTCAR functional could not be matched for species--</span><span class="si">{</span><span class="n">symbol</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">potcar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;symbols&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;hashes&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;functional&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+        <span class="n">functionals</span> <span class="o">=</span> <span class="p">[</span><span class="n">potcar_single</span><span class="o">.</span><span class="n">identify_potcar</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">potcar_single</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">potcar</span><span class="p">]</span>
+        <span class="n">functionals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">functionals</span><span class="p">)))</span>
+
+        <span class="c1"># Remove &#39;unvie_*&#39; functionals as they are rarely used, so we don&#39;t want to consider them</span>
+        <span class="n">functionals</span> <span class="o">=</span> <span class="p">[</span><span class="n">functional</span> <span class="k">for</span> <span class="n">functional</span> <span class="ow">in</span> <span class="n">functionals</span> <span class="k">if</span> <span class="s1">&#39;unvie_&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">functional</span><span class="p">]</span>
+        <span class="n">functionals</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">functionals</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">hashes</span> <span class="o">=</span> <span class="p">[</span><span class="n">_get_potcar_hash</span><span class="p">(</span><span class="n">potcar_single</span><span class="p">)</span> <span class="k">for</span> <span class="n">potcar_single</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">potcar</span><span class="p">]</span>
+        <span class="n">symbols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">potcar</span><span class="o">.</span><span class="n">symbols</span>
+        <span class="n">final_functional</span> <span class="o">=</span> <span class="p">[</span><span class="n">_determine_functional</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="nb">hash</span><span class="p">,</span> <span class="n">functionals</span><span class="p">)</span> <span class="k">for</span> <span class="n">sym</span><span class="p">,</span> <span class="nb">hash</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">symbols</span><span class="p">,</span> <span class="n">hashes</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">final_functional</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Different POTCAR functionals found for different species--</span><span class="si">{</span><span class="n">symbols</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">final_functional</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;symbols&#39;</span><span class="p">:</span> <span class="n">symbols</span><span class="p">,</span> <span class="s1">&#39;hashes&#39;</span><span class="p">:</span> <span class="n">hashes</span><span class="p">,</span> <span class="s1">&#39;functional&#39;</span><span class="p">:</span> <span class="n">final_functional</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+
+<div class="viewcode-block" id="VaspInput.to_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspInput.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">incar_dict</span><span class="p">,</span> <span class="n">kpoints_dict</span> <span class="o">=</span> <span class="n">obj_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">incar</span><span class="p">),</span> <span class="n">obj_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="p">)</span>
+        <span class="n">potcar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_potcar</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;incar&#39;</span><span class="p">:</span> <span class="n">incar_dict</span><span class="p">,</span> <span class="s1">&#39;kpoints&#39;</span><span class="p">:</span> <span class="n">kpoints_dict</span><span class="p">,</span> <span class="s1">&#39;potcar&#39;</span><span class="p">:</span> <span class="n">potcar_dict</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="VaspInput.from_job">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspInput.from_job">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_job</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">substep_job</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">substep_job</span><span class="o">.</span><span class="n">incar</span><span class="p">,</span> <span class="n">substep_job</span><span class="o">.</span><span class="n">kpoints</span><span class="p">,</span> <span class="n">substep_job</span><span class="o">.</span><span class="n">potcar</span><span class="p">)</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_reconstruct_potcar</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">potcar_dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">potcar_dict</span><span class="p">[</span><span class="s1">&#39;symbols&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">Potcar</span><span class="p">(</span><span class="n">symbols</span><span class="o">=</span><span class="n">potcar_dict</span><span class="p">[</span><span class="s1">&#39;symbols&#39;</span><span class="p">],</span> <span class="n">functional</span><span class="o">=</span><span class="n">potcar_dict</span><span class="p">[</span><span class="s1">&#39;functional&#39;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="VaspInput.from_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspInput.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="n">REQUIRED_KEYS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;kpoints&#39;</span><span class="p">,</span> <span class="s1">&#39;potcar&#39;</span><span class="p">,</span> <span class="s1">&#39;incar&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">REQUIRED_KEYS</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;input dictionary is not properly formatted&#39;</span><span class="p">)</span>
+
+        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;kpoints&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">usershift</span> <span class="o">=</span> <span class="n">kpoints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;usershift&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">usershift</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;kpoints&#39;</span><span class="p">][</span><span class="s1">&#39;usershift&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;kpoints&#39;</span><span class="p">][</span><span class="s1">&#39;usershift&#39;</span><span class="p">])</span>
+
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">dict_to_obj</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;incar&#39;</span><span class="p">],</span> <span class="n">Incar</span><span class="p">)</span>
+        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">dict_to_obj</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;kpoints&#39;</span><span class="p">],</span> <span class="n">Kpoints</span><span class="p">)</span>
+        <span class="n">potcar</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_reconstruct_potcar</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;potcar&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span> <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span> <span class="n">potcar</span><span class="o">=</span><span class="n">potcar</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VaspInput.write">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspInput.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">incar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">incar</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;INCAR&#39;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;KPOINTS&#39;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">potcar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">potcar</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;POTCAR&#39;</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;inputs.json&#39;</span><span class="p">),</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">outfile</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="VaspOutput">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspOutput">[docs]</a>
+<span class="k">class</span> <span class="nc">VaspOutput</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vaspinfo</span><span class="p">,</span> <span class="n">dos</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vaspinfo</span> <span class="o">=</span> <span class="n">vaspinfo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dos</span> <span class="o">=</span> <span class="n">dos</span>
+
+<div class="viewcode-block" id="VaspOutput.to_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspOutput.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;vaspinfo&#39;</span><span class="p">:</span> <span class="n">obj_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vaspinfo</span><span class="p">),</span> <span class="s1">&#39;dos&#39;</span><span class="p">:</span> <span class="n">obj_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dos</span><span class="p">)}</span></div>
+
+
+<div class="viewcode-block" id="VaspOutput.from_job">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspOutput.from_job">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_job</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">job_substep</span><span class="p">,</span> <span class="n">read_dos</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">vasprun</span> <span class="o">=</span> <span class="n">job_substep</span><span class="o">.</span><span class="n">get_vasprun</span><span class="p">(</span><span class="n">exception_on_bad_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parse_dos</span><span class="o">=</span><span class="n">read_dos</span><span class="p">)</span>
+        <span class="n">outcar</span> <span class="o">=</span> <span class="n">job_substep</span><span class="o">.</span><span class="n">pymatgen_outcar</span>
+
+        <span class="k">if</span> <span class="n">vasprun</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">outcar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vaspinfo</span> <span class="o">=</span> <span class="n">VaspInfo</span><span class="o">.</span><span class="n">from_vaspout</span><span class="p">(</span><span class="n">outcar</span><span class="o">=</span><span class="n">outcar</span><span class="p">,</span>
+                                             <span class="n">vasprun</span><span class="o">=</span><span class="n">vasprun</span><span class="p">,</span>
+                                             <span class="n">is_converged</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">job_substep</span><span class="o">.</span><span class="n">is_converged</span><span class="p">()))</span>
+            <span class="n">dos</span> <span class="o">=</span> <span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;complete_dos&#39;</span><span class="p">)</span>
+            <span class="n">dos</span> <span class="o">=</span> <span class="n">dos</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dos</span><span class="p">,</span> <span class="n">CompleteDos</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vaspinfo</span> <span class="o">=</span> <span class="n">VaspInfo</span><span class="p">()</span>
+            <span class="n">dos</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">vaspinfo</span><span class="p">,</span> <span class="n">dos</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VaspOutput.from_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspOutput.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="n">REQUIRED_KEYS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;vaspinfo&#39;</span><span class="p">,</span> <span class="s1">&#39;dos&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">REQUIRED_KEYS</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;input dictionary is not properly formatted&#39;</span><span class="p">)</span>
+
+        <span class="n">vaspinfo</span> <span class="o">=</span> <span class="n">dict_to_obj</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;vaspinfo&#39;</span><span class="p">],</span> <span class="n">VaspInfo</span><span class="p">)</span>
+        <span class="n">dos</span> <span class="o">=</span> <span class="n">dict_to_obj</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;dos&#39;</span><span class="p">],</span> <span class="n">CompleteDos</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">vaspinfo</span><span class="p">,</span> <span class="n">dos</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VaspOutput.write">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.vasp.VaspOutput.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;outputs.json&#39;</span><span class="p">),</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">outfile</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

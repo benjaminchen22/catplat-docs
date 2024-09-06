@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.database.mat_proj &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.database.mat_proj</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.database.mat_proj</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module implements functions that interfaces with the MPRester.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">mp_api.client</span> <span class="kn">import</span> <span class="n">MPRester</span> <span class="k">as</span> <span class="n">MPAPIRester</span>
+<span class="kn">from</span> <span class="nn">mp_api.client</span> <span class="kn">import</span> <span class="n">MPRestError</span>
+
+<span class="kn">from</span> <span class="nn">pyatoms.utils.utils</span> <span class="kn">import</span> <span class="n">retry</span>
+<span class="kn">from</span> <span class="nn">pymatgen.io.ase</span> <span class="kn">import</span> <span class="n">AseAtomsAdaptor</span>
+<span class="kn">from</span> <span class="nn">pymatgen.symmetry.analyzer</span> <span class="kn">import</span> <span class="n">SpacegroupAnalyzer</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
+
+<span class="kn">from</span> <span class="nn">catplat.core.chemsys</span> <span class="kn">import</span> <span class="n">Chemsys</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.constants</span> <span class="kn">import</span> <span class="n">E_ABOVE_HULL</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.user</span> <span class="kn">import</span> <span class="n">CatplatUserSettings</span>
+<span class="kn">from</span> <span class="nn">catplat.utils</span> <span class="kn">import</span> <span class="n">Comparator</span>
+
+<span class="n">MP_API_KEY</span> <span class="o">=</span> <span class="s1">&#39;93zekbLff5K0YM3fvL7n4DSOlxDCuq1N&#39;</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="QueryMPAPI">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.mat_proj.QueryMPAPI">[docs]</a>
+<span class="k">class</span> <span class="nc">QueryMPAPI</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Query Materials Project using the new MP API Rester</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        initial_magmom_threshold (float): Below specified value, the initial magmoms on the output data[&#39;atoms&#39;] object</span>
+<span class="sd">            will be removed to avoid triggering a spin-polarized calculation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_criteria</span><span class="p">,</span> <span class="n">mp_rester</span><span class="o">=</span><span class="n">MPAPIRester</span><span class="p">,</span> <span class="n">mp_rester_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initial_magmom_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">primitive_standard_cell</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">initial_magmom_threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">settings</span> <span class="o">=</span> <span class="n">CatplatUserSettings</span><span class="p">()</span>
+            <span class="n">initial_magmom_threshold</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">initial_magmom_threshold</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query_criteria</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;query_criteria must be a dict&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Remove None attributes from query_criteria</span>
+        <span class="n">query_criteria</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">query_criteria</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">mp_rester_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mp_rester_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># pre-processing for chemsys</span>
+        <span class="n">query_criteria</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chemsys_preprocessing</span><span class="p">(</span><span class="n">query_criteria</span><span class="p">)</span>
+
+        <span class="c1"># pre-processing for e_above_hull</span>
+        <span class="c1"># 1. Changes the name used in our query set (i.e.,&#39;e_above_hull&#39;) to the name used in Materials Project API (i.e.,&#39;energy_above_hull&#39;)</span>
+        <span class="c1"># 2. Converts the value (comparator/int) to a tuple(min, max)</span>
+        <span class="n">query_criteria</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_e_above_hull_preprocessing</span><span class="p">(</span><span class="n">query_criteria</span><span class="p">)</span>
+
+        <span class="c1"># pre-processing for spacegroup</span>
+        <span class="c1"># changes the name used in our query set (i.e.,&#39;spacegroup&#39;) to the name used in Materials Project API (i.e.,&#39;spacegroup_number&#39;)</span>
+        <span class="k">if</span> <span class="s1">&#39;spacegroup&#39;</span> <span class="ow">in</span> <span class="n">query_criteria</span><span class="p">:</span>
+            <span class="n">query_criteria</span><span class="p">[</span><span class="s1">&#39;spacegroup_number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">query_criteria</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;spacegroup&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;bulk_formula&#39;</span> <span class="ow">in</span> <span class="n">query_criteria</span><span class="p">:</span>
+            <span class="n">query_criteria</span><span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">query_criteria</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;bulk_formula&#39;</span><span class="p">)</span>
+
+        <span class="c1"># pre-processing for mpid</span>
+        <span class="c1"># 1. Changes the name used in our query set (i.e.,&#39;mpid&#39;) to the name used in Materials Project API (i.e.,&#39;material_ids&#39;)</span>
+        <span class="c1"># 2. Convert str to a 1D list as Materials Project API takes in a list of ids to search.</span>
+        <span class="k">if</span> <span class="s1">&#39;mpid&#39;</span> <span class="ow">in</span> <span class="n">query_criteria</span><span class="p">:</span>
+            <span class="n">query_criteria</span><span class="p">[</span><span class="s1">&#39;material_ids&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">query_criteria</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;mpid&#39;</span><span class="p">)]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_magmom_threshold</span> <span class="o">=</span> <span class="n">initial_magmom_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_criteria</span> <span class="o">=</span> <span class="n">query_criteria</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mp_rester</span> <span class="o">=</span> <span class="n">mp_rester</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mp_rester_kwargs</span> <span class="o">=</span> <span class="n">mp_rester_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primitive_standard_cell</span> <span class="o">=</span> <span class="n">primitive_standard_cell</span>
+
+    <span class="k">def</span> <span class="nf">_chemsys_preprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_criteria</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;chemsys&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">query_criteria</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">query_criteria</span>
+
+        <span class="n">chemsys</span> <span class="o">=</span> <span class="n">Chemsys</span><span class="p">(</span><span class="n">query_criteria</span><span class="p">[</span><span class="s1">&#39;chemsys&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">expand</span><span class="p">()</span>
+        <span class="n">query_criteria</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;chemsys&#39;</span><span class="p">:</span> <span class="n">chemsys</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">query_criteria</span>
+
+    <span class="k">def</span> <span class="nf">_e_above_hull_preprocessing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_criteria</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Pre-processing for e_above_hull.</span>
+
+<span class="sd">        Limit the maximum e_above_hull to 10 eV/atom. Seems to help with query speed.</span>
+<span class="sd">        Maximum e_above_hull in Materials Project webpage is 1.0 eV/atom.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="s1">&#39;e_above_hull&#39;</span> <span class="ow">in</span> <span class="n">query_criteria</span><span class="p">:</span>
+            <span class="n">e_above_hull_value</span> <span class="o">=</span> <span class="n">query_criteria</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;e_above_hull&#39;</span><span class="p">)</span>
+            <span class="n">e_above_hull_comparator</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">e_above_hull_value</span><span class="p">)</span>
+            <span class="n">e_above_hull_tuple</span> <span class="o">=</span> <span class="n">e_above_hull_comparator</span><span class="o">.</span><span class="n">get_tuple</span><span class="p">(</span><span class="n">min_lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_upper</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">query_criteria</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;energy_above_hull&#39;</span><span class="p">:</span> <span class="n">e_above_hull_tuple</span><span class="p">})</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">query_criteria</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;energy_above_hull&#39;</span><span class="p">:</span> <span class="n">E_ABOVE_HULL</span><span class="p">})</span>  <span class="c1"># set default e_above_hull</span>
+
+        <span class="k">return</span> <span class="n">query_criteria</span>
+
+    <span class="k">def</span> <span class="nf">_update_query_criteria</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_criteria</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">old_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">old_key</span> <span class="ow">in</span> <span class="n">query_criteria</span><span class="p">:</span>
+            <span class="n">query_criteria</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">query_criteria</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">old_key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">query_criteria</span>
+
+<div class="viewcode-block" id="QueryMPAPI.retrieve">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.mat_proj.QueryMPAPI.retrieve">[docs]</a>
+    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mp_rester</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Need to install mp-api to use new MPRester.&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">mp_rester</span><span class="p">(</span><span class="n">MP_API_KEY</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">mp_rester_kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">mp_rester</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data_from_query</span><span class="p">(</span><span class="n">mp_rester</span><span class="o">=</span><span class="n">mp_rester</span><span class="p">)</span>
+            <span class="n">mp_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">material</span><span class="p">[</span><span class="s1">&#39;material_id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">material</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Got mp-ids: </span><span class="si">{</span><span class="n">mp_ids</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_data_from_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mp_rester</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">mp_rester</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">query_criteria</span><span class="p">,</span> <span class="n">all_fields</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                        <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;structure&#39;</span><span class="p">,</span> <span class="s1">&#39;symmetry&#39;</span><span class="p">,</span><span class="s1">&#39;material_id&#39;</span><span class="p">,</span><span class="s1">&#39;energy_above_hull&#39;</span><span class="p">,</span><span class="s1">&#39;chemsys&#39;</span><span class="p">,</span>
+                                                <span class="s1">&#39;formula_pretty&#39;</span><span class="p">])</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">structure</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;structure&#39;</span><span class="p">]</span>
+
+            <span class="c1"># mp-api 0.37.1 returns a dict, whereas mp-api 0.33.3 returns a Structure object</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">structure</span> <span class="o">=</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">primitive_standard_cell</span><span class="p">:</span>
+                <span class="n">structure</span> <span class="o">=</span> <span class="n">SpacegroupAnalyzer</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span><span class="o">.</span><span class="n">get_primitive_standard_structure</span><span class="p">()</span>
+
+            <span class="n">atoms</span> <span class="o">=</span> <span class="n">AseAtomsAdaptor</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+
+            <span class="n">initial_magmoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">get_initial_magnetic_moments</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">initial_magmoms</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_magmom_threshold</span><span class="p">):</span>
+                <span class="n">atoms</span><span class="o">.</span><span class="n">set_initial_magnetic_moments</span><span class="p">(</span><span class="n">magmoms</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atoms</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;spacegroup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;symmetry&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number&#39;</span><span class="p">)</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;bulk_formula&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;formula_pretty&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

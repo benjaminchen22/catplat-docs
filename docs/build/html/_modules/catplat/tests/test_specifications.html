@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.tests.test_specifications &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.tests.test_specifications</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.tests.test_specifications</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">catplat.specifications.adsorbate</span> <span class="kn">import</span> <span class="p">(</span><span class="n">AdsorbateSpecifications</span><span class="p">,</span>
+                                              <span class="n">AdsorbateSpecificationsSet</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catplat.specifications.bulk</span> <span class="kn">import</span> <span class="p">(</span><span class="n">BulkSpecifications</span><span class="p">,</span>
+                                         <span class="n">BulkSpecificationsSet</span><span class="p">,</span>
+                                         <span class="n">MPBulkSpecifications</span><span class="p">,</span>
+                                         <span class="n">UserBulkSpecifications</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catplat.specifications.other</span> <span class="kn">import</span> <span class="p">(</span><span class="n">OtherSpecifications</span><span class="p">,</span>
+                                          <span class="n">OtherSpecificationsSet</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catplat.specifications.slab</span> <span class="kn">import</span> <span class="p">(</span><span class="n">CatplatSlabSpecifications</span><span class="p">,</span>
+                                         <span class="n">SlabSpecifications</span><span class="p">,</span>
+                                         <span class="n">SlabSpecificationsSet</span><span class="p">,</span>
+                                         <span class="n">UserSlabSpecifications</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="bulk_specs_set">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.bulk_specs_set">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">bulk_specs_set</span><span class="p">():</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;chemsys&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;Rh&#39;</span><span class="p">],</span>
+                  <span class="s1">&#39;e_above_hull&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;&lt;0.01&#39;</span><span class="p">],</span>
+                  <span class="s1">&#39;spacegroup&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">225</span><span class="p">,</span> <span class="mi">194</span><span class="p">]}</span>
+    <span class="n">bulk_specs_set</span> <span class="o">=</span> <span class="n">BulkSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">bulk_specs_set</span></div>
+
+
+
+<div class="viewcode-block" id="slab_specs_set">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.slab_specs_set">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">slab_specs_set</span><span class="p">():</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;miller_index&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span>
+                  <span class="s1">&#39;num_fixed_layers&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                  <span class="s1">&#39;num_layers&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]}</span>
+    <span class="n">slab_specs</span> <span class="o">=</span> <span class="n">SlabSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">slab_specs</span></div>
+
+
+
+<div class="viewcode-block" id="ads_specs_set">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.ads_specs_set">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">ads_specs_set</span><span class="p">():</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;adsorbate_atoms&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;CO&#39;</span><span class="p">],</span>
+                  <span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]}</span>
+    <span class="n">ads_specs_set</span> <span class="o">=</span> <span class="n">AdsorbateSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ads_specs_set</span></div>
+
+
+
+<div class="viewcode-block" id="other_specs_set">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.other_specs_set">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">other_specs_set</span><span class="p">():</span>
+    <span class="n">other_specs_set</span> <span class="o">=</span> <span class="n">OtherSpecificationsSet</span><span class="p">()</span>
+    <span class="n">other_specs_set</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">other_specs_set</span><span class="o">.</span><span class="n">relaxed</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">other_specs_set</span></div>
+
+
+
+<div class="viewcode-block" id="TestSpecificationsSet">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecificationsSet">[docs]</a>
+<span class="k">class</span> <span class="nc">TestSpecificationsSet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpecificationsSet.test_is_empty">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecificationsSet.test_is_empty">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;&quot; Test SpecificationSet.is_empty() method. &quot;&quot;&quot;</span>
+        <span class="n">specifications_set</span> <span class="o">=</span> <span class="n">BulkSpecificationsSet</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">specifications_set</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
+
+        <span class="n">specifications_set</span> <span class="o">=</span> <span class="n">BulkSpecificationsSet</span><span class="p">(</span><span class="n">e_above_hull</span><span class="o">=</span><span class="p">[</span><span class="mf">0.01</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">specifications_set</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestSpecificationsSet.test_is_user_bulk">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecificationsSet.test_is_user_bulk">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;attr, expected&#39;</span><span class="p">,</span> <span class="p">(({</span><span class="s1">&#39;bulk_atoms&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;valid_bulk&#39;</span><span class="p">]},</span> <span class="kc">True</span><span class="p">),</span>
+                                                <span class="p">({</span><span class="s1">&#39;chemsys&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">]},</span> <span class="kc">False</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_is_user_bulk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test SpecificationSet.is_user_bulk attribute. &quot;&quot;&quot;</span>
+        <span class="n">specifications_set</span> <span class="o">=</span> <span class="n">BulkSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">specifications_set</span><span class="o">.</span><span class="n">is_user_bulk</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestSpecificationsSet.test_to_dict">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecificationsSet.test_to_dict">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;test_set&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;bulk_specs_set&#39;</span><span class="p">,</span> <span class="s1">&#39;slab_specs_set&#39;</span><span class="p">,</span> <span class="s1">&#39;ads_specs_set&#39;</span><span class="p">,</span> <span class="s1">&#39;other_specs_set&#39;</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">test_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test SpecificationSet.to_dict() method. &quot;&quot;&quot;</span>
+        <span class="n">specifications_set</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">getfixturevalue</span><span class="p">(</span><span class="n">test_set</span><span class="p">)</span>
+        <span class="n">attributes_dict</span> <span class="o">=</span> <span class="n">specifications_set</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">attributes_dict</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">specifications_set</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestSpecificationsSet.test_instantiation">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecificationsSet.test_instantiation">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;class_type, test_dict&#39;</span><span class="p">,</span> <span class="p">((</span><span class="n">BulkSpecificationsSet</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;chemsys&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">]}),</span>
+                                                       <span class="p">(</span><span class="n">SlabSpecificationsSet</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;miller_index&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]}),</span>
+                                                       <span class="p">(</span><span class="n">AdsorbateSpecificationsSet</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;adsorbate_atoms&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">]}),</span>
+                                                       <span class="p">(</span><span class="n">OtherSpecificationsSet</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]})))</span>
+    <span class="k">def</span> <span class="nf">test_instantiation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_type</span><span class="p">,</span> <span class="n">test_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test correct values are stored when instantiating SpecificationsSet class. &quot;&quot;&quot;</span>
+        <span class="n">attribute_name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">test_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">specifications_set</span> <span class="o">=</span> <span class="n">class_type</span><span class="p">(</span><span class="o">**</span><span class="n">test_dict</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">specifications_set</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">test_dict</span><span class="p">[</span><span class="n">attribute_name</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestSpecificationsSet.test_instantiation_invalid">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecificationsSet.test_instantiation_invalid">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;class_type, test_dict&#39;</span><span class="p">,</span> <span class="p">((</span><span class="n">BulkSpecificationsSet</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;invalid&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">]}),</span>
+                                                       <span class="p">(</span><span class="n">SlabSpecificationsSet</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;invalid&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]}),</span>
+                                                       <span class="p">(</span><span class="n">AdsorbateSpecificationsSet</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;invalid&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">]}),</span>
+                                                       <span class="p">(</span><span class="n">OtherSpecificationsSet</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;invalid&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]})))</span>
+    <span class="k">def</span> <span class="nf">test_instantiation_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_type</span><span class="p">,</span> <span class="n">test_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test error handling from instantiating SpecificationsSet with invalid attribute. &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
+            <span class="n">specifications_set</span> <span class="o">=</span> <span class="n">class_type</span><span class="p">(</span><span class="o">**</span><span class="n">test_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestSpecificationsSet.test_to_specs">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecificationsSet.test_to_specs">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;test_set, expected&#39;</span><span class="p">,</span> <span class="p">((</span><span class="s1">&#39;bulk_specs_set&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                                                    <span class="p">(</span><span class="s1">&#39;slab_specs_set&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+                                                    <span class="p">(</span><span class="s1">&#39;ads_specs_set&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                                                    <span class="p">(</span><span class="s1">&#39;other_specs_set&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_to_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test SpecificationsSet.to_specifications() method. &quot;&quot;&quot;</span>
+        <span class="n">specifications_set</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">getfixturevalue</span><span class="p">(</span><span class="n">test_set</span><span class="p">)</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">specifications_set</span><span class="o">.</span><span class="n">to_specifications</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestSpecificationsSet.test_to_specs_empty_vaue">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecificationsSet.test_to_specs_empty_vaue">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_to_specs_empty_vaue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">specs_set</span> <span class="o">=</span> <span class="n">OtherSpecificationsSet</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="p">[])</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="n">specs_set</span><span class="o">.</span><span class="n">to_specifications</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestSpecificationsSet.test_is_user_slab">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecificationsSet.test_is_user_slab">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_is_user_slab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test SpecificationsSet.to_specifications() method. &quot;&quot;&quot;</span>
+        <span class="n">SlabSpecsSet</span> <span class="o">=</span> <span class="n">SlabSpecificationsSet</span><span class="p">(</span><span class="n">slab_atoms</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;valid_slab&#39;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">SlabSpecsSet</span><span class="o">.</span><span class="n">is_user_slab</span> <span class="ow">is</span> <span class="kc">True</span>
+
+        <span class="n">SlabSpecsSet</span> <span class="o">=</span> <span class="n">SlabSpecificationsSet</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">SlabSpecsSet</span><span class="o">.</span><span class="n">is_user_slab</span> <span class="ow">is</span> <span class="kc">False</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestSlabSpecifications">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSlabSpecifications">[docs]</a>
+<span class="k">class</span> <span class="nc">TestSlabSpecifications</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSlabSpecifications.test_slab_specifications_defaults">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSlabSpecifications.test_slab_specifications_defaults">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_slab_specifications_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Should have no defaults. &quot;&quot;&quot;</span>
+        <span class="n">slab_specs</span> <span class="o">=</span> <span class="n">CatplatSlabSpecifications</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">slab_specs</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestSpecifications">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecifications">[docs]</a>
+<span class="k">class</span> <span class="nc">TestSpecifications</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpecifications.test_subclass_instantiation">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecifications.test_subclass_instantiation">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;attributes, parent_class, sub_class&#39;</span><span class="p">,</span>
+                             <span class="p">(({</span><span class="s1">&#39;chemsys&#39;</span><span class="p">:</span> <span class="s1">&#39;Cu&#39;</span><span class="p">},</span> <span class="n">BulkSpecifications</span><span class="p">,</span> <span class="n">MPBulkSpecifications</span><span class="p">),</span>
+                              <span class="p">({</span><span class="s1">&#39;bulk_atoms&#39;</span><span class="p">:</span> <span class="s1">&#39;valid_bulk&#39;</span><span class="p">},</span> <span class="n">BulkSpecifications</span><span class="p">,</span> <span class="n">UserBulkSpecifications</span><span class="p">),</span>
+                              <span class="p">({</span><span class="s1">&#39;miller_index&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)},</span> <span class="n">SlabSpecifications</span><span class="p">,</span> <span class="n">CatplatSlabSpecifications</span><span class="p">),</span>
+                              <span class="p">({</span><span class="s1">&#39;slab_atoms&#39;</span><span class="p">:</span> <span class="s1">&#39;valid_slab&#39;</span><span class="p">},</span> <span class="n">SlabSpecifications</span><span class="p">,</span> <span class="n">UserSlabSpecifications</span><span class="p">),</span>
+                              <span class="p">({</span><span class="s1">&#39;adsorbate_atoms&#39;</span><span class="p">:</span> <span class="s1">&#39;CO&#39;</span><span class="p">},</span> <span class="n">AdsorbateSpecifications</span><span class="p">,</span> <span class="n">AdsorbateSpecifications</span><span class="p">),</span>
+                              <span class="p">({</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">OtherSpecifications</span><span class="p">,</span> <span class="n">OtherSpecifications</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_subclass_instantiation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">parent_class</span><span class="p">,</span> <span class="n">sub_class</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test if correct subclass is instantiated from the classmethod. &quot;&quot;&quot;</span>
+        <span class="n">bulk_specs</span> <span class="o">=</span> <span class="n">parent_class</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bulk_specs</span><span class="p">,</span> <span class="n">sub_class</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestSpecifications.test_generate_atoms_bulkspecs">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecifications.test_generate_atoms_bulkspecs">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;attributes, expected&#39;</span><span class="p">,</span>
+                             <span class="p">(({</span><span class="s1">&#39;chemsys&#39;</span><span class="p">:</span> <span class="s1">&#39;Cu&#39;</span><span class="p">},</span> <span class="p">(</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;mp-30&#39;</span><span class="p">,</span> <span class="s1">&#39;mp-bulk&#39;</span><span class="p">)),</span>
+                              <span class="p">({</span><span class="s1">&#39;bulk_atoms&#39;</span><span class="p">:</span> <span class="s1">&#39;valid_bulk&#39;</span><span class="p">},</span> <span class="p">(</span><span class="s1">&#39;Rh&#39;</span><span class="p">,</span> <span class="s1">&#39;Rh4&#39;</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;user-bulk&#39;</span><span class="p">))))</span>
+    <span class="k">def</span> <span class="nf">test_generate_atoms_bulkspecs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test generate_atoms() for BulkSpecs subclasses. &quot;&quot;&quot;</span>
+        <span class="n">expected_properties</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;chemsys&#39;</span><span class="p">:</span> <span class="n">expected</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;bulk_formula&#39;</span><span class="p">:</span> <span class="n">expected</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;spacegroup&#39;</span><span class="p">:</span> <span class="n">expected</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                               <span class="s1">&#39;e_above_hull&#39;</span><span class="p">:</span> <span class="n">expected</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;mpid&#39;</span><span class="p">:</span> <span class="n">expected</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;bulk_provenance&#39;</span><span class="p">:</span> <span class="n">expected</span><span class="p">[</span><span class="mi">5</span><span class="p">]}</span>
+        <span class="n">bulk_specs</span> <span class="o">=</span> <span class="n">BulkSpecifications</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+
+        <span class="n">images</span><span class="p">,</span> <span class="n">properties</span> <span class="o">=</span> <span class="n">bulk_specs</span><span class="o">.</span><span class="n">generate_atoms</span><span class="p">()</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">properties</span> <span class="o">==</span> <span class="n">expected_properties</span></div>
+
+
+<div class="viewcode-block" id="TestSpecifications.test_sieve_bulk">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecifications.test_sieve_bulk">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;e_above_hull, spacegroup, expected&#39;</span><span class="p">,</span> <span class="p">((</span><span class="s1">&#39;&lt;0.5&#39;</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;&gt;=0&#39;</span><span class="p">,</span> <span class="mi">194</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_sieve_bulk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e_above_hull</span><span class="p">,</span> <span class="n">spacegroup</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test if specifications class is working correctly with QueryMPAPI. &quot;&quot;&quot;</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;chemsys&#39;</span><span class="p">:</span> <span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;e_above_hull&#39;</span><span class="p">:</span> <span class="n">e_above_hull</span><span class="p">,</span> <span class="s1">&#39;spacegroup&#39;</span><span class="p">:</span> <span class="n">spacegroup</span><span class="p">}</span>
+        <span class="n">bulk_specs</span> <span class="o">=</span> <span class="n">MPBulkSpecifications</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="n">images</span><span class="p">,</span> <span class="n">properties</span> <span class="o">=</span> <span class="n">bulk_specs</span><span class="o">.</span><span class="n">generate_atoms</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestSpecifications.test_bonds_str">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_specifications.TestSpecifications.test_bonds_str">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;bonds_str, expected&#39;</span><span class="p">,</span> <span class="p">([</span><span class="s1">&#39;monodentate&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                                                     <span class="p">[</span><span class="s1">&#39;bidentate&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]))</span>
+    <span class="k">def</span> <span class="nf">test_bonds_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bonds_str</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">adsorbate_specs</span> <span class="o">=</span> <span class="n">AdsorbateSpecifications</span><span class="p">(</span><span class="n">adsorbate_atoms</span><span class="o">=</span><span class="s1">&#39;CO&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="n">bonds_str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">adsorbate_specs</span><span class="o">.</span><span class="n">bonds</span> <span class="o">==</span> <span class="n">expected</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.cli.extract &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.cli.extract</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.cli.extract</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">click</span>
+
+<span class="kn">from</span> <span class="nn">catplat.cli.specifications</span> <span class="kn">import</span> <span class="n">stripped_str</span>
+
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--project&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name of project containing the database_path.&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="s1">&#39;--folder&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the path of the folder(s) from which to extract the caulation data from, must be provided under quotes, e.g. -f &quot;some/path&quot;&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--id&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Database id of the unrelaxed entry whose corresponding relaxed entry is to be edited.&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--overwrite/--no-overwrite&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Toggle to overwrite the existing data section, if one is found&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--np&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of parallel threads. Use np=-1 to utilize the maximum number of available threads&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--suppress-errors/--no-supress-errors&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Toggle to silently skip the undesired, normally error-raising cases&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--backend&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;multiprocessing&#39;</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the parallelization backend. options are &quot;joblib&quot; and  &quot;multiprocessing&quot;&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--chunksize&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the chunksize option of multiprocessing.Pool.starmap&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">project</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract calculation information from folders.</span>
+
+<span class="sd">    Either update the corresponding relaxed entries in the database or store them anew.</span>
+<span class="sd">    \b</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        catplat extract  -p projectname -f &#39;/path/to/job1&#39; -f &#39;/path/to/job2&#39; --id unrelaxedid1 --id unrelaxedid2 --parallel --np 2 </span>
+<span class="sd">        catplat extract  -p projectname -f &#39;/path/to/lot_of_jobs/id*&#39; --overwrite --np -1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">catplat.database.ase</span> <span class="kn">import</span> <span class="n">Database</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+    <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+    <span class="kn">from</span> <span class="nn">catplat.settings.user</span> <span class="kn">import</span> <span class="n">CatplatUserSettings</span>
+    <span class="kn">import</span> <span class="nn">multiprocessing</span>
+    <span class="kn">from</span> <span class="nn">catplat.utils.multiprocessing</span> <span class="kn">import</span> <span class="n">NoDaemonProcessPool</span>
+    <span class="kn">import</span> <span class="nn">tqdm</span>
+    <span class="kn">import</span> <span class="nn">joblib</span>
+
+    <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">folder</span><span class="p">]</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">paths</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s1">&#39;No explicit IDs are provided; will try to figure out IDs from folder names.&#39;</span>
+                   <span class="s1">&#39;Folder name must start with &quot;id&quot;&#39;</span><span class="p">)</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+        <span class="n">uids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">2</span><span class="p">:])</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">uids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">uids</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;the number of folders provided (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span><span class="si">}</span><span class="s1">) do not match the number of IDs provided (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">uids</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">CatplatUserSettings</span><span class="p">()</span>
+    <span class="n">db_path</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get_database_path</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+
+    <span class="n">kwargs_set</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;unrelaxed_id&#39;</span><span class="p">:</span> <span class="n">uid</span><span class="p">,</span> <span class="s1">&#39;folder&#39;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s1">&#39;overwrite&#39;</span><span class="p">:</span> <span class="n">overwrite</span><span class="p">,</span>
+                   <span class="s1">&#39;suppress_errors&#39;</span><span class="p">:</span> <span class="n">suppress_errors</span><span class="p">}</span> <span class="k">for</span> <span class="n">uid</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">uids</span><span class="p">,</span> <span class="n">paths</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;joblib&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">np</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">joblib</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(),</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">))</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;attempting extraction with </span><span class="si">{</span><span class="n">np</span><span class="si">}</span><span class="s1"> thread(s)&#39;</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">np</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">100</span><span class="p">)(</span>
+            <span class="n">joblib</span><span class="o">.</span><span class="n">delayed</span><span class="p">(</span><span class="n">Database</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span><span class="o">.</span><span class="n">update_from_relaxed_folder</span><span class="p">)(</span><span class="o">**</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">kwargs_set</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="s1">&#39;multiprocessing&#39;</span><span class="p">:</span>
+
+        <span class="n">db_and_kwargs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">Database</span><span class="p">(</span><span class="n">db_path</span><span class="p">),</span> <span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">kwargs_set</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">np</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">np</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(),</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">))</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;attempting extraction with </span><span class="si">{</span><span class="n">np</span><span class="si">}</span><span class="s1"> thread(s)&#39;</span><span class="p">)</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">NoDaemonProcessPool</span><span class="p">(</span><span class="n">np</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tqdm</span><span class="o">.</span><span class="n">tqdm</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="n">update_db_starstar</span><span class="p">,</span> <span class="n">db_and_kwargs</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">),</span>
+                                 <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">db_and_kwargs</span><span class="p">)))</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;backend &quot;</span><span class="si">{</span><span class="n">backend</span><span class="si">}</span><span class="s1">&quot; is not recongnized.&#39;</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">)</span>
+    <span class="n">format_output</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="update_db_starstar">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.extract.update_db_starstar">[docs]</a>
+<span class="k">def</span> <span class="nf">update_db_starstar</span><span class="p">(</span><span class="n">db_and_kwargs</span><span class="p">):</span>
+    <span class="n">db</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">db_and_kwargs</span>
+    <span class="k">return</span> <span class="n">db</span><span class="o">.</span><span class="n">update_from_relaxed_folder</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="format_output">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.extract.format_output">[docs]</a>
+<span class="k">def</span> <span class="nf">format_output</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">rid</span><span class="p">)</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">if</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;multiple_dir&#39;</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;* multiple directories found in </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">; expecting only one; skipping&#39;</span>
+        <span class="k">if</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;no_unrelaxed&#39;</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;* no unrelaxed entry corresponding to </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1"> found in the database; skipping&#39;</span>
+        <span class="k">elif</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;unconverged&#39;</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;* the folder </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1"> does not seem to contain a converged job; skipping&#39;</span>
+        <span class="k">elif</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;atoms_unmatched&#39;</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;* the atoms objects from the unrelaxed entry do not match with folder </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">; skipping&#39;</span>
+        <span class="k">elif</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;skipped&#39;</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;* relaxed entry already contains a data section, not overwritten&#39;</span>
+        <span class="k">elif</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;stored&#39;</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;* created a new relaxed entry&#39;</span>
+        <span class="k">elif</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;overwritten&#39;</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;* relaxed entry already contains a data section, overwritten on user request&#39;</span>
+        <span class="k">elif</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;updated&#39;</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;* updated relaxed entry&#39;</span>
+        <span class="n">output</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;; relaxed ID </span><span class="si">{</span><span class="n">rid</span><span class="si">}</span><span class="s1">; unrelaxed ID </span><span class="si">{</span><span class="n">uid</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+
+
+    <span class="c1"># status messages for differenent entries starts with a * and are separated by newlines</span>
+    <span class="c1"># the different segments of a line are separated with semicolons (&#39;;&#39;)</span>
+    <span class="c1"># the status message must mention the unrelaxed ID and the relaxed ID, if available</span>
+    <span class="c1"># changing the status message format might cause the unit tests to fail</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

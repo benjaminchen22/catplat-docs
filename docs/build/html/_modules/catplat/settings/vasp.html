@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.settings.vasp &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.settings.vasp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.settings.vasp</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module consists of classes that manages the settings of VASP.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">pymatgen.io.vasp.sets</span> <span class="kn">import</span> <span class="n">_load_yaml_config</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.constants</span> <span class="kn">import</span> <span class="n">TEST_PROJECT_NAME</span>
+<span class="kn">from</span> <span class="nn">pyatoms.jobs.vasp.settings</span> <span class="kn">import</span> <span class="p">(</span><span class="n">IncarSettings</span><span class="p">,</span> <span class="n">KpointsSettings</span><span class="p">,</span>
+                                        <span class="n">PotcarSettings</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyatoms.settings.projects.vasp</span> <span class="kn">import</span> <span class="p">(</span><span class="n">VaspProjectSettings</span><span class="p">,</span>
+                                            <span class="n">project_settings</span><span class="p">)</span>
+
+<span class="c1"># Project settings for bulk, slab and complexes not confirmed</span>
+<span class="n">mprelaxset</span> <span class="o">=</span> <span class="n">_load_yaml_config</span><span class="p">(</span><span class="s1">&#39;MPRelaxSet&#39;</span><span class="p">)</span>
+<span class="n">mprelaxset_magmom_dict</span> <span class="o">=</span> <span class="n">mprelaxset</span><span class="p">[</span><span class="s1">&#39;INCAR&#39;</span><span class="p">][</span><span class="s1">&#39;MAGMOM&#39;</span><span class="p">]</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CatplatTestProjectSettings">
+<a class="viewcode-back" href="../../../catplat.settings.html#catplat.settings.vasp.CatplatTestProjectSettings">[docs]</a>
+<span class="nd">@project_settings</span>
+<span class="k">class</span> <span class="nc">CatplatTestProjectSettings</span><span class="p">(</span><span class="n">VaspProjectSettings</span><span class="p">):</span>
+    <span class="n">PROJECT_NAME</span> <span class="o">=</span> <span class="n">TEST_PROJECT_NAME</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CatplatTestProjectSettings.cell_optimization_settings">
+<a class="viewcode-back" href="../../../catplat.settings.html#catplat.settings.vasp.CatplatTestProjectSettings.cell_optimization_settings">[docs]</a>
+    <span class="k">def</span> <span class="nf">cell_optimization_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_settings</span><span class="p">()</span><span class="o">.</span><span class="n">delete_incar_parameters</span><span class="p">([</span><span class="s1">&#39;IOPT&#39;</span><span class="p">])</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">merge_incar_parameters</span><span class="p">(</span>
+            <span class="p">{</span><span class="s1">&#39;LREAL&#39;</span><span class="p">:</span> <span class="s1">&#39;Auto&#39;</span><span class="p">,</span> <span class="s1">&#39;EDIFFG&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="s1">&#39;PREC&#39;</span><span class="p">:</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;POTIM&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s1">&#39;IBRION&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;ISIF&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">delete_incar_parameters</span><span class="p">([</span><span class="s1">&#39;IOPT&#39;</span><span class="p">])</span>  <span class="c1"># IBRION=3, LREAL=Auto</span>
+
+        <span class="n">kpoints_settings</span> <span class="o">=</span> <span class="n">KpointsSettings</span><span class="o">.</span><span class="n">gamma_automatic</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">merge_parameters</span><span class="p">(</span><span class="n">kpoints_settings</span><span class="o">=</span><span class="n">kpoints_settings</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">settings</span></div>
+
+
+<div class="viewcode-block" id="CatplatTestProjectSettings.quick_settings">
+<a class="viewcode-back" href="../../../catplat.settings.html#catplat.settings.vasp.CatplatTestProjectSettings.quick_settings">[docs]</a>
+    <span class="k">def</span> <span class="nf">quick_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># return None</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_settings</span><span class="p">()</span>
+        <span class="n">quick_kpoints_settings</span> <span class="o">=</span> <span class="n">KpointsSettings</span><span class="o">.</span><span class="n">gamma_automatic</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">settings</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">merge_incar_parameters</span><span class="p">({</span><span class="s1">&#39;LREAL&#39;</span><span class="p">:</span> <span class="s1">&#39;Auto&#39;</span><span class="p">})</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">merge_parameters</span><span class="p">(</span><span class="n">kpoints_settings</span><span class="o">=</span><span class="n">quick_kpoints_settings</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">settings</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CatplatTestProjectSettings.incar_settings">
+<a class="viewcode-back" href="../../../catplat.settings.html#catplat.settings.vasp.CatplatTestProjectSettings.incar_settings">[docs]</a>
+    <span class="k">def</span> <span class="nf">incar_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">magmom_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Ni&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;Fe&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;Co&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
+        <span class="n">incar</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;LREAL&#39;</span><span class="p">:</span> <span class="s1">&#39;Auto&#39;</span><span class="p">,</span> <span class="s1">&#39;EDIFF&#39;</span><span class="p">:</span> <span class="mf">1E-7</span><span class="p">,</span> <span class="s1">&#39;IOPT&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;IBRION&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;POTIM&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;LWAVE&#39;</span><span class="p">:</span> <span class="s1">&#39;False&#39;</span><span class="p">,</span> <span class="s1">&#39;PREC&#39;</span><span class="p">:</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;EDIFFG&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="s1">&#39;ICHARG&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;NELM&#39;</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span> <span class="s1">&#39;ISYM&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ALGO&#39;</span><span class="p">:</span> <span class="s1">&#39;Fast&#39;</span><span class="p">,</span> <span class="s1">&#39;ENCUT&#39;</span><span class="p">:</span> <span class="mi">520</span><span class="p">,</span> <span class="s1">&#39;NSW&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+                 <span class="s1">&#39;ISPIN&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                 <span class="s1">&#39;GGA&#39;</span><span class="p">:</span> <span class="s1">&#39;PE&#39;</span><span class="p">,</span> <span class="s1">&#39;SIGMA&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s1">&#39;LCHARG&#39;</span><span class="p">:</span> <span class="s1">&#39;False&#39;</span><span class="p">,</span> <span class="s1">&#39;ENAUG&#39;</span><span class="p">:</span> <span class="mi">1200</span><span class="p">,</span> <span class="s1">&#39;NELMIN&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">IncarSettings</span><span class="p">(</span><span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span> <span class="n">magmom</span><span class="o">=</span><span class="n">magmom_dict</span><span class="p">,</span> <span class="n">no_spin_pol_if_no_mag_elements</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CatplatTestProjectSettings.kpoints_settings">
+<a class="viewcode-back" href="../../../catplat.settings.html#catplat.settings.vasp.CatplatTestProjectSettings.kpoints_settings">[docs]</a>
+    <span class="k">def</span> <span class="nf">kpoints_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">KpointsSettings</span><span class="o">.</span><span class="n">from_reciprocal_density</span><span class="p">(</span><span class="n">density</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CatplatTestProjectSettings.potcar_settings">
+<a class="viewcode-back" href="../../../catplat.settings.html#catplat.settings.vasp.CatplatTestProjectSettings.potcar_settings">[docs]</a>
+    <span class="k">def</span> <span class="nf">potcar_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">PotcarSettings</span><span class="p">(</span><span class="n">functional</span><span class="o">=</span><span class="s1">&#39;PBE_52&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CatplatTestProjectSettings.poscar_settings">
+<a class="viewcode-back" href="../../../catplat.settings.html#catplat.settings.vasp.CatplatTestProjectSettings.poscar_settings">[docs]</a>
+    <span class="k">def</span> <span class="nf">poscar_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

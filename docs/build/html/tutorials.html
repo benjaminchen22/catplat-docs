@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorials &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Command Line Interface" href="cli.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-1-setting-up-catplat">Tutorial 1: Setting Up CatPlat</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#activating-apptainer-catplat-container">1.1 Activating Apptainer CatPlat Container</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-a-project">1.2 Setting Up a Project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-information">1.3 Additional Information</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#testing-the-sql-tunnel-only-needed-if-sql-database-is-used">1.3.1 Testing the SQL Tunnel (Only Needed if SQL Database is Used):</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#viewing-structures">1.3.2 Viewing Structures</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-2-monodentate-adsorption-on-cu-100-surface">Tutorial 2: Monodentate Adsorption on Cu(100) Surface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#catplat-s-workflows">2.1 CatPlat’s Workflows</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-calculate-and-retrieve-project-setup-required">2.1.1 CatPlat Calculate and Retrieve (Project Setup Required)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-dryrun">2.1.2 CatPlat Dryrun</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-analyzing-structures-with-catplat-s-cli-optional">2.2 Creating/Analyzing Structures with CatPlat’s CLI (Optional)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#creating-the-co-adsorbate-structure">2.2.1 Creating the CO Adsorbate Structure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getting-cu-bulk-structure">2.2.2 Getting Cu Bulk Structure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-the-cu-100-slab">2.2.3 Building the Cu(100) Slab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#adsorption-of-co-on-the-slab">2.2.4 Adsorption of CO on the Slab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-3-bidentate-adsorption-on-cu-211-surface">Tutorial 3: Bidentate adsorption on Cu(211) Surface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#catplat-workflows">3.1 CatPlat Workflows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">3.2 Creating/Analyzing Structures with CatPlat’s CLI (Optional)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#creating-the-acetate-asorbate-structure">3.2.1 Creating the Acetate Asorbate Structure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-the-cu-211-slab">3.2.2 Building the Cu(211) Slab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-bidentate-complexes">3.2.3 Building Bidentate Complexes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-4-specifying-own-structures">Tutorial 4: Specifying Own Structures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#preparing-user-structures">4.1 Preparing User Structures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-existing-structures">4.2 Using Existing Structures</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-5-cu-x-alloys">Tutorial 5: Cu-X Alloys</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-alloy-bulks">5.1 Building Alloy Bulks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-alloy-slabs">5.2 Building Alloy Slabs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adsorbate-adsorption">5.3 Adsorbate Adsorption</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-catplat-workflows">5.3 Using CatPlat Workflows</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-6-co-adsorption-of-multiple-adsorbates">Tutorial 6: Co-adsorption of Multiple Adsorbates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-the-pt-331-surface">6.1 Building the Pt(331) Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generation-of-co-adsorption-complexes">6.2 Generation of Co-adsorption Complexes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reducing-the-number-of-complexes">6.3 Reducing the Number of Complexes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#distance-constraints">6.3.1 Distance Constraints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#connectivity-constraints">6.3.2 Connectivity Constraints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#average-coordination-number-constraints">6.3.3 Average Coordination Number Constraints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#site-constraints">6.3.4 Site Constraints</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial-7-machine-learning-preoptimization">Tutorial 7: Machine Learning Preoptimization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#downloading-the-gemnet-oc-model">7.1 Downloading the GemNet-OC Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#viewing-available-models-and-hashes">7.2 Viewing Available Models and Hashes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-mlp-models">7.3 Using MLP Models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tutorials</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorials.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tutorials">
+<h1>Tutorials<a class="headerlink" href="#tutorials" title="Link to this heading"></a></h1>
+<section id="tutorial-1-setting-up-catplat">
+<h2>Tutorial 1: Setting Up CatPlat<a class="headerlink" href="#tutorial-1-setting-up-catplat" title="Link to this heading"></a></h2>
+<p>Welcome to the first CatPlat tutorial!
+We’re thrilled to have you here.
+Please go through the code examples, and don’t hesitate to contact the CatPlat team if you have questions or feedback.</p>
+<p>In this tutorial, we’ll walk you through the process of setting up CatPlat.</p>
+<p>To keep your project organized, let’s create a dedicated folder for the tutorials.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>~/catplat_tutorial
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/catplat_tutorial
+</pre></div>
+</div>
+<section id="activating-apptainer-catplat-container">
+<h3>1.1 Activating Apptainer CatPlat Container<a class="headerlink" href="#activating-apptainer-catplat-container" title="Link to this heading"></a></h3>
+<p>We distribute CatPlat as a container to manage the complex dependencies.
+<a class="reference external" href="https://apptainer.org">Apptainer</a>, formerly known as Singularity, is used for the containerization as this has been the most popular choice for the HPC community.
+Apptainer is an available module on the ACRC machines, and NSCC Aspire2A has the Singularity/4.0.0 module available which is recent enough for all intents and purposes.</p>
+<p>Before starting the tutorials, you might want to copy the vasp pseudopotentials to the current directory.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cp<span class="w"> </span>-r<span class="w"> </span>~chenwjb/shared/potcars<span class="w"> </span>./
+</pre></div>
+</div>
+<p>You might also want to request an interactive session on a compute node of the server you’re currently on.
+You can do so with the following commands.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">For ACRC</span><a class="headerlink" href="#id4" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>qsub<span class="w"> </span>-X<span class="w"> </span>-I<span class="w"> </span>-l<span class="w"> </span><span class="nv">software</span><span class="o">=</span><span class="s2">&quot;VASP&quot;</span><span class="w"> </span>-l<span class="w"> </span><span class="k">select</span><span class="o">=</span><span class="m">1</span>:ncpus<span class="o">=</span><span class="m">16</span>:mpiprocs<span class="o">=</span><span class="m">16</span>:mem<span class="o">=</span>100G<span class="w"> </span>-l<span class="w"> </span><span class="nv">walltime</span><span class="o">=</span><span class="m">8</span>:00:00
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/catplat_tutorial
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">For Aspire2A</span><a class="headerlink" href="#id5" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>qsub<span class="w"> </span>-X<span class="w"> </span>-P<span class="w"> </span>your_project_name<span class="w"> </span>-I<span class="w"> </span>-l<span class="w"> </span><span class="k">select</span><span class="o">=</span><span class="m">1</span>:ncpus<span class="o">=</span><span class="m">16</span>:mpiprocs<span class="o">=</span><span class="m">16</span>:mem<span class="o">=</span>100G<span class="w"> </span>-l<span class="w"> </span><span class="nv">walltime</span><span class="o">=</span><span class="m">8</span>:00:00
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/catplat_tutorial
+</pre></div>
+</div>
+</div>
+<p>These commands should give you an interactive shell running on the compute node. We can now load Apptainer/Singularity:</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">For ACRC</span><a class="headerlink" href="#id6" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>module<span class="w"> </span>load<span class="w"> </span>apptainer
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">For Aspire2A</span><a class="headerlink" href="#id7" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>module<span class="w"> </span>load<span class="w"> </span>singularity/4.0.0
+</pre></div>
+</div>
+</div>
+<p>To run the container with an interactive shell, execute the following command.</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">running the container interactively for ACRC</span><a class="headerlink" href="#id8" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apptainer<span class="w"> </span>shell<span class="w"> </span>~chenwjb/shared/catplat.sif
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">running the container interactively for Aspire2A</span><a class="headerlink" href="#id9" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>singularity<span class="w"> </span>shell<span class="w"> </span>~chenwjb/shared/catplat.sif
+</pre></div>
+</div>
+</div>
+<p>The command prompt should change to <code class="docutils literal notranslate"><span class="pre">&lt;CatPlat&gt;:username&#64;machinename:~/catplat_tutorial</span></code>, indicating that we are now inside the container.
+This is a full fledged BASH shell running on an Ubuntu OS that has your $HOME (from the host machine) coveniently mounted as its $HOME.
+For details on the host locations bein auto-mounted, and how to mount other locations from the host, please click <a class="reference external" href="https://apptainer.org/docs/user/main/bind_paths_and_mounts.html">here</a>.</p>
+<p>To enable autocompletion of catplat commands and some convenient aliases, source the startscript.</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">sourcing startscript</span><a class="headerlink" href="#id10" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">source</span><span class="w"> </span>/etc/start
+</pre></div>
+</div>
+</div>
+<p>You’re now all set!
+Let’s ensure that everything is working correctly by running Pyatoms and the CatPlat command-line interface:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pyatoms<span class="w"> </span>--help
+<span class="gp">$ </span>catplat<span class="w"> </span>--help
+</pre></div>
+</div>
+<p>Let’s also make use of the container shell and make a separate directory for tutorial 1 and drop down to it.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>tutorial_1
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>tutorial_1
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The interactive shell is good for performing analyses, and we will be using this for the tutorials.
+However, CatPlat calculations that require DFT computations must be submitted through a job script.
+In that case, you will need to use the <a class="reference external" href="https://apptainer.org/docs/user/main/cli/apptainer_exec.html">Apptainer/Singularity exec command</a>.</p>
+</div>
+</section>
+<section id="setting-up-a-project">
+<h3>1.2 Setting Up a Project<a class="headerlink" href="#setting-up-a-project" title="Link to this heading"></a></h3>
+<p>Pyatoms and CatPlat use yaml files in <code class="docutils literal notranslate"><span class="pre">~/.pyatoms/pyatoms.yaml</span></code> and <code class="docutils literal notranslate"><span class="pre">~/.catplat/catplat.yaml</span></code> to store user configurations.
+Although they may be edited directly, we recommend using the <code class="docutils literal notranslate"><span class="pre">pyatoms</span> <span class="pre">config</span></code> and <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">config</span></code> commands to set up your configurations.</p>
+<p>As CatPlat is built on top of Pyatoms, we have to set up Pyatoms first.
+To set up Pyatoms, we’ll demonstrate how to configure a sample project named “myproject”.</p>
+<p>The Pyatoms project uses a yaml file, stored in <code class="docutils literal notranslate"><span class="pre">~/.pyatoms/vasp/</span></code>, to specify details such as INCAR, KPOINTS, and POTCAR parameters for our calculations.
+Let’s create the directory for Pyatoms to store the project information:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.pyatoms/vasp
+</pre></div>
+</div>
+<p>Next, set the pseudopotential directory, which Pyatoms will use to automatically create POTCARs for VASP calculations:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pyatoms<span class="w"> </span>config<span class="w"> </span>vasp-pp<span class="w"> </span>--src<span class="w"> </span>../potcars<span class="w"> </span>--dst<span class="w"> </span>~/pymatgen_pp
+</pre></div>
+</div>
+<p>Now, let’s set up a Pyatoms project:
+You may download a template of a <code class="docutils literal notranslate"><span class="pre">myproject.yaml</span></code> file <a class="reference download internal" download="" href="_downloads/63a3f8ec5fc09ee34a5bb7a0b844842e/myproject.yaml"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The yaml file should be named as {project_name}.yaml, where {project_name} is the name of your project.
+Running the <code class="docutils literal notranslate"><span class="pre">pyatoms</span> <span class="pre">config</span> <span class="pre">vasp-project</span></code> command with a project that already exists will overwrite the existing file.</p>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>wget<span class="w"> </span>https://raw.githubusercontent.com/chryston/catplat_tutorial/main/examples/myproject.yaml<span class="w"> </span>--no-check-certificate
+<span class="gp">$ </span>pyatoms<span class="w"> </span>config<span class="w"> </span>vasp-project<span class="w"> </span>--yaml-file<span class="w"> </span>myproject.yaml
+</pre></div>
+</div>
+<p>Finally, we have to set up a CatPlat project of the same name to define the calculation and database paths.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/catplat_tutorial/myproject/calculation
+
+<span class="go">FOR LOCAL DATABASE</span>
+<span class="gp">$ </span>catplat<span class="w"> </span>config<span class="w"> </span>project<span class="w"> </span>--name<span class="w"> </span>myproject<span class="w"> </span>--calculation-path<span class="w"> </span>~/catplat_tutorial/myproject/calculation<span class="w"> </span>--database-path<span class="w"> </span>~/catplat_tutorial/myproject/myproject.db
+
+<span class="go">FOR SQL DATABASE</span>
+<span class="gp">$ </span>catplat<span class="w"> </span>config<span class="w"> </span>project<span class="w"> </span>--name<span class="w"> </span>myproject<span class="w"> </span>--calculation-path<span class="w"> </span>~/catplat_tutorial/myproject/calculation<span class="w"> </span>--database-path<span class="w"> </span>mysql://<span class="o">{</span>sqluser<span class="o">}</span>:<span class="o">{</span>sqlpassword<span class="o">}</span>@172.20.116.103:3306/<span class="o">{</span>myproject<span class="o">}</span>
+</pre></div>
+</div>
+<p>(Optional: only required for running VASP) Lastly, we need to specify the location of your VASP executables:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pyatoms<span class="w"> </span>config<span class="w"> </span>vasp<span class="w"> </span>--gam<span class="w"> </span><span class="si">${</span><span class="nv">PATH</span><span class="p">/TO/VASP_GAM_EXECUTABLE</span><span class="si">}</span><span class="w"> </span>--std<span class="w"> </span><span class="si">${</span><span class="nv">PATH</span><span class="p">/TO/VASP_STD_EXECUTABLE</span><span class="si">}</span>
+</pre></div>
+</div>
+</section>
+<section id="additional-information">
+<h3>1.3 Additional Information<a class="headerlink" href="#additional-information" title="Link to this heading"></a></h3>
+<section id="testing-the-sql-tunnel-only-needed-if-sql-database-is-used">
+<h4>1.3.1 Testing the SQL Tunnel (Only Needed if SQL Database is Used):<a class="headerlink" href="#testing-the-sql-tunnel-only-needed-if-sql-database-is-used" title="Link to this heading"></a></h4>
+<p>To ensure that the SQL database is working correctly, run the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span><span class="nb">test</span><span class="w"> </span>tunnel
+</pre></div>
+</div>
+</section>
+<section id="viewing-structures">
+<h4>1.3.2 Viewing Structures<a class="headerlink" href="#viewing-structures" title="Link to this heading"></a></h4>
+<p>To visualize structures, ensure you have an X11 software installed.
+You can use <a class="reference external" href="https://mobaxterm.mobatek.net/">MobaXterm</a> or <a class="reference external" href="https://www.putty.org/">PuTTY</a> with <a class="reference external" href="https://sourceforge.net/projects/xming/">Xming</a> to follow along with the tutorials.</p>
+<p>You may also run ase’s visualization GUI directly to view structures:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>wget<span class="w"> </span>https://raw.githubusercontent.com/chryston/catplat_tutorial/main/examples/sample_POSCAR<span class="w"> </span>--no-check-certificate
+<span class="gp">$ </span>ase<span class="w"> </span>gui<span class="w"> </span>sample_POSCAR
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="tutorial-2-monodentate-adsorption-on-cu-100-surface">
+<h2>Tutorial 2: Monodentate Adsorption on Cu(100) Surface<a class="headerlink" href="#tutorial-2-monodentate-adsorption-on-cu-100-surface" title="Link to this heading"></a></h2>
+<p>Now that you have CatPlat set up and ready to go, let’s take a look at how you can use CatPlat to perform heterogeneous catalysis workflows.</p>
+<div class="admonition-scenario admonition">
+<p class="admonition-title">Scenario</p>
+<p>Computing adsorption energies is one of the fundamental tasks of heterogeneous catalysis.
+Yet, this demands an lengthy and extensive sequence of procedures.</p>
+<p>Presented below is an overview of the traditional computational workflows required to compute adsorption energies:</p>
+<a class="reference internal image-reference" href="_images/traditional_workflows.png"><img alt="_images/traditional_workflows.png" class="align-center" src="_images/traditional_workflows.png" style="width: 400px;" /></a>
+<p>In this tutorial, we will be demonstrating the use of CatPlat to compute all <strong>CO adsorption on all unique sites of a Cu(100) surface</strong>.</p>
+</div>
+<p>To keep your project organized, let’s create a dedicated folder for this tutorial.
+Ensure that all commands for this tutorial are executed within this folder.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/catplat_tutorial/tutorial_2
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/catplat_tutorial/tutorial_2
+</pre></div>
+</div>
+<section id="catplat-s-workflows">
+<h3>2.1 CatPlat’s Workflows<a class="headerlink" href="#catplat-s-workflows" title="Link to this heading"></a></h3>
+<p>We can use CatPlat’s workflows to automate the creation and optimization of the structures.</p>
+<section id="catplat-calculate-and-retrieve-project-setup-required">
+<h4>2.1.1 CatPlat Calculate and Retrieve (Project Setup Required)<a class="headerlink" href="#catplat-calculate-and-retrieve-project-setup-required" title="Link to this heading"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">calculate</span></code> is the main command that automatically creates, optimizes, and stores the results in a database.
+We will be using the project created in <a class="reference external" href="1.2SettingUpaProject">Section 1.2</a> for this tutorial.
+Do ensure that you have set up the project before proceeding.
+If you have not, you may skip to the <a class="reference external" href="2.1.2CatPlatDryrun">next part</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">calculate</span></code> command performs the actual DFT calculations.
+Therefore, you should <strong>not</strong> run the next code block on the head node.
+These commands should be added into a job script and be submitted via the scheduler.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">WARNING: DO NOT RUN THIS COMMAND ON THE HEAD NODE!!!</span><a class="headerlink" href="#id11" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>calculate<span class="w"> </span>-p<span class="w"> </span>myproject<span class="w"> </span>--chemsys<span class="w"> </span>Cu<span class="w"> </span>--miller-index<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>--unitcell-size<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>--adsorbate-atoms<span class="w"> </span>CO
+</pre></div>
+</div>
+</div>
+<p>Instead, we can add in the <code class="docutils literal notranslate"><span class="pre">--test</span></code> flag to see the output without running the actual calculations or writing any data.</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">YOU MAY RUN THIS COMMAND ON THE HEAD NODE.</span><a class="headerlink" href="#id12" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>calculate<span class="w"> </span>-p<span class="w"> </span>myproject<span class="w"> </span>--chemsys<span class="w"> </span>Cu<span class="w"> </span>--miller-index<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>--unitcell-size<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>--adsorbate-atoms<span class="w"> </span>CO<span class="w"> </span>--test
+</pre></div>
+</div>
+</div>
+<p>The output should look like this, the energies here are written as dummy values (123 eV) which indicates that the calculations are not run.</p>
+<a class="reference internal image-reference" href="_images/tut2-5.png"><img alt="_images/tut2-5.png" class="align-center" src="_images/tut2-5.png" style="height: 1400px;" /></a>
+<p>The <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">retrieve</span></code> command retrieves existing results from the project database.</p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">You do not need to run this command as there are no stored calculations.</span><a class="headerlink" href="#id13" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>retrieve<span class="w"> </span>-p<span class="w"> </span>myproject<span class="w"> </span>--chemsys<span class="w"> </span>Cu<span class="w"> </span>--miller-index<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>--unitcell-size<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>--adsorbate-atoms<span class="w"> </span>CO
+
+<span class="go">Add the --write-csv to write the results to a csv file.</span>
+<span class="gp">$ </span>catplat<span class="w"> </span>retrieve<span class="w"> </span>-p<span class="w"> </span>myproject<span class="w"> </span>--chemsys<span class="w"> </span>Cu<span class="w"> </span>--miller-index<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>--unitcell-size<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>--adsorbate-atoms<span class="w"> </span>CO<span class="w"> </span>--write-csv
+</pre></div>
+</div>
+</div>
+</section>
+<section id="catplat-dryrun">
+<h4>2.1.2 CatPlat Dryrun<a class="headerlink" href="#catplat-dryrun" title="Link to this heading"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">dryrun</span></code> is analogous to <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">calculate</span></code> but employs a dummy project, allowing us to trial and visualize the expected outputs of CatPlat workflows.
+The options specified can subsequently be copied over to <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">calculate</span></code> for the actual calculations.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">dryrun</span></code> is similar to <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">calculate</span> <span class="pre">--test</span></code>, we strongly recommend users to use <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">dryrun</span></code> for any testing.
+<code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">dryrun</span></code> does not take in any project information and therefore wouldn’t risk writing dummy values to your project’s calculation folder/database.</p>
+<p>As such, we will be using <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">dryrun</span></code> instead of <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">calculate</span> <span class="pre">--test</span></code> for all the tutorials.</p>
+</div>
+<p>Let’s try the <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">dryrun</span></code> command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>--verbose<span class="w"> </span>dryrun<span class="w"> </span>--chemsys<span class="w"> </span>Cu<span class="w"> </span>--miller-index<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>--unitcell-size<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>--adsorbate-atoms<span class="w"> </span>CO<span class="w"> </span>--no-cleanup<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>dryrun.out
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">--no-cleanup</span></code> flag retains the database and calculation files in the temporary directory created for the dry run.
+We can check the “INPUTS” section of the <code class="docutils literal notranslate"><span class="pre">dryrun.out</span></code> for the path in which the structures and database files are written to.
+You can quickly see how the calculation files are structured and the database is organized.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Let&#39;s view the output of CatPlat&#39;s dryrun command.</span>
+<span class="gp">$ </span>cat<span class="w"> </span>dryrun.out
+
+<span class="go">Viewing calculation folders structure</span>
+<span class="gp">$ </span>grep<span class="w"> </span>calculation_path<span class="w"> </span>dryrun.out<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="w"> </span>%<span class="w"> </span>find<span class="w"> </span>%<span class="w"> </span>-type<span class="w"> </span>d
+
+<span class="go">Viewing database organization</span>
+<span class="gp">$ </span>grep<span class="w"> </span>database_path<span class="w"> </span>dryrun.out<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="w"> </span>%<span class="w"> </span>ase<span class="w"> </span>db<span class="w"> </span>-c<span class="w"> </span>id,workflow_type,formula,miller_index,unitcell_size,adsorbate_atoms,connectivity,energy,relaxed<span class="w"> </span>%
+
+<span class="go">Viewing database using web interface (Only works if you have firewall access to the server)</span>
+<span class="gp">$ </span>grep<span class="w"> </span>database_path<span class="w"> </span>dryrun.out<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-I<span class="w"> </span>%<span class="w"> </span>ase<span class="w"> </span>db<span class="w"> </span>%<span class="w"> </span>-w
+</pre></div>
+</div>
+<p>Web interface of the database:</p>
+<a class="reference internal image-reference" href="_images/tut2-6.png"><img alt="_images/tut2-6.png" class="align-center" src="_images/tut2-6.png" style="height: 350px;" /></a>
+</section>
+</section>
+<section id="creating-analyzing-structures-with-catplat-s-cli-optional">
+<h3>2.2 Creating/Analyzing Structures with CatPlat’s CLI (Optional)<a class="headerlink" href="#creating-analyzing-structures-with-catplat-s-cli-optional" title="Link to this heading"></a></h3>
+<p>CatPlat provides convenient CLI commands in case we want to perform some parts of the workflow manually.
+Let’s try to recreate the workflow above using these CLI commands. This will also help us understand how CatPlat works.</p>
+<p><code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">build</span></code> is dedicated to creating and writing structures, whereas <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">analyze</span></code> is designed for in-depth structural analysis, offering valuable insights.</p>
+<p>For this tutorial, we will only be generating and analyzing the structures without running any optimization calculations.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The cli provides numerous options that can be tailored to suit a broad range of use cases.
+The sample code detailed in this tutorial is intended to serve as a foundation to get you started.
+To explore the full spectrum of options available for each subcommand, simply use the <code class="docutils literal notranslate"><span class="pre">--help</span></code> option.</p>
+</div>
+<section id="creating-the-co-adsorbate-structure">
+<h4>2.2.1 Creating the CO Adsorbate Structure<a class="headerlink" href="#creating-the-co-adsorbate-structure" title="Link to this heading"></a></h4>
+<p>First, let’s see how we can obtain the structure of our adsorbate.
+For CO, CatPlat retrieves the adsorbate structure from the <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/collections.html#ase.collections.g2">ase.collections.g2 database</a>.
+We’ll also explore how to retrieve structures from <a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov">PubChem’s database</a> in later tutorials.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Executing the command <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">build</span></code> will automatically write structures and overwrite any existing structures with the same name.
+You may specify <code class="docutils literal notranslate"><span class="pre">--no-write</span></code> if you wish to inspect the generated structures without saving them.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">Creating adsorbate structures.</span><a class="headerlink" href="#id14" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>build<span class="w"> </span>adsorbate<span class="w"> </span>--name<span class="w"> </span>CO<span class="w"> </span>--box-size<span class="w"> </span><span class="m">15</span>
+</pre></div>
+</div>
+</div>
+<p>You should see a new folder named <code class="docutils literal notranslate"><span class="pre">catplat_adsorbate</span></code> containing the adsorbate structure.
+The adsorbate structure should be centered in a vacuum box of 15 Angstroms.</p>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">Analyzing adsorbate structures.</span><a class="headerlink" href="#id15" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>analyze<span class="w"> </span>adsorbate<span class="w"> </span>--name<span class="w"> </span>catplat_adsorbate/CO/POSCAR
+</pre></div>
+</div>
+</div>
+<a class="reference internal image-reference" href="_images/tut2-1.png"><img alt="_images/tut2-1.png" class="align-center" src="_images/tut2-1.png" style="height: 250px;" /></a>
+<p>CatPlat also solves for the Lewis structure of the adsorbate, offering valuable insights into its properties.
+This is useful for automatically determine the atom by which the adsorbate should bind to the surface, which defined as the <code class="docutils literal notranslate"><span class="pre">bond</span></code> attribute.</p>
+<div class="admonition-catplat-attribute-bonds admonition">
+<p class="admonition-title">CatPlat Attribute: Bonds</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Bonds</span></code> correspond to the atom indices of the adsorbate that will subsequently bind on the adsorption site.</p></li>
+<li><p>You may view the atom indices in the ase gui by clicking <code class="docutils literal notranslate"><span class="pre">View</span> <span class="pre">&gt;</span> <span class="pre">Show</span> <span class="pre">Labels</span> <span class="pre">&gt;</span> <span class="pre">Atom</span> <span class="pre">Index</span></code>.</p></li>
+<li><dl class="simple">
+<dt>In this example:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">bonds</span> <span class="pre">0</span></code> binds CO to the surface via the C atom,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bonds</span> <span class="pre">1</span></code> binds CO to the surface via the O atom</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bonds</span> <span class="pre">0,1</span></code> binds CO to the surface bidentate via C and O.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="admonition-pyatoms-job-submission admonition">
+<p class="admonition-title">Pyatoms Job Submission</p>
+<p>After creating the adsorbate structure, you may use Pyatoms to do a gas phase geometry optimization of the adsorbate.
+However, we will not be relaxing the structures in this tutorial.</p>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">FOR REFERENCE ONLY. DO NOT RUN THIS COMMAND ON THE HEAD NODE.</span><a class="headerlink" href="#id16" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pyatoms<span class="w"> </span>sub<span class="w"> </span>-f<span class="w"> </span>catplat_adsorbate/CO<span class="w"> </span>vasp<span class="w"> </span>--project<span class="w"> </span>myproject<span class="w"> </span>--gas<span class="w"> </span>geomopt
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="getting-cu-bulk-structure">
+<h4>2.2.2 Getting Cu Bulk Structure<a class="headerlink" href="#getting-cu-bulk-structure" title="Link to this heading"></a></h4>
+<p>Next, we obtain our bulk structure by querying the <a class="reference external" href="https://next-gen.materialsproject.org/">Materials Project database</a>.
+Let’s attempt to get the traditional Cu fcc bulk structure:</p>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">Creating bulk structures.</span><a class="headerlink" href="#id17" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>bulk<span class="w"> </span>--chemsys<span class="w"> </span>Cu<span class="w"> </span>--spacegroup<span class="w"> </span><span class="m">225</span>
+</pre></div>
+</div>
+</div>
+<p>You should see a new folder named <code class="docutils literal notranslate"><span class="pre">catplat_bulk</span></code> containing the bulk structure.
+We can analyze the symmetries of the bulk structure using the following command:</p>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">Analyzing bulk structures.</span><a class="headerlink" href="#id18" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>analyze<span class="w"> </span>bulk<span class="w"> </span>--name<span class="w"> </span>catplat_bulk/Cu_225_0/POSCAR
+</pre></div>
+</div>
+</div>
+<a class="reference internal image-reference" href="_images/tut2-2.png"><img alt="_images/tut2-2.png" class="align-center" src="_images/tut2-2.png" style="height: 200px;" /></a>
+<div class="admonition-pyatoms-job-submission admonition">
+<p class="admonition-title">Pyatoms Job Submission</p>
+<p>Similarly, we can use Pyatoms to do a cell optimization of the bulk structure.</p>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">FOR REFERENCE ONLY. DO NOT RUN THIS COMMAND ON THE HEAD NODE.</span><a class="headerlink" href="#id19" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pyatoms<span class="w"> </span>sub<span class="w"> </span>-f<span class="w"> </span>catplat_bulk/Cu_225_0<span class="w"> </span>vasp<span class="w"> </span>--project<span class="w"> </span>myproject<span class="w"> </span>cellopt
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="building-the-cu-100-slab">
+<h4>2.2.3 Building the Cu(100) Slab<a class="headerlink" href="#building-the-cu-100-slab" title="Link to this heading"></a></h4>
+<p>Then, we cleave the bulk using our in-house algorithms to obtain the slab structure.
+Let’s build a 3x3 Cu(100) slab with 4 layers, where the bottom 2 layers are fixed.</p>
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">Creating slab structures.</span><a class="headerlink" href="#id20" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>slab<span class="w"> </span>--name<span class="w"> </span>catplat_bulk/Cu_225_0/POSCAR<span class="w"> </span>--miller<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>--num-layers<span class="w"> </span><span class="m">4</span><span class="w"> </span>--num-fixed-layers<span class="w"> </span><span class="m">2</span><span class="w"> </span>--unitcell-size<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+</div>
+<p>You should see a new folder named <code class="docutils literal notranslate"><span class="pre">catplat_slab</span></code> containing the slab structure.
+We can analyze the slab structure and adsorption sites using the following commands:</p>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">Analyzing slab structures.</span><a class="headerlink" href="#id21" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>analyze<span class="w"> </span>slab<span class="w"> </span>--name<span class="w"> </span>catplat_slab/Cu36_0/POSCAR
+<span class="gp">$ </span>catplat<span class="w"> </span>analyze<span class="w"> </span>sites<span class="w"> </span>--name<span class="w"> </span>catplat_slab/Cu36_0/POSCAR
+</pre></div>
+</div>
+</div>
+<a class="reference internal image-reference" href="_images/tut2-3.png"><img alt="_images/tut2-3.png" class="align-center" src="_images/tut2-3.png" style="height: 350px;" /></a>
+<p>There are 3 unique sites on Cu(100).
+Analyzing the sites gives us valuable information on the site properties, such as the connectivity and average coordination number.
+We’ll learn to use this information to acheive fine control over the adsorption site(s) of interest in future tutorials.</p>
+<div class="admonition-pyatoms-job-submission admonition">
+<p class="admonition-title">Pyatoms Job Submission</p>
+<p>We can use Pyatoms to do a geometry optimization of the slab structure.</p>
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">FOR REFERENCE ONLY. DO NOT RUN THIS COMMAND ON THE HEAD NODE.</span><a class="headerlink" href="#id22" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pyatoms<span class="w"> </span>sub<span class="w"> </span>-f<span class="w"> </span>catplat_slab/Cu36_0<span class="w"> </span>vasp<span class="w"> </span>--project<span class="w"> </span>myproject<span class="w"> </span>geomopt
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="adsorption-of-co-on-the-slab">
+<h4>2.2.4 Adsorption of CO on the Slab<a class="headerlink" href="#adsorption-of-co-on-the-slab" title="Link to this heading"></a></h4>
+<p>Finally, let’s adsorb CO on all 3 unique sites of Cu(100).</p>
+<div class="literal-block-wrapper docutils container" id="id23">
+<div class="code-block-caption"><span class="caption-text">Creating complex structures.</span><a class="headerlink" href="#id23" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>build<span class="w"> </span>complex<span class="w"> </span>--slab<span class="w"> </span>catplat_slab/Cu36_0/POSCAR<span class="w"> </span>--adsorbate<span class="w"> </span>catplat_adsorbate/CO/POSCAR
+</pre></div>
+</div>
+</div>
+<a class="reference internal image-reference" href="_images/tut2-4.png"><img alt="_images/tut2-4.png" class="align-center" src="_images/tut2-4.png" style="height: 350px;" /></a>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The visualization window that opens up contains information on the adsorption schematic.
+You may press <code class="docutils literal notranslate"><span class="pre">View</span> <span class="pre">&gt;</span> <span class="pre">Show</span> <span class="pre">forces</span></code> or <code class="docutils literal notranslate"><span class="pre">ctrl+f</span></code> to view the adsorption vector of the adsorbate.
+The small red atom, X, is a dummy atom showing the adsorption coordinates.</p>
+</div>
+<p>The 3 structures in <code class="docutils literal notranslate"><span class="pre">catplat_complex</span></code> correspond to the 3 adsorption sites.
+Let’s analyze the structures. We have to specify the adsorbate and slab chemical symbols to properly differentiate between the slab and adsorbate atoms.</p>
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">Analyzing complex structures</span><a class="headerlink" href="#id24" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>analyze<span class="w"> </span>complex<span class="w"> </span>--name<span class="w"> </span>catplat_complex/CCu36O_0/POSCAR<span class="w"> </span>--adsorbate<span class="w"> </span>CO<span class="w"> </span>--slab-elements<span class="w"> </span>Cu
+<span class="gp">$ </span>catplat<span class="w"> </span>analyze<span class="w"> </span>complex<span class="w"> </span>--name<span class="w"> </span>catplat_complex/CCu36O_1/POSCAR<span class="w"> </span>--adsorbate<span class="w"> </span>CO<span class="w"> </span>--slab-elements<span class="w"> </span>Cu
+<span class="gp">$ </span>catplat<span class="w"> </span>analyze<span class="w"> </span>complex<span class="w"> </span>--name<span class="w"> </span>catplat_complex/CCu36O_2/POSCAR<span class="w"> </span>--adsorbate<span class="w"> </span>CO<span class="w"> </span>--slab-elements<span class="w"> </span>Cu
+</pre></div>
+</div>
+</div>
+<div class="admonition-pyatoms-job-submission admonition">
+<p class="admonition-title">Pyatoms Job Submission</p>
+<p>We can use Pyatoms to do a geometry optimization of the complex structure(s).</p>
+<div class="literal-block-wrapper docutils container" id="id25">
+<div class="code-block-caption"><span class="caption-text">FOR REFERENCE ONLY. DO NOT RUN THIS COMMAND ON THE HEAD NODE.</span><a class="headerlink" href="#id25" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pyatoms<span class="w"> </span>sub<span class="w"> </span>-N<span class="w"> </span><span class="m">3</span><span class="w"> </span>-o<span class="w"> </span>catplat_complex/*<span class="w"> </span>vasp<span class="w"> </span>--project<span class="w"> </span>myproject<span class="w"> </span>geomopt
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="tutorial-3-bidentate-adsorption-on-cu-211-surface">
+<h2>Tutorial 3: Bidentate adsorption on Cu(211) Surface<a class="headerlink" href="#tutorial-3-bidentate-adsorption-on-cu-211-surface" title="Link to this heading"></a></h2>
+<div class="admonition-scenario admonition">
+<p class="admonition-title">Scenario</p>
+<p>Bidentate adsorption – where an adsorbate binds to the surface via two atoms – is very common in heterogeneous catalysis,.
+More complex, stepped surfaces such as the fcc(211) are also commonly used to model the interface between the fcc(111) and fcc(100) facets of a nanoparticle.
+Additionally, stepped surfaces are also more reactive due to the lower coordination number of the step-edge atoms.
+In this tutorial, we show how CatPlat can handle a more complex example of <strong>acetate adsorption on a stepped Cu(211) surface</strong>.</p>
+</div>
+<p>To keep your project organized, let’s create a dedicated folder for this tutorial.
+Ensure that all commands for this tutorial are executed within this folder.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/catplat_tutorial/tutorial_3
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/catplat_tutorial/tutorial_3
+</pre></div>
+</div>
+<section id="catplat-workflows">
+<h3>3.1 CatPlat Workflows<a class="headerlink" href="#catplat-workflows" title="Link to this heading"></a></h3>
+<p>We can simply analyze this using CatPlat’s workflows.</p>
+<p>Quickly add the acetate structure to your adsorbate folder.
+We will explain this command in more detail in the next section.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>build<span class="w"> </span>adsorbate<span class="w"> </span>--name<span class="w"> </span>pubchem:175<span class="w"> </span>--box-size<span class="w"> </span><span class="m">15</span>
+<span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.catplat/adsorbate<span class="p">;</span>cp<span class="w"> </span>catplat_adsorbate/C2H3O2/POSCAR<span class="w"> </span>~/.catplat/adsorbate/acetate_POSCAR
+</pre></div>
+</div>
+<p>Let’s try the <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">dryrun</span></code> command to bind acetate near the step-edge of the Cu(211) surface, note that this may take a few minutes to run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>dryrun<span class="w"> </span>--chemsys<span class="w"> </span>Cu<span class="w"> </span>--spacegroup<span class="w"> </span><span class="m">225</span><span class="w"> </span>--miller<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--unitcell-size<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">4</span><span class="w"> </span>--num-layers<span class="w"> </span><span class="m">12</span><span class="w"> </span>--num-fixed-layers<span class="w"> </span><span class="m">6</span><span class="w"> </span>--adsorbate-atoms<span class="w"> </span>acetate<span class="w"> </span>--bonds<span class="w"> </span><span class="m">0</span>,1<span class="w"> </span>--avg-coord-num<span class="w"> </span><span class="s2">&quot;&lt;=8,&lt;=8&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>dryrun.out
+</pre></div>
+</div>
+<p>We can see that 6 complex structures were produced.
+We will breakdown the options specified in the dryrun command in the next section.</p>
+</section>
+<section id="id1">
+<h3>3.2 Creating/Analyzing Structures with CatPlat’s CLI (Optional)<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>Similar to Tutorial 2, we will now break down the above command into smaller steps to understand how the structures are created.</p>
+<section id="creating-the-acetate-asorbate-structure">
+<h4>3.2.1 Creating the Acetate Asorbate Structure<a class="headerlink" href="#creating-the-acetate-asorbate-structure" title="Link to this heading"></a></h4>
+<p>Acetate is not found in the <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/collections.html#ase.collections.g2">ase.collections.g2 database</a>.
+Therefore, we will use the PubChem API to create the adsorbate.
+The link to the pubchem molecule that we will be building today can be found <a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/compound/Acetate">here</a>.</p>
+<p>There are multiple ways to specify this molecule.
+We can either use its SMILES string, PubChem ID, or simply its name.</p>
+<div class="literal-block-wrapper docutils container" id="id26">
+<div class="code-block-caption"><span class="caption-text">Multiple ways to build the adsorbate structure. The double quotes in the first command are required to escape the parenthesis.</span><a class="headerlink" href="#id26" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Using SMILES string</span>
+<span class="gp">$ </span>catplat<span class="w"> </span>build<span class="w"> </span>adsorbate<span class="w"> </span>--name<span class="w"> </span><span class="s2">&quot;pubchem:CC(=O)[O-]&quot;</span><span class="w"> </span>--box-size<span class="w"> </span><span class="m">15</span>
+
+<span class="go">Using PubChem ID</span>
+<span class="gp">$ </span>catplat<span class="w"> </span>build<span class="w"> </span>adsorbate<span class="w"> </span>--name<span class="w"> </span>pubchem:175<span class="w"> </span>--box-size<span class="w"> </span><span class="m">15</span>
+
+<span class="go">Using the name of the molecule</span>
+<span class="gp">$ </span>catplat<span class="w"> </span>build<span class="w"> </span>adsorbate<span class="w"> </span>--name<span class="w"> </span>pubchem:acetate<span class="w"> </span>--box-size<span class="w"> </span><span class="m">15</span>
+</pre></div>
+</div>
+</div>
+<a class="reference internal image-reference" href="_images/tut3-1.png"><img alt="_images/tut3-1.png" class="align-center" src="_images/tut3-1.png" style="height: 300px;" /></a>
+<p>Acetate typically binds in a bidentate fashion. To achieve this, we need to let CatPlat which two atoms to bind to the surface.
+Let’s analyze the adsorbate to determine the likely bonded atoms.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>analyze<span class="w"> </span>adsorbate<span class="w"> </span>--name<span class="w"> </span>catplat_adsorbate/C2H3O2/POSCAR
+</pre></div>
+</div>
+<p>The output, <code class="docutils literal notranslate"><span class="pre">Automatic</span> <span class="pre">bond</span> <span class="pre">detection</span> <span class="pre">(bidentate)</span></code>, suggests that the acetate adsorbate would bind via <code class="docutils literal notranslate"><span class="pre">0,1</span></code>, corresponding to the two O atoms.
+This information would be specified later during the complex building.</p>
+</section>
+<section id="building-the-cu-211-slab">
+<h4>3.2.2 Building the Cu(211) Slab<a class="headerlink" href="#building-the-cu-211-slab" title="Link to this heading"></a></h4>
+<p>As mentioned in the previous tutorial, bulk structures can be obtained using the following command.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>bulk<span class="w"> </span>--chemsys<span class="w"> </span>Cu<span class="w"> </span>--spacegroup<span class="w"> </span><span class="m">225</span>
+</pre></div>
+</div>
+<p>Slab building is often an iterative process.
+We can build and view trial structures without writing them using the <code class="docutils literal notranslate"><span class="pre">--no-write</span></code> flag.
+Firstly, let’s build a trial fcc(211) slab to see what the slab looks like.</p>
+<div class="literal-block-wrapper docutils container" id="id27">
+<div class="code-block-caption"><span class="caption-text">Trial slab structure</span><a class="headerlink" href="#id27" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>slab<span class="w"> </span>--name<span class="w"> </span>catplat_bulk/Cu_225_0/POSCAR<span class="w"> </span>--miller<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--num-layers<span class="w"> </span><span class="m">1</span><span class="w"> </span>--num-fixed-layers<span class="w"> </span><span class="m">1</span><span class="w"> </span>--no-write
+</pre></div>
+</div>
+</div>
+<a class="reference internal image-reference" href="_images/tut3-2.png"><img alt="_images/tut3-2.png" class="align-center" src="_images/tut3-2.png" style="height: 150px;" /></a>
+<p>Due to the stepped nature of the surface, we observe that the minimum basis of repetition in the z-direction consists of 3 atoms.
+Therefore, the <code class="docutils literal notranslate"><span class="pre">--num-layers</span></code> specified for the 211 slab should be multiples of 3.
+We can also see that each <code class="docutils literal notranslate"><span class="pre">--num-fixed-layers</span></code> here is defined by atoms with the same z-coordinates.
+We will also need to account for the minimum basis when specifying <code class="docutils literal notranslate"><span class="pre">--unitcell-size</span></code>.</p>
+<p>After playing around with the slab attributes, we can proceed to create the slab structure.</p>
+<div class="literal-block-wrapper docutils container" id="id28">
+<div class="code-block-caption"><span class="caption-text">Creating slab structure.</span><a class="headerlink" href="#id28" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>slab<span class="w"> </span>--name<span class="w"> </span>catplat_bulk/Cu_225_0/POSCAR<span class="w"> </span>--miller<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--unitcell-size<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">4</span><span class="w"> </span>--num-layers<span class="w"> </span><span class="m">12</span><span class="w"> </span>--num-fixed-layers<span class="w"> </span><span class="m">6</span>
+</pre></div>
+</div>
+</div>
+<a class="reference internal image-reference" href="_images/tut3-3.png"><img alt="_images/tut3-3.png" class="align-center" src="_images/tut3-3.png" style="height: 250px;" /></a>
+<p>The generated slab should now be large enough to accommodate adsorbates.
+Let’s proceed to analyze the sites of the fcc(211) surface.</p>
+<div class="literal-block-wrapper docutils container" id="id29">
+<div class="code-block-caption"><span class="caption-text">Analyzing slab structure.</span><a class="headerlink" href="#id29" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>analyze<span class="w"> </span>sites<span class="w"> </span>--name<span class="w"> </span>catplat_slab/Cu96_0/POSCAR
+</pre></div>
+</div>
+</div>
+<p><a class="reference internal" href="_images/tut3-5.png"><img alt="tut3-5" src="_images/tut3-5.png" style="height: 300px;" /></a> <a class="reference internal" href="_images/tut3-4.png"><img alt="tut3-4" src="_images/tut3-4.png" style="height: 300px;" /></a></p>
+<p>The slab has 14 unique adsorption sites.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>To get more information regarding the specific sites, you may turn on the atom index on the ase gui (<code class="docutils literal notranslate"><span class="pre">View</span> <span class="pre">&gt;</span> <span class="pre">Show</span> <span class="pre">Labels</span> <span class="pre">&gt;</span> <span class="pre">Atom</span> <span class="pre">Index</span></code>).
+The coordinates, connectivity, and average coordination number of each site corresponds to the <code class="docutils literal notranslate"><span class="pre">site_idx</span></code></p>
+<p><a class="reference internal" href="_images/tut3-7.png"><img alt="tut3-7" src="_images/tut3-7.png" style="height: 600px;" /></a></p>
+</div>
+<p>Performing an exhaustive analysis of all 14 unique sites may be too computationally intensive.
+Generally, sites closer to the step edge are more reactive as the surface atoms have lower coordination numbers.
+We can use <code class="docutils literal notranslate"><span class="pre">--connectivity</span></code> and <code class="docutils literal notranslate"><span class="pre">--avg-coord-num</span></code> to filter the sites of interest.</p>
+<div class="admonition-catplat-attribute-connectivity admonition">
+<p class="admonition-title">CatPlat Attribute: Connectivity</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Connectivity</span></code> corresponds to the number of surface atoms coordinated to the adsorbate.</p></li>
+<li><p>Connectivity should be integers.</p></li>
+<li><dl class="simple">
+<dt>In this example:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">connectivity</span> <span class="pre">1</span></code>: red atom represents the top sites</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">connectivity</span> <span class="pre">2</span></code>: white atom represents the bridge sites</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">connectivity</span> <span class="pre">3</span></code>: green atom represents the 3-fold hollow sites (fcc and hcp)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">connectivity</span> <span class="pre">4</span></code>: blue atom represents the 4-fold hollow sites.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">connectivity</span> <span class="pre">1,1</span></code>: bidentate on top-top side.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="admonition-catplat-attribute-average-coordination-number admonition">
+<p class="admonition-title">CatPlat Attribute: Average Coordination Number</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Average</span> <span class="pre">Coordination</span> <span class="pre">Number</span></code> corresponds to the average coordination number of the atoms around the site.</p></li>
+<li><p>Generally: The lower the average coordination number, the more reactive the site.</p></li>
+<li><p>Average coordination numbers are often described using comparators.</p></li>
+<li><dl class="simple">
+<dt>In this example:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">avg-coord-num</span></code> for this surface ranges from 7 - 10</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">avg-coord-num</span> <span class="pre">9</span></code>: sites on the fcc(111) terrace.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">avg-coord-num</span> <span class="pre">&quot;&lt;=8&quot;</span></code>:  sites closer to the step-edge</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">avg-coord-num</span> <span class="pre">7,7</span></code>:  bidentate on the step-edge.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<p>Let’s select sites of interest based on these two attributes:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Top sites only:</span>
+<span class="gp">$  </span>catplat<span class="w"> </span>analyze<span class="w"> </span>sites<span class="w"> </span>--name<span class="w"> </span>catplat_slab/Cu96_0/POSCAR<span class="w"> </span>--connectivity<span class="w"> </span><span class="m">1</span>
+
+<span class="go">Top and Bridge sites:</span>
+<span class="gp">$  </span>catplat<span class="w"> </span>analyze<span class="w"> </span>sites<span class="w"> </span>--name<span class="w"> </span>catplat_slab/Cu96_0/POSCAR<span class="w"> </span>--connectivity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--connectivity<span class="w"> </span><span class="m">2</span>
+
+<span class="go">Sites nearer the step-edge:</span>
+<span class="gp">$  </span>catplat<span class="w"> </span>analyze<span class="w"> </span>sites<span class="w"> </span>--name<span class="w"> </span>catplat_slab/Cu96_0/POSCAR<span class="w"> </span>--avg-coord-num<span class="w"> </span><span class="s2">&quot;&lt;=8&quot;</span>
+
+<span class="go">Step-edge top site:</span>
+<span class="gp">$  </span>catplat<span class="w"> </span>analyze<span class="w"> </span>sites<span class="w"> </span>--name<span class="w"> </span>catplat_slab/Cu96_0/POSCAR<span class="w"> </span>--connectivity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--avg-coord-num<span class="w"> </span><span class="m">7</span>
+</pre></div>
+</div>
+</section>
+<section id="building-bidentate-complexes">
+<h4>3.2.3 Building Bidentate Complexes<a class="headerlink" href="#building-bidentate-complexes" title="Link to this heading"></a></h4>
+<p>Let’s proceed to bind acetate bidentate near the step edge of the Cu(211) surface.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Bidentate bonds are specified using a <code class="docutils literal notranslate"><span class="pre">,</span></code> to separate the two bonds.
+When specifying bidentate <code class="docutils literal notranslate"><span class="pre">bonds</span></code>, we need to ensure that the denticities of <code class="docutils literal notranslate"><span class="pre">avg_coord_num</span></code>, <code class="docutils literal notranslate"><span class="pre">connectivity</span></code>, and <code class="docutils literal notranslate"><span class="pre">sites</span></code> are bidentate.</p>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>complex<span class="w"> </span>-s<span class="w"> </span>catplat_slab/Cu96_0/POSCAR<span class="w"> </span>-a<span class="w"> </span>catplat_adsorbate/C2H3O2/POSCAR<span class="w"> </span>--bonds<span class="w"> </span><span class="m">0</span>,1<span class="w"> </span>--avg-coord-num<span class="w"> </span><span class="s2">&quot;&lt;=8,&lt;=8&quot;</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/tut3-8.gif"><img alt="_images/tut3-8.gif" class="align-center" src="_images/tut3-8.gif" style="height: 300px;" /></a>
+<p>CatPlat automatically attempts to enumerate all reasonable bidentate conformations that fit within the specifications.
+Here, 6 structures were generated.</p>
+</section>
+</section>
+</section>
+<section id="tutorial-4-specifying-own-structures">
+<h2>Tutorial 4: Specifying Own Structures<a class="headerlink" href="#tutorial-4-specifying-own-structures" title="Link to this heading"></a></h2>
+<div class="admonition-scenario admonition">
+<p class="admonition-title">Scenario</p>
+<p>So far, we have been using bulk structures from the Materials Project database.
+However, there may be cases where you may already have your own bulk/slab/adsorbate structures to analyze.
+In this tutorial, we will show how we can use them with CatPlat.</p>
+</div>
+<p>To keep your project organized, let’s create a dedicated folder for this tutorial.
+Ensure that all commands for this tutorial are executed within this folder.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/catplat_tutorial/tutorial_4
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/catplat_tutorial/tutorial_4
+</pre></div>
+</div>
+<section id="preparing-user-structures">
+<h3>4.1 Preparing User Structures<a class="headerlink" href="#preparing-user-structures" title="Link to this heading"></a></h3>
+<p>First, let’s create the default directories for CatPlat to read the structures from.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.catplat/adsorbate<span class="p">;</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.catplat/bulk<span class="p">;</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.catplat/slab
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Any structures readable by ase can be used with CatPlat.
+Some examples are, name.xyz, name.cif, POSCAR_name and name_POSCAR.
+<code class="docutils literal notranslate"><span class="pre">name</span></code> is be used to specify the structure in CatPlat, file extensions are not required.</p>
+</div>
+<p>Next, let’s download some sample structures, we will try to incorporate these structures into our workflow:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>wget<span class="w"> </span>https://raw.githubusercontent.com/chryston/catplat_tutorial/main/examples/user_ads.xyz<span class="w"> </span>--no-check-certificate
+<span class="gp">$ </span>wget<span class="w"> </span>https://raw.githubusercontent.com/chryston/catplat_tutorial/main/examples/POSCAR_user_bulk<span class="w"> </span>--no-check-certificate
+<span class="gp">$ </span>wget<span class="w"> </span>https://raw.githubusercontent.com/chryston/catplat_tutorial/main/examples/user_slab_POSCAR<span class="w"> </span>--no-check-certificate
+</pre></div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id30">
+<div class="code-block-caption"><span class="caption-text">Visualizing user structures.</span><a class="headerlink" href="#id30" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ase<span class="w"> </span>gui<span class="w"> </span>user_ads.xyz<span class="w"> </span>POSCAR_user_bulk<span class="w"> </span>user_slab_POSCAR
+</pre></div>
+</div>
+</div>
+<a class="reference internal image-reference" href="_images/tut4-1.png"><img alt="_images/tut4-1.png" class="align-center" src="_images/tut4-1.png" style="height: 250px;" /></a>
+<p>Now, let’s copy the structures to their respective folders!</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cp<span class="w"> </span>user_ads.xyz<span class="w"> </span>~/.catplat/adsorbate<span class="p">;</span><span class="w"> </span>cp<span class="w"> </span>POSCAR_user_bulk<span class="w"> </span>~/.catplat/bulk<span class="p">;</span><span class="w"> </span>cp<span class="w"> </span>user_slab_POSCAR<span class="w"> </span>~/.catplat/slab
+</pre></div>
+</div>
+</section>
+<section id="using-existing-structures">
+<h3>4.2 Using Existing Structures<a class="headerlink" href="#using-existing-structures" title="Link to this heading"></a></h3>
+<p>After all the structures are in the respective directories, we can use them with CatPlat by specifying the <code class="docutils literal notranslate"><span class="pre">name</span></code> of the structure.
+A quick reminder that the file extensions should not be specified when specifying the <code class="docutils literal notranslate"><span class="pre">name</span></code> of the structure.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When  specifying <code class="docutils literal notranslate"><span class="pre">--bulk-atoms</span></code>, other bulk-related flags such as <code class="docutils literal notranslate"><span class="pre">--chemsys</span></code> and <code class="docutils literal notranslate"><span class="pre">--spacegroup</span></code> should not be specified.
+Likewise, bulk and slab-related flages should not be specified when specifying <code class="docutils literal notranslate"><span class="pre">--slab-atoms</span></code>.</p>
+</div>
+<div class="literal-block-wrapper docutils container" id="id31">
+<div class="code-block-caption"><span class="caption-text">Executing workflow with user structures.</span><a class="headerlink" href="#id31" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Using user bulk structure</span>
+<span class="gp">$ </span>catplat<span class="w"> </span>dryrun<span class="w"> </span>--bulk-atoms<span class="w"> </span>user_bulk
+
+<span class="go">Using user slab and user adsorbate structures</span>
+<span class="gp">$ </span>catplat<span class="w"> </span>dryrun<span class="w"> </span>--slab-atoms<span class="w"> </span>user_slab<span class="w"> </span>--adsorbate-atoms<span class="w"> </span>user_ads
+</pre></div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you do not want to use the CatPlat directories, you may also specify the path directly.</p>
+<div class="literal-block-wrapper docutils container" id="id32">
+<div class="code-block-caption"><span class="caption-text">Specifying user structures by path</span><a class="headerlink" href="#id32" title="Link to this code"></a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>dryrun<span class="w"> </span>--bulk-atoms<span class="w"> </span>~/catplat_tutorial/tutorial_4/POSCAR_user_bulk
+<span class="gp">$ </span>catplat<span class="w"> </span>dryrun<span class="w"> </span>--slab-atoms<span class="w"> </span>~/catplat_tutorial/tutorial_4/user_slab_POSCAR<span class="w"> </span>--adsorbate-atoms<span class="w"> </span>~/catplat_tutorial/tutorial_4/user_ads.xyz
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="tutorial-5-cu-x-alloys">
+<h2>Tutorial 5: Cu-X Alloys<a class="headerlink" href="#tutorial-5-cu-x-alloys" title="Link to this heading"></a></h2>
+<div class="admonition-scenario admonition">
+<p class="admonition-title">Scenario</p>
+<p>You are conducting research on Cu-X binary alloys for CO2 reduction reactions (CO2RR) and wish to leverage on CatPlat for this purpose.
+This tutorial will walk you through the process of analyzing CO adsorption on a fcc(111) facet Cu-X alloy.</p>
+</div>
+<p>To keep your project organized, let’s create a dedicated folder for this tutorial.
+Ensure that all commands for this tutorial are executed within this folder.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/catplat_tutorial/tutorial_5
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/catplat_tutorial/tutorial_5
+</pre></div>
+</div>
+<section id="building-alloy-bulks">
+<h3>5.1 Building Alloy Bulks<a class="headerlink" href="#building-alloy-bulks" title="Link to this heading"></a></h3>
+<p>Let’s start by finding Cu-X alloy bulks in the Materials Project database.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>build<span class="w"> </span>bulk<span class="w"> </span>--chemsys<span class="w"> </span>Cu-*<span class="w"> </span>--no-write
+</pre></div>
+</div>
+<p>This command will get all the Cu-X alloy structures. If the list is too extensive, you can narrow it down to stable Cu-Rh and Cu-Pt structures:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>build<span class="w"> </span>bulk<span class="w"> </span>--chemsys<span class="w"> </span>Cu-<span class="o">[</span>Rh,Pt<span class="o">]</span><span class="w"> </span>--e-above-hull<span class="w"> </span><span class="s2">&quot;&lt;0.05&quot;</span>
+</pre></div>
+</div>
+<p>We have now refined the number of alloy bulks to a manageable number. Let’s see how we can build the alloy slabs in the next section.</p>
+</section>
+<section id="building-alloy-slabs">
+<h3>5.2 Building Alloy Slabs<a class="headerlink" href="#building-alloy-slabs" title="Link to this heading"></a></h3>
+<p>Alloy structures can pose unique challenges when specifying miller indices, as they may not always correspond to the traditional Miller indices.
+For the sake of the tutorial, let’s use the example of <code class="docutils literal notranslate"><span class="pre">Cu3Rh_139_*</span></code> and specify the slab using <code class="docutils literal notranslate"><span class="pre">--miller-index</span> <span class="pre">1</span> <span class="pre">1</span> <span class="pre">1</span></code>.
+Keep in mind that the resulting slab may not resemble a typical fcc(111) surface.</p>
+<p>Furthermore, we do not know how many atoms there are in each basis of repetition in the x, y and z direction.
+Hence, we use <code class="docutils literal notranslate"><span class="pre">--length</span></code> and <code class="docutils literal notranslate"><span class="pre">--thickness</span></code> instead of <code class="docutils literal notranslate"><span class="pre">--unitcell-size</span></code> and <code class="docutils literal notranslate"><span class="pre">--num-layers</span></code> to specify the size of the slab.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>build<span class="w"> </span>slab<span class="w"> </span>--name<span class="w"> </span>catplat_bulk/Cu3Rh_139_*/POSCAR<span class="w"> </span>--miller-index<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--thickness<span class="w"> </span><span class="m">5</span><span class="w"> </span>--length<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">10</span><span class="w"> </span>--no-write
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/tut5-1.png"><img alt="_images/tut5-1.png" class="align-center" src="_images/tut5-1.png" style="height: 300px;" /></a>
+<p>To ensure you’re working with the correct miller indices, you can analyze the Miller indices of the bulk using <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">analyze</span> <span class="pre">miller</span></code>.
+In this scenario, we try all possible combinations of <code class="docutils literal notranslate"><span class="pre">±{max-index}</span></code> for (h,k,l) and use the surface coordination to determine if it corresponds to the tradional fcc(111) facet.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>analyze<span class="w"> </span>miller<span class="w"> </span>--name<span class="w"> </span>catplat_bulk/Cu3Rh_139_*/POSCAR<span class="w"> </span>--facet<span class="w"> </span><span class="m">111</span><span class="w"> </span>--max-index<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<p>Based on the output, we see that 112 corresponds to the traditional fcc(111) facet. Let’s verify this by building the slab:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>build<span class="w"> </span>slab<span class="w"> </span>--name<span class="w"> </span>catplat_bulk/Cu3Rh_139_*/POSCAR<span class="w"> </span>--miller-index<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span><span class="w"> </span>--thickness<span class="w"> </span><span class="m">5</span><span class="w"> </span>--length<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">10</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/tut5-2.png"><img alt="_images/tut5-2.png" class="align-center" src="_images/tut5-2.png" style="height: 200px;" /></a>
+<p>Feel free to determine fcc(111)-like Miller indices and build the slab for the other two bulks (<code class="docutils literal notranslate"><span class="pre">CuPt_166_*</span></code> and <code class="docutils literal notranslate"><span class="pre">Cu6Rh2_194_*</span></code>) if you have the time.</p>
+</section>
+<section id="adsorbate-adsorption">
+<h3>5.3 Adsorbate Adsorption<a class="headerlink" href="#adsorbate-adsorption" title="Link to this heading"></a></h3>
+<p>The process of adsorbate adsorption is similar to previous tutorials and won’t be covered in detail here.</p>
+</section>
+<section id="using-catplat-workflows">
+<h3>5.3 Using CatPlat Workflows<a class="headerlink" href="#using-catplat-workflows" title="Link to this heading"></a></h3>
+<p>We can use CatPlat’s workflows to automate the process. Below is an example:</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>To prevent the inadvertent creation of incorrect slabs, we recommend to limit the number of bulks per <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">calculate</span></code> / <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">dryrun</span></code> to one.
+We also highly recommend testing the commands before conducting the actual calculations.</p>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>dryrun<span class="w"> </span>--chemsys<span class="w"> </span>Cu-Rh<span class="w"> </span>--max-e-above-hull<span class="w"> </span><span class="m">0</span>.05<span class="w"> </span>--spacegroup<span class="w"> </span><span class="m">139</span><span class="w"> </span>--miller-index<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span><span class="w"> </span>--min-thickness<span class="w"> </span><span class="m">5</span><span class="w"> </span>--min-length<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">10</span><span class="w"> </span>--adsorbate-atoms<span class="w"> </span>CO
+</pre></div>
+</div>
+</section>
+</section>
+<section id="tutorial-6-co-adsorption-of-multiple-adsorbates">
+<h2>Tutorial 6: Co-adsorption of Multiple Adsorbates<a class="headerlink" href="#tutorial-6-co-adsorption-of-multiple-adsorbates" title="Link to this heading"></a></h2>
+<div class="admonition-scenario admonition">
+<p class="admonition-title">Scenario</p>
+<p>Up to this juncture, our focus has been on scenarios involving the adsorption of a single molecule on the surface.
+However, certain situations, such as coverage effects, necessitate the adsorption of multiple molecules on the surface.
+Manually achieving this can be incredibly time-consuming, given the numerous potential adsorption configurations.</p>
+<p>Fortunately, CatPlat offers a solution by automating the generation of these structures.
+In this tutorial, we will explore how to efficiently handle the co-adsorption of 3 oxygen atoms on a small Pt(331) surface.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As of version 0.1.0, CatPlat is only capable of generating co-adsorption structures for a single type of adsorbate.
+Future plans for the next version include:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Integration of co-adsorption into CatPlat’s workflows.</p></li>
+<li><p>Support for co-adsorption of multiple adsorbate species.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<p>To keep your project organized, let’s create a dedicated folder for this tutorial.
+Ensure that all commands for this tutorial are executed within this folder.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/catplat_tutorial/tutorial_6
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/catplat_tutorial/tutorial_6
+</pre></div>
+</div>
+<section id="building-the-pt-331-surface">
+<h3>6.1 Building the Pt(331) Surface<a class="headerlink" href="#building-the-pt-331-surface" title="Link to this heading"></a></h3>
+<p>As covered in the previous tutorials, we can build and analyze the Pt(331) slab with these commands:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>bulk<span class="w"> </span>--chemsys<span class="w"> </span>Pt<span class="w"> </span>--spacegroup<span class="w"> </span><span class="m">225</span>
+<span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>slab<span class="w"> </span>--name<span class="w"> </span>catplat_bulk/Pt_225_0/POSCAR<span class="w"> </span>--miller<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--unitcell-size<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--num-layers<span class="w"> </span><span class="m">12</span><span class="w"> </span>--num-fixed-layers<span class="w"> </span><span class="m">6</span>
+<span class="gp">$  </span>catplat<span class="w"> </span>analyze<span class="w"> </span>sites<span class="w"> </span>--name<span class="w"> </span>catplat_slab/Pt24_0/POSCAR
+<span class="gp">$  </span>catplat<span class="w"> </span>analyze<span class="w"> </span>sites<span class="w"> </span>--name<span class="w"> </span>catplat_slab/Pt24_0/POSCAR<span class="w"> </span>--no-unique
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/tut6-1.png"><img alt="_images/tut6-1.png" src="_images/tut6-1.png" style="height: 400px;" /></a>
+<p>From the command, we can see that there are 20 sites in the unit cell and 9 unique sites.</p>
+</section>
+<section id="generation-of-co-adsorption-complexes">
+<h3>6.2 Generation of Co-adsorption Complexes<a class="headerlink" href="#generation-of-co-adsorption-complexes" title="Link to this heading"></a></h3>
+<p>CatPlat enumerates all the possible combinations of <cite>n</cite> adsorbates on the sites in cell, where <cite>n</cite> is the number of adsorbates specified by the user.
+CatPlat then removes equivalent structures by graph theory and specified constraints.
+The resulting structures are then written to the <code class="docutils literal notranslate"><span class="pre">catplat_multicomplex</span></code> directory.</p>
+<p>Let’s try to generate the co-adsorption structures of 3 oxygen atoms on the Pt(331) surface without any constraints.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>multicomplex<span class="w"> </span>--adsorbate<span class="w"> </span>atom:O<span class="w"> </span>--slab<span class="w"> </span>catplat_slab/Pt24_0/POSCAR<span class="w"> </span>--quantity<span class="w"> </span><span class="m">3</span><span class="w"> </span>--dist-tol<span class="w"> </span><span class="m">0</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/tut6-2.png"><img alt="_images/tut6-2.png" src="_images/tut6-2.png" style="height: 400px;" /></a>
+<p>As seen in the earlier section, the number of sites in the unit cell is 20.
+Hence, the number of possible structures here is 1140 (20 choose 3).
+However, we are left with 425 structures after filtering equivalent structures.</p>
+</section>
+<section id="reducing-the-number-of-complexes">
+<h3>6.3 Reducing the Number of Complexes<a class="headerlink" href="#reducing-the-number-of-complexes" title="Link to this heading"></a></h3>
+<p>Although we have reduced the number of structures to 425, it is still a lot of structures to perform DFT relaxations on.
+Additionally, the number of possible structures can increase significantly based on the following criteria(s):</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Number of adsorbates increase.</p></li>
+<li><p>Low symmetry of the slab (more unique sites).</p></li>
+<li><p>Large slabs (more sites in cell)</p></li>
+</ul>
+</div></blockquote>
+<p>In this section, we explore some tricks we can use to limit the number of generated structures.</p>
+<section id="distance-constraints">
+<h4>6.3.1 Distance Constraints<a class="headerlink" href="#distance-constraints" title="Link to this heading"></a></h4>
+<p>Generally, adsorbates prefer not to coordinate with the adjacent sites of the same surface atom.
+We can use <code class="docutils literal notranslate"><span class="pre">--dist-tol</span></code> to remove adsorbates which are too close to each other.
+<code class="docutils literal notranslate"><span class="pre">dist-tol</span></code> (default=0.8) is a ratio corresponding to the average top-top distance of the surface atoms (d<sup>top_top</sup>).
+The actual minimum distance in Angstroms can be obtained by <cite>dist-tol * d:sup:`top_top</cite>.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>multicomplex<span class="w"> </span>--adsorbate<span class="w"> </span>atom:O<span class="w"> </span>--slab<span class="w"> </span>catplat_slab/Pt24_0/POSCAR<span class="w"> </span>--quantity<span class="w"> </span><span class="m">3</span><span class="w"> </span>--dist-tol<span class="w"> </span><span class="m">0</span>.8<span class="w"> </span>--no-write
+</pre></div>
+</div>
+<p>Adding this constraint narrowed down the number of complexes from 425 to 128.</p>
+</section>
+<section id="connectivity-constraints">
+<h4>6.3.2 Connectivity Constraints<a class="headerlink" href="#connectivity-constraints" title="Link to this heading"></a></h4>
+<p>If we have prior information on which site is more stable for the adsorbate, we can filter out the sites that are not so stable.
+The adsorbate, for example, could only be stable on top and bridge sites.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>multicomplex<span class="w"> </span>--adsorbate<span class="w"> </span>atom:O<span class="w"> </span>--slab<span class="w"> </span>catplat_slab/Pt24_0/POSCAR<span class="w"> </span>--quantity<span class="w"> </span><span class="m">3</span><span class="w"> </span>--dist-tol<span class="w"> </span><span class="m">0</span><span class="w"> </span>--connectivity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--connectivity<span class="w"> </span><span class="m">2</span><span class="w"> </span>--no-write
+</pre></div>
+</div>
+<p>Adding this constraint narrowed down the number of complexes from 425 to 35.</p>
+</section>
+<section id="average-coordination-number-constraints">
+<h4>6.3.3 Average Coordination Number Constraints<a class="headerlink" href="#average-coordination-number-constraints" title="Link to this heading"></a></h4>
+<p>When analyzing a step surface, the adsorbates are generally more stable on the step edge due to the lower coordination number of the surface atoms.
+We can only include the sites near the step edge to save on computing resources.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>multicomplex<span class="w"> </span>--adsorbate<span class="w"> </span>atom:O<span class="w"> </span>--slab<span class="w"> </span>catplat_slab/Pt24_0/POSCAR<span class="w"> </span>--quantity<span class="w"> </span><span class="m">3</span><span class="w"> </span>--dist-tol<span class="w"> </span><span class="m">0</span><span class="w"> </span>--avg-coord-num<span class="w"> </span><span class="s2">&quot;&lt;8&quot;</span><span class="w"> </span>--no-write
+</pre></div>
+</div>
+<p>Adding this constraint narrowed down the number of complexes from 425 to 10.</p>
+</section>
+<section id="site-constraints">
+<h4>6.3.4 Site Constraints<a class="headerlink" href="#site-constraints" title="Link to this heading"></a></h4>
+<p>We can iteratively determine the coverage effects of 3 oxygen atoms on this slab through site constraints.
+Before we proceed, let’s look at how to specify the exact site for an adsorbate to bind on.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>analyze<span class="w"> </span>sites<span class="w"> </span>--name<span class="w"> </span>catplat_slab/Pt24_0/POSCAR<span class="w"> </span>--no-unique
+</pre></div>
+</div>
+<p>If we enable atom index, we can see the number corresponding to each site.
+We can fix one or more atoms at the sites using the <code class="docutils literal notranslate"><span class="pre">--sites</span></code> option.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Add 1 adsorbate (9 structures, corresponding to 9 unique sites)</span>
+<span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>multicomplex<span class="w"> </span>--adsorbate<span class="w"> </span>atom:O<span class="w"> </span>--slab<span class="w"> </span>catplat_slab/Pt24_0/POSCAR<span class="w"> </span>--quantity<span class="w"> </span><span class="m">1</span><span class="w"> </span>--dist-tol<span class="w"> </span><span class="m">0</span><span class="w"> </span>--no-write
+
+<span class="go">Let&#39;s say that site 236 is the most stable site, create coadsorption complex with 2 adsorbates (17 structures)</span>
+<span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>multicomplex<span class="w"> </span>--adsorbate<span class="w"> </span>atom:O<span class="w"> </span>--slab<span class="w"> </span>catplat_slab/Pt24_0/POSCAR<span class="w"> </span>--quantity<span class="w"> </span><span class="m">2</span><span class="w"> </span>--sites<span class="w"> </span><span class="m">236</span><span class="w"> </span>--dist-tol<span class="w"> </span><span class="m">0</span><span class="w"> </span>--no-write
+
+<span class="go">Let&#39;s say that site 236 and 30 is the most stable site, create coadsorption complex with 3 adsorbates (16 structures)</span>
+<span class="gp">$  </span>catplat<span class="w"> </span>build<span class="w"> </span>multicomplex<span class="w"> </span>--adsorbate<span class="w"> </span>atom:O<span class="w"> </span>--slab<span class="w"> </span>catplat_slab/Pt24_0/POSCAR<span class="w"> </span>--quantity<span class="w"> </span><span class="m">3</span><span class="w"> </span>--sites<span class="w"> </span><span class="m">30</span>,236<span class="w"> </span>--dist-tol<span class="w"> </span><span class="m">0</span><span class="w"> </span>--no-write
+</pre></div>
+</div>
+<p>This way, we can narrow down the number of complexes to 42 (9+17+16).</p>
+</section>
+</section>
+</section>
+<section id="tutorial-7-machine-learning-preoptimization">
+<h2>Tutorial 7: Machine Learning Preoptimization<a class="headerlink" href="#tutorial-7-machine-learning-preoptimization" title="Link to this heading"></a></h2>
+<div class="admonition-scenario admonition">
+<p class="admonition-title">Scenario</p>
+<p>Machine Learning Potentials (MLP) offer a rapid means of obtaining estimates for the relaxed structure and energy.
+CatPlat can employ existing MLP models to preoptimize the generated structures before performing DFT calculations.</p>
+<a class="reference internal image-reference" href="_images/tut7-1.png"><img alt="_images/tut7-1.png" src="_images/tut7-1.png" style="width: 550px;" /></a>
+<p>Here, we see that ml preoptiomzation of HCOO binding on the Cu(100) surface significantly reduces the number of DFT calls compared to a pure DFT approach.</p>
+<a class="reference internal image-reference" href="_images/tut7-2.png"><img alt="_images/tut7-2.png" src="_images/tut7-2.png" style="width: 300px;" /></a>
+<p>In this tutorial, we will try to apply the GemNet-OC and MACE pretrained models to the workflow in tutorial 2.</p>
+</div>
+<p>To keep your project organized, let’s create a dedicated folder for this tutorial.
+Ensure that all commands for this tutorial are executed within this folder.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/catplat_tutorial/tutorial_7
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>~/catplat_tutorial/tutorial_7
+</pre></div>
+</div>
+<section id="downloading-the-gemnet-oc-model">
+<h3>7.1 Downloading the GemNet-OC Model<a class="headerlink" href="#downloading-the-gemnet-oc-model" title="Link to this heading"></a></h3>
+<p>Pretrained models are stored in <code class="docutils literal notranslate"><span class="pre">~/.catplat/mlp</span></code>.
+You may include your own models by placing them in this directory.</p>
+<p>The GemNet-OC model is a Graph Neural Networks (GNN) based model trained on a diverse array of structures sourced from the Open Catalyst 2020 dataset.
+You may download the GemNet-OC model using the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>download<span class="w"> </span>resources
+</pre></div>
+</div>
+</section>
+<section id="viewing-available-models-and-hashes">
+<h3>7.2 Viewing Available Models and Hashes<a class="headerlink" href="#viewing-available-models-and-hashes" title="Link to this heading"></a></h3>
+<p>You may check all your available models with the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$  </span>catplat<span class="w"> </span>mlp<span class="w"> </span>view
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/tut7-3.png"><img alt="_images/tut7-3.png" class="align-center" src="_images/tut7-3.png" style="width: 800px;" /></a>
+<p>As of the current version, you should see 2 available models.
+The first model is the GemNet-OC model, which we have just downloaded.
+The second model is a specialized model for Cu-C-H-O systems, developed through training with MACE.</p>
+</section>
+<section id="using-mlp-models">
+<h3>7.3 Using MLP Models<a class="headerlink" href="#using-mlp-models" title="Link to this heading"></a></h3>
+<p>Using the MLP models is as simple as adding the <code class="docutils literal notranslate"><span class="pre">--ml-preopt</span></code> flag to the <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">calculate</span></code> or <code class="docutils literal notranslate"><span class="pre">catplat</span> <span class="pre">dryrun</span></code> command.
+You may select which model you want via the <code class="docutils literal notranslate"><span class="pre">--ml-potential-hash</span></code> option.
+If no hash is specified, CatPlat will automatically select the a suitable model.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Activate the <code class="docutils literal notranslate"><span class="pre">--verbose</span></code> flag to see the ML preoptimization in action.</p>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Using GemNet-OC model</span>
+<span class="gp">$ </span>catplat<span class="w"> </span>--verbose<span class="w"> </span>dryrun<span class="w"> </span>--chemsys<span class="w"> </span>Cu<span class="w"> </span>--miller-index<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>--unitcell-size<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>--adsorbate-atoms<span class="w"> </span>CO<span class="w"> </span>--ml-preopt<span class="w"> </span>--ml-potential-hash<span class="w"> </span>2830e3c9a0d5910c59f9a3136daeb607
+
+<span class="go">Using MACE model</span>
+<span class="gp">$ </span>catplat<span class="w"> </span>--verbose<span class="w"> </span>dryrun<span class="w"> </span>--chemsys<span class="w"> </span>Cu<span class="w"> </span>--miller-index<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>--unitcell-size<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>--adsorbate-atoms<span class="w"> </span>CO<span class="w"> </span>--ml-preopt<span class="w"> </span>--ml-potential-hash<span class="w"> </span>922c3f9c9a2e1c7e567ac09db8797b6c
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/tut7-4.png"><img alt="_images/tut7-4.png" class="align-center" src="_images/tut7-4.png" style="width: 800px;" /></a>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli.html" class="btn btn-neutral float-right" title="Command Line Interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

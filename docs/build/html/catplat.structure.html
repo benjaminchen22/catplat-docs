@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.structure package &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">catplat.structure package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/catplat.structure.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="catplat-structure-package">
+<h1>catplat.structure package<a class="headerlink" href="#catplat-structure-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-catplat.structure.adsorbate">
+<span id="catplat-structure-adsorbate-module"></span><h2>catplat.structure.adsorbate module<a class="headerlink" href="#module-catplat.structure.adsorbate" title="Link to this heading"></a></h2>
+<p>This module contains classes that involve adsorbate and it’s attributes.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.structure.adsorbate.</span></span><span class="sig-name descname"><span class="pre">Adsorbate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomsWrapper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adsorption_sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bonds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#catplat.structure.adsorbate.Bonds" title="catplat.structure.adsorbate.Bonds"><span class="pre">Bonds</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#catplat.structure.adsorbate.Sites" title="catplat.structure.adsorbate.Sites"><span class="pre">Sites</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adsorption_vector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbour_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.6</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Adsorbate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Properties that define an adsorbate</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.adsorption_coords">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adsorption_coords</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.adsorption_coords" title="Link to this definition"></a></dt>
+<dd><p>Adsorption_coords of the adsorbate.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.align">
+<span class="sig-name descname"><span class="pre">align</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slab</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Adsorbate.align"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.align" title="Link to this definition"></a></dt>
+<dd><p>Aligns adsorbate to the y axis. If slab is specified, aligns the adsorbate to the y vector of the unit cell instead</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>slab</strong> (<em>AtomsWrapper</em>) – Structure of the slab. Defaults to None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.avg_coord_num">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">avg_coord_num</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#catplat.structure.adsorbate.AverageCoordinationNumber" title="catplat.structure.adsorbate.AverageCoordinationNumber"><span class="pre">AverageCoordinationNumber</span></a></em><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.avg_coord_num" title="Link to this definition"></a></dt>
+<dd><p>Average coordination number of the adsorbate.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.chemical_formula">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chemical_formula</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.chemical_formula" title="Link to this definition"></a></dt>
+<dd><p>Chemical formula of the adsorbate.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.connectivity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">connectivity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#catplat.structure.adsorbate.Connectivity" title="catplat.structure.adsorbate.Connectivity"><span class="pre">Connectivity</span></a></em><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.connectivity" title="Link to this definition"></a></dt>
+<dd><p>Connectivity of the adsorbate.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.denticity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">denticity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.denticity" title="Link to this definition"></a></dt>
+<dd><p>Denticity of the adsorbate.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.from_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bonds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Adsorbate.from_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.from_name" title="Link to this definition"></a></dt>
+<dd><p>Convenience method to instantiate Adsorbate from name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.is_symmetrical_along_bond">
+<span class="sig-name descname"><span class="pre">is_symmetrical_along_bond</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Adsorbate.is_symmetrical_along_bond"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.is_symmetrical_along_bond" title="Link to this definition"></a></dt>
+<dd><p>Returns True if the adsorbate is symetrical along bond vector. False otherwise.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.lone_pairs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lone_pairs</span></span><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.lone_pairs" title="Link to this definition"></a></dt>
+<dd><p>Number of lone pairs for each atom.</p>
+<dl>
+<dt>Example 1: CO with 1 lone pair on C and 1 lone pair on O</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ads</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s1">&#39;CO&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ads</span><span class="o">.</span><span class="n">lone_pairs</span>
+<span class="go">[1, 1]</span>
+</pre></div>
+</div>
+</dd>
+<dt>Example 2: CO2 with 0 lone pairs on C and 2 lone pairs on each O</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ads</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s1">&#39;CO2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ads</span><span class="o">.</span><span class="n">lone_pairs</span>
+<span class="go">[0, 2, 2]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.num_bonds">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_bonds</span></span><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.num_bonds" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.radical_atoms">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">radical_atoms</span></span><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.radical_atoms" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.sites_info">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sites_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">NamedTuple</span></em><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.sites_info" title="Link to this definition"></a></dt>
+<dd><p>Site information of bonded site(s).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.unpaired_electrons_multiple">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unpaired_electrons_multiple</span></span><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.unpaired_electrons_multiple" title="Link to this definition"></a></dt>
+<dd><p>Number of unsaturated bonds for each atom. Assumes atoms can form multiple bonds if 2
+unsaturated atoms are adjacent to each other.</p>
+<dl>
+<dt>Example: CO with 0 unsaturated bonds on C and 2 unsaturated bond on O (CO considered as double bond)</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ads</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s1">&#39;CO&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ads</span><span class="o">.</span><span class="n">unsaturated_bonds_multiple</span>
+<span class="go">[2, 0]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.unpaired_electrons_single">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unpaired_electrons_single</span></span><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.unpaired_electrons_single" title="Link to this definition"></a></dt>
+<dd><p>Number of unsaturated bonds for each atom. Assumes each atom only can form single bonds.</p>
+<dl>
+<dt>Example: CO with 3 unsaturated bonds on C and 1 unsaturated bond on O (C-O considered as single bond)</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ads</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s1">&#39;CO&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ads</span><span class="o">.</span><span class="n">unsaturated_bonds_single</span>
+<span class="go">[3, 1]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.unsaturated_atoms">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unsaturated_atoms</span></span><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.unsaturated_atoms" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Adsorbate.view">
+<span class="sig-name descname"><span class="pre">view</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Adsorbate.view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Adsorbate.view" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AdsorbateAttribute">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.structure.adsorbate.</span></span><span class="sig-name descname"><span class="pre">AdsorbateAttribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#AdsorbateAttribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.AdsorbateAttribute" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AdsorbateAttribute.VALID_TYPE">
+<span class="sig-name descname"><span class="pre">VALID_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">NotImplemented</span></em><a class="headerlink" href="#catplat.structure.adsorbate.AdsorbateAttribute.VALID_TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AdsorbateAttribute.denticity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">denticity</span></span><a class="headerlink" href="#catplat.structure.adsorbate.AdsorbateAttribute.denticity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AdsorbateAttribute.from_value">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#AdsorbateAttribute.from_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.AdsorbateAttribute.from_value" title="Link to this definition"></a></dt>
+<dd><p>Convenience method to instantiate AdsorbateAttribute subclass.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AdsorbateAttribute.match">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">match</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#AdsorbateAttribute.match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.AdsorbateAttribute.match" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AdsorbateAttribute.match_all">
+<span class="sig-name descname"><span class="pre">match_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#AdsorbateAttribute.match_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.AdsorbateAttribute.match_all" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AdsorbateAttribute.match_any">
+<span class="sig-name descname"><span class="pre">match_any</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#AdsorbateAttribute.match_any"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.AdsorbateAttribute.match_any" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AdsorbateAttribute.reverse">
+<span class="sig-name descname"><span class="pre">reverse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#AdsorbateAttribute.reverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.AdsorbateAttribute.reverse" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AdsorbateAttribute.to_tuple">
+<span class="sig-name descname"><span class="pre">to_tuple</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#AdsorbateAttribute.to_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.AdsorbateAttribute.to_tuple" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AdsorbateAttribute.tolist">
+<span class="sig-name descname"><span class="pre">tolist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#AdsorbateAttribute.tolist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.AdsorbateAttribute.tolist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AverageCoordinationNumber">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.structure.adsorbate.</span></span><span class="sig-name descname"><span class="pre">AverageCoordinationNumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#AverageCoordinationNumber"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.AverageCoordinationNumber" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.structure.adsorbate.AdsorbateAttribute" title="catplat.structure.adsorbate.AdsorbateAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdsorbateAttribute</span></code></a></p>
+<p>AverageCoordinationNumber is a tuple of value(s) that define the average coordination number
+of the site, corresponding to the bonded atom.</p>
+<p class="rubric">Example</p>
+<p>monodentate = (7,) | (7.0,) | (‘&lt;8’,)
+bidentate = (7,7) | (7.0,7.0) | (‘&lt;8’, ‘&lt;8’)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AverageCoordinationNumber.VALID_TYPE">
+<span class="sig-name descname"><span class="pre">VALID_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;class</span> <span class="pre">'int'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;)</span></em><a class="headerlink" href="#catplat.structure.adsorbate.AverageCoordinationNumber.VALID_TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AverageCoordinationNumber.comparators">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">comparators</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="catplat.utils.html#catplat.utils.comparator.Comparator" title="catplat.utils.comparator.Comparator"><span class="pre">Comparator</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#catplat.structure.adsorbate.AverageCoordinationNumber.comparators" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.AverageCoordinationNumber.match">
+<span class="sig-name descname"><span class="pre">match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">avg_coord_num</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#AverageCoordinationNumber.match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.AverageCoordinationNumber.match" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Bonds">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.structure.adsorbate.</span></span><span class="sig-name descname"><span class="pre">Bonds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Bonds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Bonds" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.structure.adsorbate.AdsorbateAttribute" title="catplat.structure.adsorbate.AdsorbateAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdsorbateAttribute</span></code></a></p>
+<p>Class representing bonds. Bonds is a tuple of atom indices (corresponding to the adsorbate structure) that are bonded to the surface.
+The denticity of the adsorbate is defined by the length of bonds.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Bonds.VALID_TYPE">
+<span class="sig-name descname"><span class="pre">VALID_TYPE</span></span><a class="headerlink" href="#catplat.structure.adsorbate.Bonds.VALID_TYPE" title="Link to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Bonds.from_adsorbate">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_adsorbate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adsorbate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denticity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Bonds.from_adsorbate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Bonds.from_adsorbate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Bonds.match">
+<span class="sig-name descname"><span class="pre">match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bond</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Bonds.match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Bonds.match" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Connectivity">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.structure.adsorbate.</span></span><span class="sig-name descname"><span class="pre">Connectivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Connectivity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Connectivity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.structure.adsorbate.AdsorbateAttribute" title="catplat.structure.adsorbate.AdsorbateAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdsorbateAttribute</span></code></a></p>
+<p>Connectivity is a tuple of integer(s) that defines the number of bonds formed between the adsorbate and the surface.</p>
+<p class="rubric">Example</p>
+<p>monodentate = (1,) | (2,)
+bidentate = (1,1) | (1,2)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Connectivity.VALID_TYPE">
+<span class="sig-name descname"><span class="pre">VALID_TYPE</span></span><a class="headerlink" href="#catplat.structure.adsorbate.Connectivity.VALID_TYPE" title="Link to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Connectivity.match">
+<span class="sig-name descname"><span class="pre">match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connectivity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Connectivity.match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Connectivity.match" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Sites">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.structure.adsorbate.</span></span><span class="sig-name descname"><span class="pre">Sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Sites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Sites" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.structure.adsorbate.AdsorbateAttribute" title="catplat.structure.adsorbate.AdsorbateAttribute"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdsorbateAttribute</span></code></a></p>
+<p>Class representing the site indices of the SitesLattice class.</p>
+<p>Sites is a tuple of integer(s) that define the site(s) of the adsorbate.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Sites.VALID_TYPE">
+<span class="sig-name descname"><span class="pre">VALID_TYPE</span></span><a class="headerlink" href="#catplat.structure.adsorbate.Sites.VALID_TYPE" title="Link to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.adsorbate.Sites.match">
+<span class="sig-name descname"><span class="pre">match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/catplat/structure/adsorbate.html#Sites.match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.adsorbate.Sites.match" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="catplat-structure-complex-module">
+<h2>catplat.structure.complex module<a class="headerlink" href="#catplat-structure-complex-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-catplat.structure.lasp">
+<span id="catplat-structure-lasp-module"></span><h2>catplat.structure.lasp module<a class="headerlink" href="#module-catplat.structure.lasp" title="Link to this heading"></a></h2>
+<p>This module consist of classes which looks into transition state structures
+This includes functions like obtaining TS structure and final structure from the initial structure.</p>
+<p>WIP:
+Current LaspBuilder is work in progress due to the changes in ComplexBuilder and deprecation of symmetry filter.</p>
+<ol class="arabic simple">
+<li><p>Order indices, move adsorbate to the back of the class</p></li>
+<li><p>Use ComplexBuilders to Build image</p></li>
+<li><p>AtomsWraper.image_distance(other) to choose complex that has the closest distance to initial</p></li>
+</ol>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.structure.lasp.</span></span><span class="sig-name descname"><span class="pre">LaspBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diss_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomsWrapper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slab_elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads1_denticity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads2_denticity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads1_avg_coord_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#catplat.structure.adsorbate.AverageCoordinationNumber" title="catplat.structure.adsorbate.AverageCoordinationNumber"><span class="pre">AverageCoordinationNumber</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads2_avg_coord_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#catplat.structure.adsorbate.AverageCoordinationNumber" title="catplat.structure.adsorbate.AverageCoordinationNumber"><span class="pre">AverageCoordinationNumber</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads1_connectivity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#catplat.structure.adsorbate.Connectivity" title="catplat.structure.adsorbate.Connectivity"><span class="pre">Connectivity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads2_connectivity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#catplat.structure.adsorbate.Connectivity" title="catplat.structure.adsorbate.Connectivity"><span class="pre">Connectivity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads1_bind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads2_bind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads1_distance_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads2_distance_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads1_direction_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ads2_direction_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/lasp.html#LaspBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class that handles the logic for creating transition and final state guesses from initial structure.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ol class="arabic simple">
+<li><p>ads1 and ads2 corresponds to the adsorbate derived from the atom at diss_idx[0] and diss_idx[1] respectively.</p></li>
+<li><dl class="simple">
+<dt>By default, ads1_dist_filter and ads1_dir_filter is True while ads2_dist_filiter and ads2_dir filter is False.</dt><dd><p>(i.e., ads1 is programmed to be moved away from the adsorbate to the specified site while ads2 is programmed to find the nearest site.)</p>
+</dd>
+</dl>
+</li>
+<li><p>If ads1 binding site == ads2 binding site, ads1 would be given priority for the site.</p></li>
+<li><p>If ads1/ads2 is bidentate, the exisiting bond on the slab would be prioritized.</p></li>
+</ol>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.initial_file">
+<span class="sig-name descname"><span class="pre">initial_file</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.initial_file" title="Link to this definition"></a></dt>
+<dd><p>File path to initial structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.diss_idx">
+<span class="sig-name descname"><span class="pre">diss_idx</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.diss_idx" title="Link to this definition"></a></dt>
+<dd><p>List of len 2 that specifies the index of atoms to be dissociated (i.e. [ads1_idx, ads2_idx])</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.slab_elements">
+<span class="sig-name descname"><span class="pre">slab_elements</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.slab_elements" title="Link to this definition"></a></dt>
+<dd><p>List indicating the element composition of the slab (i.e., [‘Rh’,’Pd’]). If ‘None’ specified LaspBuilder will assume transition metals as the slab elements. Defaults to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads1_acn">
+<span class="sig-name descname"><span class="pre">ads1_acn</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads1_acn" title="Link to this definition"></a></dt>
+<dd><p>Specifies avg_coord_num of site for ads1. Defaults to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, int, float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads1_connectivity">
+<span class="sig-name descname"><span class="pre">ads1_connectivity</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads1_connectivity" title="Link to this definition"></a></dt>
+<dd><p>Specifies connectivity of site for ads1. Defaults to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads1_bind">
+<span class="sig-name descname"><span class="pre">ads1_bind</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads1_bind" title="Link to this definition"></a></dt>
+<dd><p>Toggle to bind ads1 to site. The position of ads1 will remain unchanged if False. Defaults to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads1_dist_tol">
+<span class="sig-name descname"><span class="pre">ads1_dist_tol</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads1_dist_tol" title="Link to this definition"></a></dt>
+<dd><p>XY distance tolerance (in angstroms) for ads1 adsorption site selection. Defaults to 1.5.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads1_dir_tol">
+<span class="sig-name descname"><span class="pre">ads1_dir_tol</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads1_dir_tol" title="Link to this definition"></a></dt>
+<dd><p>XY vector direction tolerance for ads1 adsorption site selection. Where -1 &lt;= directon_tol &lt;= 1. Defaults to 0.5.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads1_dist_filter">
+<span class="sig-name descname"><span class="pre">ads1_dist_filter</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads1_dist_filter" title="Link to this definition"></a></dt>
+<dd><p>Toggle to filter off sites that are too close to ads1 initial position. Defaults to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads1_dir_filter">
+<span class="sig-name descname"><span class="pre">ads1_dir_filter</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads1_dir_filter" title="Link to this definition"></a></dt>
+<dd><p>Toggle to filter off sites that are not facing the same direction as the dissociation vector. Defaults to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads2_acn">
+<span class="sig-name descname"><span class="pre">ads2_acn</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads2_acn" title="Link to this definition"></a></dt>
+<dd><p>Specifies avg_coord_num of site for ads2. Defaults to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, int, float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads2_connectivity">
+<span class="sig-name descname"><span class="pre">ads2_connectivity</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads2_connectivity" title="Link to this definition"></a></dt>
+<dd><p>Specifies connectivity of site for ads2. Defaults to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list, int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads2_bind">
+<span class="sig-name descname"><span class="pre">ads2_bind</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads2_bind" title="Link to this definition"></a></dt>
+<dd><p>Toggle to bind ads2 to site. The position of ads2 will remain unchanged if False. Defaults to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads2_dist_tol">
+<span class="sig-name descname"><span class="pre">ads2_dist_tol</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads2_dist_tol" title="Link to this definition"></a></dt>
+<dd><p>XY distance tolerance (in angstroms) for ads2 adsorption site selection. Defaults to 1.5.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads2_dir_tol">
+<span class="sig-name descname"><span class="pre">ads2_dir_tol</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads2_dir_tol" title="Link to this definition"></a></dt>
+<dd><p>XY vector direction tolerance for ads2 adsorption site selection. Where -1 &lt;= directon_tol &lt;= 1. Defaults to 0.5.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads2_dist_filter">
+<span class="sig-name descname"><span class="pre">ads2_dist_filter</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads2_dist_filter" title="Link to this definition"></a></dt>
+<dd><p>Toggle to filter off sites that are too close to ads2 initial position. Defaults to False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads2_dir_filter">
+<span class="sig-name descname"><span class="pre">ads2_dir_filter</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads2_dir_filter" title="Link to this definition"></a></dt>
+<dd><p>Toggle to filter off sites that are not facing the same direction as the dissociation vector. Defaults to False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.zoom">
+<span class="sig-name descname"><span class="pre">zoom</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.zoom" title="Link to this definition"></a></dt>
+<dd><p>Toggle to return initial and final states that are closer to the transition state. Defaults to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.zoom_tol">
+<span class="sig-name descname"><span class="pre">zoom_tol</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.zoom_tol" title="Link to this definition"></a></dt>
+<dd><p>bond distance between initial, transition and final state. (i.e., if bond distance(TS)=1.5 and zoom_tol=0.3, bond distance(IS)=1.2 and bond_distance(FS)=1.8). Defaults to 0.3.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads_diss_vec">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ads_diss_vec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads_diss_vec" title="Link to this definition"></a></dt>
+<dd><p>Direction vector of the dissociation of ads1 and ads2.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.ads_idx">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ads_idx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.ads_idx" title="Link to this definition"></a></dt>
+<dd><p>List of atom indexes of the adsorbate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If diss_idx[i] not in ads_idx.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.adsorbate">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adsorbate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AtomsWrapper</span></em><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.adsorbate" title="Link to this definition"></a></dt>
+<dd><p>Structure of adsorbate.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.adsorbate_split">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adsorbate_split</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">AtomsWrapper</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.adsorbate_split" title="Link to this definition"></a></dt>
+<dd><p>Structure of adsorbate split into ads1 and ads2.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.adsorption_schematic">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adsorption_schematic</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AtomsWrapper</span></em><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.adsorption_schematic" title="Link to this definition"></a></dt>
+<dd><p>Returns decorated slab showing adsorption schematic of ads1 and ads2 based on initialization criteria.
+Site(s) for ads1 ands ads2 represented by ‘X’ and ‘Ne’ respectively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If adsorbate splitting failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.atoms_init_pos">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">atoms_init_pos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.atoms_init_pos" title="Link to this definition"></a></dt>
+<dd><p>Initial position of atoms before bond breaking.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.bonds">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bonds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#catplat.structure.adsorbate.Bonds" title="catplat.structure.adsorbate.Bonds"><span class="pre">Bonds</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.bonds" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.decorated_slab">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decorated_slab</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AtomsWrapper</span></em><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.decorated_slab" title="Link to this definition"></a></dt>
+<dd><p>Structure showing all adsorption sites of slab.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.filtered_sites">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filtered_sites</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.filtered_sites" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomsWrapper</span></span></span><a class="reference internal" href="_modules/catplat/structure/lasp.html#LaspBuilder.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.run" title="Link to this definition"></a></dt>
+<dd><p>Main function to get initial, transition and final states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>initial, transition and final state structures</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>3 AtomsWrapper objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.sites">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sites</span></span><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.sites" title="Link to this definition"></a></dt>
+<dd><p>SitesLattice of the slab surface.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.slab">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">slab</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AtomsWrapper</span></em><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.slab" title="Link to this definition"></a></dt>
+<dd><p>Structure of slab.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.slab_idx">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">slab_idx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.slab_idx" title="Link to this definition"></a></dt>
+<dd><p>index of slab</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.lasp.LaspBuilder.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomsWrapper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomsWrapper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomsWrapper</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/catplat/structure/lasp.html#LaspBuilder.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.lasp.LaspBuilder.write" title="Link to this definition"></a></dt>
+<dd><p>Writes initial, transnition and final state as POSCAR files.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-catplat.structure.slab">
+<span id="catplat-structure-slab-module"></span><h2>catplat.structure.slab module<a class="headerlink" href="#module-catplat.structure.slab" title="Link to this heading"></a></h2>
+<p>This module contains classes for slab creation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.structure.slab.SlabBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.structure.slab.</span></span><span class="sig-name descname"><span class="pre">SlabBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bulk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">miller_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vacuum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_thickness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlayer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conventional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slab_generator_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.12</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/slab.html#SlabBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.slab.SlabBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Heavily modified version of catkit.gen.surface.SlabGenerator.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.slab.SlabBuilder.generate_surfaces">
+<span class="sig-name descname"><span class="pre">generate_surfaces</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/structure/slab.html#SlabBuilder.generate_surfaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.slab.SlabBuilder.generate_surfaces" title="Link to this definition"></a></dt>
+<dd><p>Main function that creates the slab.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.slab.SlabBuilder.get_slab">
+<span class="sig-name descname"><span class="pre">get_slab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/slab.html#SlabBuilder.get_slab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.slab.SlabBuilder.get_slab" title="Link to this definition"></a></dt>
+<dd><p>Copy from catkit.gen.surface.SlabGenerator</p>
+<p>Changelog:
+1. Removed transform_ab step to prevent unexpected change in termination.
+2. Replace utils.get_unique_coordinates() with get_unique_coordinates_cartesian_tol()
+3. Assume layer_type to be ‘trim’</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.slab.SlabBuilder.get_slab_basis">
+<span class="sig-name descname"><span class="pre">get_slab_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/slab.html#SlabBuilder.get_slab_basis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.slab.SlabBuilder.get_slab_basis" title="Link to this definition"></a></dt>
+<dd><p>Copy from catkit.gen.surface.SlabGenerator</p>
+<p>Changelog:
+1. Assumes that slab_basis == [None] * len(terminations)
+2. Replace utils.get_unique_coordinates() with get_unique_coordinates_cartesian_tol()
+3. Remove the need to ibasis.set_cell(newcell) and ibasis.wrap() to prevent slab from generating inaccurate structures due to surface roughness.
+4. Added tolerance for slab cleaving during termination identification to ensure that the whole surface is cleaved.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.slab.SlabBuilder.unique_terminations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unique_terminations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#catplat.structure.slab.SlabBuilder.unique_terminations" title="Link to this definition"></a></dt>
+<dd><p>Determines the number of termination to test.</p>
+<dl class="simple">
+<dt>Changelog:</dt><dd><ol class="arabic simple">
+<li><p>Replaced catkit function wtih get_unique_coordinates_cartesian_tol</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-catplat.structure.surface">
+<span id="catplat-structure-surface-module"></span><h2>catplat.structure.surface module<a class="headerlink" href="#module-catplat.structure.surface" title="Link to this heading"></a></h2>
+<p>This module contains classes for slab creation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.structure.surface.MillerAnalyzer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.structure.surface.</span></span><span class="sig-name descname"><span class="pre">MillerAnalyzer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bulk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/surface.html#MillerAnalyzer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.surface.MillerAnalyzer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>“ Class which recursively tries different miller indices, create surfaces and classifies them to the corresponding facets.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.structure.surface.MillerAnalyzer.MILLER_PROPERTIES">
+<span class="sig-name descname"><span class="pre">MILLER_PROPERTIES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'100':</span> <span class="pre">{'acn':</span> <span class="pre">{8.0},</span> <span class="pre">'connectivity':</span> <span class="pre">{1,</span> <span class="pre">2,</span> <span class="pre">4},</span> <span class="pre">'num_sites':</span> <span class="pre">3},</span> <span class="pre">'110':</span> <span class="pre">{'acn':</span> <span class="pre">{7.0,</span> <span class="pre">8.3,</span> <span class="pre">9.0,</span> <span class="pre">11.0},</span> <span class="pre">'connectivity':</span> <span class="pre">{1,</span> <span class="pre">2,</span> <span class="pre">3},</span> <span class="pre">'num_sites':</span> <span class="pre">4},</span> <span class="pre">'111':</span> <span class="pre">{'acn':</span> <span class="pre">{9.0},</span> <span class="pre">'connectivity':</span> <span class="pre">{1,</span> <span class="pre">2,</span> <span class="pre">3},</span> <span class="pre">'num_sites':</span> <span class="pre">4},</span> <span class="pre">'211':</span> <span class="pre">{'acn':</span> <span class="pre">{7.0,</span> <span class="pre">7.7,</span> <span class="pre">8.0,</span> <span class="pre">8.3,</span> <span class="pre">8.5,</span> <span class="pre">9.0,</span> <span class="pre">9.3,</span> <span class="pre">9.5,</span> <span class="pre">9.7,</span> <span class="pre">10.0},</span> <span class="pre">'connectivity':</span> <span class="pre">{1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4},</span> <span class="pre">'num_sites':</span> <span class="pre">14}}</span></em><a class="headerlink" href="#catplat.structure.surface.MillerAnalyzer.MILLER_PROPERTIES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.surface.MillerAnalyzer.get_miller_indices">
+<span class="sig-name descname"><span class="pre">get_miller_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">facet</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/surface.html#MillerAnalyzer.get_miller_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.surface.MillerAnalyzer.get_miller_indices" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Get miller indices corresponding to the specified facet. Miller indices are identified by the average
+coordination number and connectivity of their surface atoms.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>facet (str): Facet of the slab.
+debug (bool): Returns the values of the calculated indices.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Tuple: (h,k,l) if miller indices is found.
+None: if no miller indices matching facet with current set of trial indices</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If facet not in self.MILLER_PROPERTIES.keys()</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><a href="#id1"><span class="problematic" id="id2">`</span></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.surface.MillerAnalyzer.get_terminations">
+<span class="sig-name descname"><span class="pre">get_terminations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/surface.html#MillerAnalyzer.get_terminations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.surface.MillerAnalyzer.get_terminations" title="Link to this definition"></a></dt>
+<dd><p>Returns the number of terminations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>tuple</em>) – Miller indices to cleave the bulk.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>number of terminations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.structure.surface.</span></span><span class="sig-name descname"><span class="pre">Surface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bottom_indices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/surface.html#Surface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.surface.Surface" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Slab with specified indices of atoms at the top and bottom surfaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atoms</strong> (<em>Atoms</em>) – Atoms object</p></li>
+<li><p><strong>top_indices</strong> (<em>iterable</em>) – Iterable of atom indices at the top surface</p></li>
+<li><p><strong>bottom_indices</strong> (<em>iterable</em>) – Iterable of atom indices at the bottom surface</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface.cell">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cell</span></span><a class="headerlink" href="#catplat.structure.surface.Surface.cell" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface.cell_length">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cell_length</span></span><a class="headerlink" href="#catplat.structure.surface.Surface.cell_length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface.chemsys">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chemsys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Chemsys</span></em><a class="headerlink" href="#catplat.structure.surface.Surface.chemsys" title="Link to this definition"></a></dt>
+<dd><p>Chemsys of surface</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface.from_atoms">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_atoms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/surface.html#Surface.from_atoms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.surface.Surface.from_atoms" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface.gratoms">
+<span class="sig-name descname"><span class="pre">gratoms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/surface.html#Surface.gratoms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.surface.Surface.gratoms" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface.surface_acn">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">surface_acn</span></span><a class="headerlink" href="#catplat.structure.surface.Surface.surface_acn" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface.surface_atoms">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">surface_atoms</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AtomsWrapper</span></em><a class="headerlink" href="#catplat.structure.surface.Surface.surface_atoms" title="Link to this definition"></a></dt>
+<dd><p>AtomsWrapper object of surface</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface.surface_density">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">surface_density</span></span><a class="headerlink" href="#catplat.structure.surface.Surface.surface_density" title="Link to this definition"></a></dt>
+<dd><p>Density of the surface atoms over xy area</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface.termination">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">termination</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#catplat.structure.surface.Surface.termination" title="Link to this definition"></a></dt>
+<dd><p>Chemsys of surface</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface.top_distance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">top_distance</span></span><a class="headerlink" href="#catplat.structure.surface.Surface.top_distance" title="Link to this definition"></a></dt>
+<dd><p>Mean distance of two top sites</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.structure.surface.Surface.vacuum">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vacuum</span></span><a class="headerlink" href="#catplat.structure.surface.Surface.vacuum" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.structure.surface.SurfaceBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.structure.surface.</span></span><span class="sig-name descname"><span class="pre">SurfaceBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voronoi_cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/surface.html#SurfaceBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.surface.SurfaceBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Builds an instance of Surface with a given slab.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atoms</strong> (<em>Atoms</em>) – Atoms object representing the slab</p></li>
+<li><p><strong>voronoi_cutoff</strong> (<em>int</em><em>, </em><em>Angstroms</em>) – Larger cutoff can better resolve the “ups and downs”
+of the surfacewhereas smaller cutoff smoothens the surface.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.structure.surface.SurfaceBuilder.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/structure/surface.html#SurfaceBuilder.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.structure.surface.SurfaceBuilder.build" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="catplat-structure-symmetry-module">
+<h2>catplat.structure.symmetry module<a class="headerlink" href="#catplat-structure-symmetry-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-catplat.structure">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-catplat.structure" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

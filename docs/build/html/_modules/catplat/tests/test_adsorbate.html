@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.tests.test_adsorbate &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.tests.test_adsorbate</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.tests.test_adsorbate</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+
+<span class="kn">from</span> <span class="nn">catplat.structure.adsorbate</span> <span class="kn">import</span> <span class="n">Adsorbate</span><span class="p">,</span> <span class="n">Connectivity</span><span class="p">,</span> <span class="n">AverageCoordinationNumber</span>
+<span class="kn">from</span> <span class="nn">pyatoms.utils.utils</span> <span class="kn">import</span> <span class="n">isiterable</span>
+
+
+<div class="viewcode-block" id="TestConnectivity">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestConnectivity">[docs]</a>
+<span class="k">class</span> <span class="nc">TestConnectivity</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestConnectivity.test_instantiation_connectivity">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestConnectivity.test_instantiation_connectivity">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)])</span>
+    <span class="k">def</span> <span class="nf">test_instantiation_connectivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">connectivity</span> <span class="o">=</span> <span class="n">Connectivity</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,)</span>
+        <span class="k">assert</span> <span class="n">connectivity</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestConnectivity.test_contains">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestConnectivity.test_contains">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_contains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">connectivity</span> <span class="o">=</span> <span class="n">Connectivity</span><span class="o">.</span><span class="n">from_value</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">connectivity</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="mi">2</span> <span class="ow">in</span> <span class="n">connectivity</span>
+        <span class="k">assert</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">connectivity</span></div>
+
+
+<div class="viewcode-block" id="TestConnectivity.test_reverse">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestConnectivity.test_reverse">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">connectivity</span> <span class="o">=</span> <span class="n">Connectivity</span><span class="o">.</span><span class="n">from_value</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">connectivity</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">value</span>
+        <span class="n">connectivity_reversed</span> <span class="o">=</span> <span class="n">connectivity</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">connectivity_reversed</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">value</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="TestConnectivity.test_connectivity_type_error">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestConnectivity.test_connectivity_type_error">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mf">1.5</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">),</span> <span class="s1">&#39;test&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_connectivity_type_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
+            <span class="n">Connectivity</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestConnectivity.test_connectivity_match">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestConnectivity.test_connectivity_match">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,),</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+    <span class="k">def</span> <span class="nf">test_connectivity_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">connectivity</span> <span class="o">=</span> <span class="n">Connectivity</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">connectivity</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">connectivity</span><span class="o">.</span><span class="n">match</span><span class="p">([</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">connectivity</span><span class="o">.</span><span class="n">denticity</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestConnectivity.test_connectivity_match_any">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestConnectivity.test_connectivity_match_any">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;arr, expected&#39;</span><span class="p">,</span> <span class="p">[[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="kc">True</span><span class="p">],</span>
+                                               <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="kc">False</span><span class="p">]])</span>
+    <span class="k">def</span> <span class="nf">test_connectivity_match_any</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">connectivity</span> <span class="o">=</span> <span class="n">Connectivity</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">connectivity</span><span class="o">.</span><span class="n">match_any</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="ow">is</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestConnectivity.test_connectivity_match_all">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestConnectivity.test_connectivity_match_all">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;arr, expected&#39;</span><span class="p">,</span> <span class="p">[[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="kc">True</span><span class="p">],</span>
+                                               <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="kc">False</span><span class="p">]])</span>
+    <span class="k">def</span> <span class="nf">test_connectivity_match_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">connectivity</span> <span class="o">=</span> <span class="n">Connectivity</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">connectivity</span><span class="o">.</span><span class="n">match_all</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="ow">is</span> <span class="n">expected</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestAverageCoordinationNumber">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestAverageCoordinationNumber">[docs]</a>
+<span class="k">class</span> <span class="nc">TestAverageCoordinationNumber</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestAverageCoordinationNumber.test_instantiation_acn">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestAverageCoordinationNumber.test_instantiation_acn">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="p">(</span><span class="mi">7</span><span class="p">,),</span> <span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="s1">&#39;&lt;=7&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;&lt;=7&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;&lt;=7&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=7&#39;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)])</span>
+    <span class="k">def</span> <span class="nf">test_instantiation_acn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">acn</span> <span class="o">=</span> <span class="n">AverageCoordinationNumber</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">exclude_strings</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,)</span>
+        <span class="k">assert</span> <span class="n">acn</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestAverageCoordinationNumber.test_acn_match">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestAverageCoordinationNumber.test_acn_match">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">7</span><span class="p">,),</span> <span class="p">[</span><span class="mf">6.96</span><span class="p">],</span> <span class="p">(</span><span class="mf">7.04</span><span class="p">,),</span> <span class="p">[</span><span class="mf">7.0</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;&gt;=7&#39;</span><span class="p">]])</span>
+    <span class="k">def</span> <span class="nf">test_acn_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">acn</span> <span class="o">=</span> <span class="n">AverageCoordinationNumber</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">equal_tol</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">acn</span><span class="o">.</span><span class="n">match</span><span class="p">([</span><span class="mi">7</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">acn</span><span class="o">.</span><span class="n">match</span><span class="p">([</span><span class="mi">6</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="TestAverageCoordinationNumber.test_acn_match_bidentate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestAverageCoordinationNumber.test_acn_match_bidentate">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value, match&#39;</span><span class="p">,</span> <span class="p">[[(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="kc">True</span><span class="p">],</span>
+                                              <span class="p">[(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="kc">False</span><span class="p">],</span>
+                                              <span class="p">[(</span><span class="s1">&#39;&lt;=7&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=7&#39;</span><span class="p">),</span> <span class="kc">True</span><span class="p">],</span>
+                                              <span class="p">[(</span><span class="s1">&#39;&gt;=7&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=7&#39;</span><span class="p">),</span> <span class="kc">False</span><span class="p">]])</span>
+    <span class="k">def</span> <span class="nf">test_acn_match_bidentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">match</span><span class="p">):</span>
+        <span class="n">acn</span> <span class="o">=</span> <span class="n">AverageCoordinationNumber</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">acn</span><span class="o">.</span><span class="n">match</span><span class="p">([</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span> <span class="ow">is</span> <span class="n">match</span></div>
+
+
+<div class="viewcode-block" id="TestAverageCoordinationNumber.test_equal_tol">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestAverageCoordinationNumber.test_equal_tol">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;equal_tol&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_equal_tol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">equal_tol</span><span class="p">):</span>
+        <span class="n">acn</span> <span class="o">=</span> <span class="n">AverageCoordinationNumber</span><span class="o">.</span><span class="n">from_value</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="n">equal_tol</span><span class="o">=</span><span class="n">equal_tol</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">7</span> <span class="ow">in</span> <span class="n">acn</span>
+        <span class="k">assert</span> <span class="mi">7</span> <span class="o">+</span> <span class="n">equal_tol</span> <span class="ow">in</span> <span class="n">acn</span>
+        <span class="k">assert</span> <span class="mi">7</span> <span class="o">-</span> <span class="n">equal_tol</span> <span class="ow">in</span> <span class="n">acn</span>
+        <span class="k">assert</span> <span class="mi">7</span> <span class="o">+</span> <span class="n">equal_tol</span> <span class="o">+</span> <span class="mf">0.001</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">acn</span>
+        <span class="k">assert</span> <span class="mi">7</span> <span class="o">-</span> <span class="n">equal_tol</span> <span class="o">-</span> <span class="mf">0.001</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">acn</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestAdsorbate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestAdsorbate">[docs]</a>
+<span class="k">class</span> <span class="nc">TestAdsorbate</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestAdsorbate.test_adsorbate_denticity">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestAdsorbate.test_adsorbate_denticity">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;bonds, denticity&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;monodentate&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                                                  <span class="p">(</span><span class="s1">&#39;bidentate&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                                                  <span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">),</span>
+                                                  <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)])</span>
+    <span class="k">def</span> <span class="nf">test_adsorbate_denticity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">co_adsorbate</span><span class="p">,</span> <span class="n">denticity</span><span class="p">,</span> <span class="n">bonds</span><span class="p">):</span>
+        <span class="n">adsorbate</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">co_adsorbate</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="n">bonds</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">adsorbate</span><span class="o">.</span><span class="n">denticity</span> <span class="o">==</span> <span class="n">denticity</span></div>
+
+
+<div class="viewcode-block" id="TestAdsorbate.test_align">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestAdsorbate.test_align">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;ads_str&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;CH3CHOH&#39;</span><span class="p">,</span> <span class="s1">&#39;CH3COH&#39;</span><span class="p">,</span> <span class="s1">&#39;CH3CO&#39;</span><span class="p">,</span> <span class="s1">&#39;CH2COH&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_align</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads_str</span><span class="p">):</span>
+        <span class="n">adsorbate</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="n">ads_str</span><span class="p">)</span>
+        <span class="n">adsorbate</span> <span class="o">=</span> <span class="n">adsorbate</span><span class="o">.</span><span class="n">align</span><span class="p">()</span>
+
+        <span class="n">val</span><span class="p">,</span> <span class="n">vec</span> <span class="o">=</span> <span class="n">adsorbate</span><span class="o">.</span><span class="n">get_moments_of_inertia</span><span class="p">(</span><span class="n">vectors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">vec_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vec</span><span class="p">[</span><span class="n">vec_idx</span><span class="p">]),</span> <span class="nb">abs</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestAdsorbate.test_adsorbate_symmetry">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_adsorbate.TestAdsorbate.test_adsorbate_symmetry">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;ads_str, expected&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;CO&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                                                   <span class="p">(</span><span class="s1">&#39;O2&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                                                   <span class="p">(</span><span class="s1">&#39;pubchem:C(=O)[O-]&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)])</span>
+    <span class="k">def</span> <span class="nf">test_adsorbate_symmetry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads_str</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">adsorbate</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="n">ads_str</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="s1">&#39;bidentate&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">adsorbate</span><span class="o">.</span><span class="n">is_symmetrical_along_bond</span><span class="p">()</span> <span class="ow">is</span> <span class="n">expected</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

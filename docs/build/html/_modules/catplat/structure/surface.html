@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.structure.surface &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.structure.surface</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.structure.surface</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains classes for slab creation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">concurrent.futures</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">catkit.gen</span> <span class="kn">import</span> <span class="n">symmetry</span>
+<span class="kn">from</span> <span class="nn">catkit.gen.utils</span> <span class="kn">import</span> <span class="n">get_voronoi_neighbors</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.qhull</span> <span class="kn">import</span> <span class="n">QhullError</span>
+
+<span class="kn">from</span> <span class="nn">catplat.io.gratoms</span> <span class="kn">import</span> <span class="n">GratomsWrapper</span>
+<span class="kn">from</span> <span class="nn">catplat.structure.slab</span> <span class="kn">import</span> <span class="n">SlabBuilder</span>
+<span class="kn">from</span> <span class="nn">pyatoms.io.ase.atoms</span> <span class="kn">import</span> <span class="n">AtomsWrapper</span><span class="p">,</span> <span class="n">IAtomsWrapper</span>
+<span class="kn">from</span> <span class="nn">pyatoms.utils.utils</span> <span class="kn">import</span> <span class="n">timeout</span>
+<span class="kn">from</span> <span class="nn">catplat.core.structure.slab</span> <span class="kn">import</span> <span class="n">Slab</span>
+<span class="kn">from</span> <span class="nn">catplat.core.chemsys</span> <span class="kn">import</span> <span class="n">Chemsys</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MillerAnalyzer">
+<a class="viewcode-back" href="../../../catplat.structure.html#catplat.structure.surface.MillerAnalyzer">[docs]</a>
+<span class="k">class</span> <span class="nc">MillerAnalyzer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot; Class which recursively tries different miller indices, create surfaces and classifies them to the corresponding facets. &quot;&quot;&quot;</span>
+
+    <span class="n">MILLER_PROPERTIES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;100&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;num_sites&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;acn&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mf">8.0</span><span class="p">},</span> <span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">}},</span>
+                         <span class="s1">&#39;111&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;num_sites&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;acn&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mf">9.0</span><span class="p">},</span> <span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}},</span>
+                         <span class="s1">&#39;110&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;num_sites&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;acn&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mf">8.3</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">11.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">},</span> <span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}},</span>
+                         <span class="s1">&#39;211&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;num_sites&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s1">&#39;acn&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">,</span> <span class="mf">9.7</span><span class="p">,</span> <span class="mf">9.3</span><span class="p">,</span> <span class="mf">7.7</span><span class="p">,</span> <span class="mf">8.3</span><span class="p">},</span>
+                                 <span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}}}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bulk</span><span class="p">,</span> <span class="n">num_processes</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">max_index</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;&quot; Initialize MillerAnalyzer class.</span>
+<span class="sd">        Attributes:</span>
+<span class="sd">            bulk (Atoms): Atoms object of the bulk.</span>
+<span class="sd">            num_processes (int): Number of processes for multiprocessing.</span>
+<span class="sd">            max_index (int): The maximum index. For example, a max_index of 1</span>
+<span class="sd">                            means that (100), (110), and (111) are returned for the cubic</span>
+<span class="sd">                            structure. All other indices are equivalent to one of these.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bulk</span> <span class="o">=</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="n">bulk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_index</span> <span class="o">=</span> <span class="n">max_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_processes</span> <span class="o">=</span> <span class="n">num_processes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bulk</span> <span class="o">=</span> <span class="n">bulk</span>
+
+<div class="viewcode-block" id="MillerAnalyzer.get_miller_indices">
+<a class="viewcode-back" href="../../../catplat.structure.html#catplat.structure.surface.MillerAnalyzer.get_miller_indices">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_miller_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">facet</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get miller indices corresponding to the specified facet. Miller indices are identified by the average</span>
+<span class="sd">        coordination number and connectivity of their surface atoms.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            facet (str): Facet of the slab.</span>
+<span class="sd">            debug (bool): Returns the values of the calculated indices.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple: (h,k,l) if miller indices is found.</span>
+<span class="sd">            None: if no miller indices matching facet with current set of trial indices</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If facet not in self.MILLER_PROPERTIES.keys()</span>
+<span class="sd">    `   &quot;&quot;&quot;</span>
+
+        <span class="c1"># simple error check for facet</span>
+        <span class="n">supported_facets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MILLER_PROPERTIES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">facet</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_facets</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error! </span><span class="si">{</span><span class="n">facet</span><span class="si">}</span><span class="s1"> not supported yet. Currently supported facets: </span><span class="si">{</span><span class="n">supported_facets</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_indices_pymatgen</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Indices to be trialed: </span><span class="si">{</span><span class="n">indices</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">ProcessPoolExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_processes</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_facet</span><span class="p">,</span> <span class="n">facet</span><span class="o">=</span><span class="n">facet</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">i</span><span class="p">):</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">}</span>
+
+            <span class="c1"># break out of loop if indices found</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="si">}</span><span class="s2"> completed, returned </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="si">}</span><span class="s2"> is a </span><span class="si">{</span><span class="n">facet</span><span class="si">}</span><span class="s2"> surface, cancelling tasks...&quot;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># finish up running futures and cancel</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cancelling </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+                    <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+            <span class="n">debug</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;get_miller_indices output: </span><span class="si">{</span><span class="n">debug</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_is_facet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">facet</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Check if miller index corresponds to facet.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True: if surface of the slab created using specified index corresponds to facet.</span>
+<span class="sd">            False: if does not correspond to facet.</span>
+<span class="sd">            Error: if error occurred when obtaining slab/site information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># get surface and site information</span>
+            <span class="n">surface</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_surface</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">num_sites</span><span class="p">,</span> <span class="n">acn_set</span><span class="p">,</span> <span class="n">conn_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sites_info</span><span class="p">(</span><span class="n">surface</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Finished processing </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="c1"># check if site information corresponds to facet</span>
+            <span class="k">if</span> <span class="n">num_sites</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">MILLER_PROPERTIES</span><span class="p">[</span><span class="n">facet</span><span class="p">][</span><span class="s1">&#39;num_sites&#39;</span><span class="p">]</span> <span class="ow">and</span> \
+                    <span class="n">acn_set</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">MILLER_PROPERTIES</span><span class="p">[</span><span class="n">facet</span><span class="p">][</span><span class="s1">&#39;acn&#39;</span><span class="p">]</span> <span class="ow">and</span> \
+                    <span class="n">conn_set</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">MILLER_PROPERTIES</span><span class="p">[</span><span class="n">facet</span><span class="p">][</span><span class="s1">&#39;connectivity&#39;</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">QhullError</span><span class="p">,</span> <span class="ne">TimeoutError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">error</span>
+
+    <span class="nd">@lru_cache</span><span class="p">()</span>
+    <span class="nd">@timeout</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_get_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get Surface object from miller index. &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting surface for </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">SlabBuilder</span><span class="p">(</span><span class="n">bulk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="p">,</span> <span class="n">miller_index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">slab</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">get_slab</span><span class="p">(</span><span class="n">iterm</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">slab</span> <span class="o">=</span> <span class="n">Slab</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="n">miller_index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">apply_vacuum</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">slab</span><span class="o">.</span><span class="n">surface</span>
+
+    <span class="nd">@lru_cache</span><span class="p">()</span>
+    <span class="nd">@timeout</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_get_sites_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get site information (number of sites, average coordination set, connectivity set) from Surface object.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if surface.surface_density is less than 1.2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">surface</span><span class="o">.</span><span class="n">surface_density</span> <span class="o">&lt;</span> <span class="mf">1.2</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">catplat.adsorption.build</span> <span class="kn">import</span> <span class="n">ComplexBuilder</span>
+            <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">surface</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                    <span class="n">num_procs</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+            <span class="n">sites_info</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">get_sites_info</span><span class="p">()</span>
+            <span class="n">num_sites</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sites_info</span><span class="o">.</span><span class="n">connectivity</span><span class="p">)</span>
+            <span class="n">acn_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">sites_info</span><span class="o">.</span><span class="n">avg_coord_num</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># round acn to 1 dp</span>
+            <span class="n">conn_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sites_info</span><span class="o">.</span><span class="n">connectivity</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">num_sites</span><span class="p">,</span> <span class="n">acn_set</span><span class="p">,</span> <span class="n">conn_set</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Surface density is less than threshold value of 1.2.&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MillerAnalyzer.get_terminations">
+<a class="viewcode-back" href="../../../catplat.structure.html#catplat.structure.surface.MillerAnalyzer.get_terminations">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_terminations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns the number of terminations.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            index (tuple): Miller indices to cleave the bulk.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: number of terminations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">SlabBuilder</span><span class="p">(</span><span class="n">bulk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="p">,</span> <span class="n">miller_index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">slabs</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">generate_surfaces</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">slabs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_indices_pymatgen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Handles negative miller indices as well. &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">pymatgen.core.surface</span> <span class="kn">import</span> \
+            <span class="n">get_symmetrically_distinct_miller_indices</span>
+
+        <span class="c1"># Important to use standardized cell</span>
+        <span class="n">bulk</span> <span class="o">=</span> <span class="n">symmetry</span><span class="o">.</span><span class="n">get_standardized_cell</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+        <span class="n">bulk</span> <span class="o">=</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="n">bulk</span><span class="p">)</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">bulk</span><span class="o">.</span><span class="n">to_structure</span><span class="p">()</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">get_symmetrically_distinct_miller_indices</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">max_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_index</span><span class="p">,</span> <span class="n">return_hkil</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">indices</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># improves efficiency by sorting indices  lower miller indices first</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Number of miller index returned: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">indices</span></div>
+
+
+
+<div class="viewcode-block" id="Surface">
+<a class="viewcode-back" href="../../../catplat.structure.html#catplat.structure.surface.Surface">[docs]</a>
+<span class="k">class</span> <span class="nc">Surface</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Slab with specified indices of atoms at the top and bottom surfaces.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atoms (Atoms): Atoms object</span>
+<span class="sd">        top_indices (iterable): Iterable of atom indices at the top surface</span>
+<span class="sd">        bottom_indices (iterable): Iterable of atom indices at the bottom surface</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">top_indices</span><span class="p">,</span> <span class="n">bottom_indices</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">top_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">top_indices</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">bottom_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bottom_indices</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">top_indices</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bottom_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">bottom_indices</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Surface.gratoms">
+<a class="viewcode-back" href="../../../catplat.structure.html#catplat.structure.surface.Surface.gratoms">[docs]</a>
+    <span class="k">def</span> <span class="nf">gratoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">GratomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">atoms</span><span class="o">.</span><span class="n">set_surface_atoms</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">top_indices</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bottom_indices</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">atoms</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">cell</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cell_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">vacuum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">slab_thickness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thickness</span>
+        <span class="n">vacuum</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_length</span> <span class="o">-</span> <span class="n">slab_thickness</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">vacuum</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_thickness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">slab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">zmin</span> <span class="o">=</span> <span class="n">zmax</span> <span class="o">=</span> <span class="n">slab</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">slab</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">zmax</span><span class="p">:</span>
+                <span class="n">zmax</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">zmin</span><span class="p">:</span>
+                <span class="n">zmin</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">slab_thickness</span> <span class="o">=</span> <span class="n">zmax</span> <span class="o">-</span> <span class="n">zmin</span>
+        <span class="k">return</span> <span class="n">slab_thickness</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">surface_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsWrapper</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; AtomsWrapper object of surface&quot;&quot;&quot;</span>
+        <span class="n">top_surface</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="n">cell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_indices</span><span class="p">:</span>
+            <span class="n">top_surface</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">AtomsWrapper</span><span class="p">(</span><span class="n">top_surface</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">termination</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Chemsys of surface&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">chemsys</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">chemsys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Chemsys</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Chemsys of surface&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Chemsys</span><span class="o">.</span><span class="n">get_chemsys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">surface_atoms</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">surface_acn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">catplat.utils</span> <span class="kn">import</span> <span class="n">get_avg_coord_num</span>
+        <span class="k">return</span> <span class="n">get_avg_coord_num</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">top_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mean distance of two top sites&quot;&quot;&quot;</span>
+        <span class="n">top_surface</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface_atoms</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># repeat for larger slab</span>
+        <span class="n">tmp_surface</span> <span class="o">=</span> <span class="n">top_surface</span><span class="o">.</span><span class="n">repeat</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># graph theory of surface atoms</span>
+        <span class="n">tmp_surface_graph</span> <span class="o">=</span> <span class="n">tmp_surface</span><span class="o">.</span><span class="n">graph</span><span class="p">(</span><span class="n">neighbour_distance</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+        <span class="n">neighbour_list</span> <span class="o">=</span> <span class="n">tmp_surface_graph</span><span class="o">.</span><span class="n">neighbour_list</span>
+
+        <span class="c1"># get the mean top site distance</span>
+
+        <span class="n">dist</span> <span class="o">=</span> <span class="p">[</span><span class="n">tmp_surface</span><span class="o">.</span><span class="n">get_distances</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">mic</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">neighbour_list</span><span class="p">)]</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dist</span><span class="p">]</span>
+
+        <span class="n">top_distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">top_distance</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">surface_density</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Density of the surface atoms over xy area&quot;&quot;&quot;</span>
+        <span class="n">top_surface</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface_atoms</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># repeat for larger slab, minimize edge effects</span>
+        <span class="n">tmp_surface</span> <span class="o">=</span> <span class="n">top_surface</span><span class="o">.</span><span class="n">repeat</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">num_surface_atoms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp_surface</span><span class="p">)</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">tmp_surface</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tmp_surface</span><span class="o">.</span><span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="n">surface_density</span> <span class="o">=</span> <span class="n">num_surface_atoms</span> <span class="o">/</span> <span class="n">area</span>
+        <span class="k">return</span> <span class="n">surface_density</span>
+
+<div class="viewcode-block" id="Surface.from_atoms">
+<a class="viewcode-back" href="../../../catplat.structure.html#catplat.structure.surface.Surface.from_atoms">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_atoms</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">atoms</span><span class="p">):</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">surface_atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">arrays</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;surface_atoms&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">surface_atoms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">top_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">surface_atoms</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">bottom_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">surface_atoms</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">surface</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="n">top_indices</span><span class="o">=</span><span class="n">top_indices</span><span class="p">,</span> <span class="n">bottom_indices</span><span class="o">=</span><span class="n">bottom_indices</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">builder</span> <span class="o">=</span> <span class="n">SurfaceBuilder</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">)</span>
+            <span class="n">surface</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">surface</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SurfaceBuilder">
+<a class="viewcode-back" href="../../../catplat.structure.html#catplat.structure.surface.SurfaceBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">SurfaceBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds an instance of Surface with a given slab.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atoms (Atoms): Atoms object representing the slab</span>
+<span class="sd">        voronoi_cutoff (int, Angstroms): Larger cutoff can better resolve the &quot;ups and downs&quot; </span>
+<span class="sd">            of the surfacewhereas smaller cutoff smoothens the surface. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1E-9</span><span class="p">,</span> <span class="n">voronoi_cutoff</span><span class="o">=</span><span class="mf">5.5</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voronoi_cutoff</span> <span class="o">=</span> <span class="n">voronoi_cutoff</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_tmp_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Temporary processed atoms object used for determining top and bottom indices&quot;&quot;&quot;</span>
+        <span class="n">tmp_atoms</span> <span class="o">=</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="n">tmp_atoms</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">array</span>
+
+        <span class="c1"># wrap atoms</span>
+        <span class="n">tmp_atoms</span><span class="o">.</span><span class="n">set_positions</span><span class="p">(</span><span class="n">tmp_atoms</span><span class="o">.</span><span class="n">get_positions</span><span class="p">(</span><span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+        <span class="c1"># translate slab downwards along z cell vector</span>
+        <span class="c1"># get z cell vector</span>
+        <span class="n">z_val</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">cell_vec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cell</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cell_vec</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">z_val</span><span class="p">:</span>
+                <span class="n">z_val</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cell_vec</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">z_vec_idx</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="n">z_vec</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[</span><span class="n">z_vec_idx</span><span class="p">]</span>
+
+        <span class="c1"># get z min</span>
+        <span class="n">zmin</span> <span class="o">=</span> <span class="n">tmp_atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">tmp_atoms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">zmin</span><span class="p">:</span>
+                <span class="n">zmin</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="c1"># get scalar to translate atoms</span>
+        <span class="n">scalar</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="n">zmin</span> <span class="o">/</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">z_vec</span><span class="p">]</span> <span class="o">*</span> <span class="n">z_vec</span>
+
+        <span class="n">tmp_atoms</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">scalar</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tmp_atoms</span>
+
+<div class="viewcode-block" id="SurfaceBuilder.build">
+<a class="viewcode-back" href="../../../catplat.structure.html#catplat.structure.surface.SurfaceBuilder.build">[docs]</a>
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">slab</span> <span class="o">=</span> <span class="n">Slab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tmp_atoms</span><span class="p">)</span>
+        <span class="n">slab_novac</span> <span class="o">=</span> <span class="n">slab</span><span class="o">.</span><span class="n">eliminate_vacuum</span><span class="p">()</span>
+        <span class="n">top_indices</span><span class="p">,</span> <span class="n">bottom_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_determine_surface_atoms</span><span class="p">(</span><span class="n">slab_novac</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Surface</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">top_indices</span><span class="o">=</span><span class="n">top_indices</span><span class="p">,</span> <span class="n">bottom_indices</span><span class="o">=</span><span class="n">bottom_indices</span><span class="p">)</span></div>
+
+
+
+    <span class="c1"># note: adapted from SlabGenerator.get_slab_basis</span>
+    <span class="k">def</span> <span class="nf">_determine_surface_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">):</span>
+        <span class="n">slab</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># PBC must be all True for surface atom detection</span>
+        <span class="n">slab</span><span class="o">.</span><span class="n">pbc</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+
+        <span class="n">slab_double</span> <span class="o">=</span> <span class="n">slab</span><span class="o">.</span><span class="n">repeat</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">gvn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_voronoi_neighbours</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">IAtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="n">slab_double</span><span class="p">),</span>
+                                      <span class="n">voronoi_cutoff</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">voronoi_cutoff</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">slab</span><span class="p">)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">gvn</span><span class="p">[:</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">surf_atoms</span> <span class="o">=</span> <span class="n">diff</span> <span class="o">!=</span> <span class="mi">0</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">surf_atoms</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="n">scaled_zpositions</span> <span class="o">=</span> <span class="n">slab</span><span class="o">.</span><span class="n">get_scaled_positions</span><span class="p">()[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span>
+        <span class="n">scaled_zpositions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">scaled_zpositions</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">zcoords</span> <span class="o">=</span> <span class="n">scaled_zpositions</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scaled_zpositions</span><span class="p">)</span>
+
+        <span class="n">top</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">zcoords</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">bottom</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">zcoords</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">top</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_get_voronoi_neighbours</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">voronoi_cutoff</span><span class="o">=</span><span class="mf">5.5</span><span class="p">):</span>
+        <span class="c1"># less than 3 might have problem</span>
+        <span class="k">return</span> <span class="n">get_voronoi_neighbors</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">voronoi_cutoff</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

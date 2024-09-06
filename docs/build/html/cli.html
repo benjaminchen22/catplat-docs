@@ -1,0 +1,2349 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command Line Interface &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Gallery" href="gallery.html" />
+    <link rel="prev" title="Tutorials" href="tutorials.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#help">Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#catplat">catplat</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-analyze">analyze</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-build">build</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-calculate">calculate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-config">config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-database">database</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-download">download</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-dryrun">dryrun</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-entry">entry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-extract">extract</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-laspinit">laspinit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-mlp">mlp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-projects">projects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-retrieve">retrieve</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-statistics">statistics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-test">test</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-tunnel">tunnel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#catplat-welcome">welcome</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Command Line Interface</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/cli.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="command-line-interface">
+<h1><a class="toc-backref" href="#id2" role="doc-backlink">Command Line Interface</a><a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h1>
+<nav class="contents" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#command-line-interface" id="id2">Command Line Interface</a></p>
+<ul>
+<li><p><a class="reference internal" href="#help" id="id3">Help</a></p></li>
+<li><p><a class="reference internal" href="#documentation" id="id4">Documentation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat" id="id5">catplat</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat-analyze" id="id6">analyze</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat-analyze-adsorbate" id="id7">adsorbate</a></p></li>
+<li><p><a class="reference internal" href="#catplat-analyze-bulk" id="id8">bulk</a></p></li>
+<li><p><a class="reference internal" href="#catplat-analyze-complex" id="id9">complex</a></p></li>
+<li><p><a class="reference internal" href="#catplat-analyze-miller" id="id10">miller</a></p></li>
+<li><p><a class="reference internal" href="#catplat-analyze-sites" id="id11">sites</a></p></li>
+<li><p><a class="reference internal" href="#catplat-analyze-slab" id="id12">slab</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#catplat-build" id="id13">build</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat-build-adsorbate" id="id14">adsorbate</a></p></li>
+<li><p><a class="reference internal" href="#catplat-build-bulk" id="id15">bulk</a></p></li>
+<li><p><a class="reference internal" href="#catplat-build-complex" id="id16">complex</a></p></li>
+<li><p><a class="reference internal" href="#catplat-build-multicomplex" id="id17">multicomplex</a></p></li>
+<li><p><a class="reference internal" href="#catplat-build-slab" id="id18">slab</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#catplat-calculate" id="id19">calculate</a></p></li>
+<li><p><a class="reference internal" href="#catplat-config" id="id20">config</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat-config-project" id="id21">project</a></p></li>
+<li><p><a class="reference internal" href="#catplat-config-show" id="id22">show</a></p></li>
+<li><p><a class="reference internal" href="#catplat-config-user" id="id23">user</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#catplat-database" id="id24">database</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat-database-backup" id="id25">backup</a></p></li>
+<li><p><a class="reference internal" href="#catplat-database-upgrade" id="id26">upgrade</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#catplat-download" id="id27">download</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat-download-resources" id="id28">resources</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#catplat-dryrun" id="id29">dryrun</a></p></li>
+<li><p><a class="reference internal" href="#catplat-entry" id="id30">entry</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat-entry-delete" id="id31">delete</a></p></li>
+<li><p><a class="reference internal" href="#catplat-entry-delete-key" id="id32">delete-key</a></p></li>
+<li><p><a class="reference internal" href="#catplat-entry-ignore" id="id33">ignore</a></p></li>
+<li><p><a class="reference internal" href="#catplat-entry-update-key" id="id34">update-key</a></p></li>
+<li><p><a class="reference internal" href="#catplat-entry-view" id="id35">view</a></p></li>
+<li><p><a class="reference internal" href="#catplat-entry-write" id="id36">write</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#catplat-extract" id="id37">extract</a></p></li>
+<li><p><a class="reference internal" href="#catplat-laspinit" id="id38">laspinit</a></p></li>
+<li><p><a class="reference internal" href="#catplat-mlp" id="id39">mlp</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat-mlp-view" id="id40">view</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#catplat-projects" id="id41">projects</a></p></li>
+<li><p><a class="reference internal" href="#catplat-retrieve" id="id42">retrieve</a></p></li>
+<li><p><a class="reference internal" href="#catplat-statistics" id="id43">statistics</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat-statistics-entries" id="id44">entries</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#catplat-test" id="id45">test</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat-test-db" id="id46">db</a></p></li>
+<li><p><a class="reference internal" href="#catplat-test-self" id="id47">self</a></p></li>
+<li><p><a class="reference internal" href="#catplat-test-tunnel" id="id48">tunnel</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#catplat-tunnel" id="id49">tunnel</a></p>
+<ul>
+<li><p><a class="reference internal" href="#catplat-tunnel-create" id="id50">create</a></p></li>
+<li><p><a class="reference internal" href="#catplat-tunnel-destroy" id="id51">destroy</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#catplat-welcome" id="id52">welcome</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Summary of Catplat CLI Sub-commands</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Sub-command 1</p></th>
+<th class="head"><p>Sub-command 2</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>analyze</p></td>
+<td><p>adsorbate</p></td>
+<td><p>Analyze adsorbate structure.</p></td>
+</tr>
+<tr class="row-odd"><td><p>analyze</p></td>
+<td><p>bulk</p></td>
+<td><p>Analyze bulk structure.</p></td>
+</tr>
+<tr class="row-even"><td><p>analyze</p></td>
+<td><p>complex</p></td>
+<td><p>Analyze complex structure.</p></td>
+</tr>
+<tr class="row-odd"><td><p>analyze</p></td>
+<td><p>miller</p></td>
+<td><p>Analyze bulk structure to obtain facet-like miller indices.</p></td>
+</tr>
+<tr class="row-even"><td><p>analyze</p></td>
+<td><p>sites</p></td>
+<td><p>Analyze adsorption sites of a slab.</p></td>
+</tr>
+<tr class="row-odd"><td><p>analyze</p></td>
+<td><p>slab</p></td>
+<td><p>Analyze slab structure.</p></td>
+</tr>
+<tr class="row-even"><td><p>build</p></td>
+<td><p>adsorbate</p></td>
+<td><p>Create/Write adsorbate structures.</p></td>
+</tr>
+<tr class="row-odd"><td><p>build</p></td>
+<td><p>bulk</p></td>
+<td><p>Create/Write bulk structures.</p></td>
+</tr>
+<tr class="row-even"><td><p>build</p></td>
+<td><p>complex</p></td>
+<td><p>Create/Write complex structures.</p></td>
+</tr>
+<tr class="row-odd"><td><p>build</p></td>
+<td><p>multicomplex</p></td>
+<td><p>Create/Write multi-adsorbate complex structures.</p></td>
+</tr>
+<tr class="row-even"><td><p>build</p></td>
+<td><p>slab</p></td>
+<td><p>Create/Write slab structures.</p></td>
+</tr>
+<tr class="row-odd"><td><p>calculate</p></td>
+<td><p>-</p></td>
+<td><p>Run Catplat workflow calculations.</p></td>
+</tr>
+<tr class="row-even"><td><p>config</p></td>
+<td><p>-</p></td>
+<td><p>Set up new project/view current project settings.</p></td>
+</tr>
+<tr class="row-odd"><td><p>database</p></td>
+<td><p>backup</p></td>
+<td><p>Backup database to file.</p></td>
+</tr>
+<tr class="row-even"><td><p>dryrun</p></td>
+<td><p>-</p></td>
+<td><p>Trial run for catplat claculate.</p></td>
+</tr>
+<tr class="row-odd"><td><p>entry</p></td>
+<td><p>delete</p></td>
+<td><p>Delete selected entries.</p></td>
+</tr>
+<tr class="row-even"><td><p>entry</p></td>
+<td><p>delete-key</p></td>
+<td><p>Delete attribute keys.</p></td>
+</tr>
+<tr class="row-odd"><td><p>entry</p></td>
+<td><p>ignore</p></td>
+<td><p>Ignore selected entries.</p></td>
+</tr>
+<tr class="row-even"><td><p>entry</p></td>
+<td><p>update-key</p></td>
+<td><p>Update existing values.</p></td>
+</tr>
+<tr class="row-odd"><td><p>entry</p></td>
+<td><p>view</p></td>
+<td><p>View data from selected entries.</p></td>
+</tr>
+<tr class="row-even"><td><p>entry</p></td>
+<td><p>write</p></td>
+<td><p>Write data from selected entries.</p></td>
+</tr>
+<tr class="row-odd"><td><p>extract</p></td>
+<td><p>-</p></td>
+<td><p>Extract calculation information from folders.</p></td>
+</tr>
+<tr class="row-even"><td><p>laspinit</p></td>
+<td><p>-</p></td>
+<td><p>Create Initial/Transition/Final structures for LASP-CBD.</p></td>
+</tr>
+<tr class="row-odd"><td><p>retrieve</p></td>
+<td><p>-</p></td>
+<td><p>Queries the database.</p></td>
+</tr>
+<tr class="row-even"><td><p>test</p></td>
+<td><p>db</p></td>
+<td><p>Test database integrity.</p></td>
+</tr>
+<tr class="row-odd"><td><p>test</p></td>
+<td><p>self</p></td>
+<td><p>Quick test for tunnel and db integrity.</p></td>
+</tr>
+<tr class="row-even"><td><p>test</p></td>
+<td><p>tunnel</p></td>
+<td><p>Test sql tunnel.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="help">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Help</a><a class="headerlink" href="#help" title="Link to this heading"></a></h2>
+<p>You may get more details of the options available by running the command with the <code class="docutils literal notranslate"><span class="pre">--help</span></code> option.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>catplat<span class="w"> </span>--help
+<span class="gp">$ </span>catplat<span class="w"> </span>sub-command-1<span class="w"> </span>--help
+<span class="gp">$ </span>catplat<span class="w"> </span>sub-command-1<span class="w"> </span>--sub-command-1-required-options<span class="w"> </span>sub-command-2<span class="w"> </span>--help
+</pre></div>
+</div>
+</section>
+<section id="documentation">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Documentation</a><a class="headerlink" href="#documentation" title="Link to this heading"></a></h2>
+<section id="catplat">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">catplat</a><a class="headerlink" href="#catplat" title="Link to this heading"></a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-stream-log">
+<span class="sig-name descname"><span class="pre">--stream-log</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-stream-log" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-log">
+<span class="sig-name descname"><span class="pre">--log</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-log" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-verbose">
+<span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-verbose" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-version">
+<span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-version" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<section id="catplat-analyze">
+<h4><a class="toc-backref" href="#id6" role="doc-backlink">analyze</a><a class="headerlink" href="#catplat-analyze" title="Link to this heading"></a></h4>
+<p>Analyze properties of structure files.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>analyze<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="catplat-analyze-adsorbate">
+<h5><a class="toc-backref" href="#id7" role="doc-backlink">adsorbate</a><a class="headerlink" href="#catplat-analyze-adsorbate" title="Link to this heading"></a></h5>
+<p>Analyze adsorbate structure.</p>
+<dl class="simple">
+<dt>Example:</dt><dd><p>catplat analyze adsorbate –name CO</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>analyze<span class="w"> </span>adsorbate<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-adsorbate-n">
+<span id="cmdoption-catplat-analyze-adsorbate-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-adsorbate-n" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+</section>
+<section id="catplat-analyze-bulk">
+<h5><a class="toc-backref" href="#id8" role="doc-backlink">bulk</a><a class="headerlink" href="#catplat-analyze-bulk" title="Link to this heading"></a></h5>
+<p>Analyze bulk structure.</p>
+<dl class="simple">
+<dt>Example:</dt><dd><p>catplat analyze bulk –name Cu_bulk</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>analyze<span class="w"> </span>bulk<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-bulk-n">
+<span id="cmdoption-catplat-analyze-bulk-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-bulk-n" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+</section>
+<section id="catplat-analyze-complex">
+<h5><a class="toc-backref" href="#id9" role="doc-backlink">complex</a><a class="headerlink" href="#catplat-analyze-complex" title="Link to this heading"></a></h5>
+<p>Analyze complex structure.</p>
+<p>Gives the percentage of images in top, bridge, three-fold, and four-fold hollow sites.</p>
+<dl class="simple">
+<dt>Example:</dt><dd><p>catplat analyze complex -n POSCAR_Rh36_O2 –slab-elements Rh –adsorbate O2</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>analyze<span class="w"> </span>complex<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-complex-n">
+<span id="cmdoption-catplat-analyze-complex-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-complex-n" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-complex-a">
+<span id="cmdoption-catplat-analyze-complex-adsorbate"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--adsorbate</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;adsorbate&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-complex-a" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-complex-s">
+<span id="cmdoption-catplat-analyze-complex-slab-elements"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--slab-elements</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;slab_elements&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-complex-s" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-complex-v">
+<span id="cmdoption-catplat-analyze-complex-verbose"></span><span id="cmdoption-catplat-analyze-complex-no-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-analyze-complex-v" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-complex-num-processes">
+<span class="sig-name descname"><span class="pre">--num-processes</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_processes&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-complex-num-processes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-complex-solfilter">
+<span id="cmdoption-catplat-analyze-complex-no-solfilter"></span><span class="sig-name descname"><span class="pre">--solfilter</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-solfilter</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-analyze-complex-solfilter" title="Link to this definition"></a></dt>
+<dd><p>Removes solvent (H2O) molecules from images. Requires solvation package</p>
+</dd></dl>
+
+</section>
+<section id="catplat-analyze-miller">
+<h5><a class="toc-backref" href="#id10" role="doc-backlink">miller</a><a class="headerlink" href="#catplat-analyze-miller" title="Link to this heading"></a></h5>
+<p>Analyze bulk structure to obtain facet-like miller indices.</p>
+<dl class="simple">
+<dt>Example:</dt><dd><p>catplat analyze miller –name Cu_bulk –facet 111 –max-index 3</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>analyze<span class="w"> </span>miller<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-miller-n">
+<span id="cmdoption-catplat-analyze-miller-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-miller-n" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-miller-f">
+<span id="cmdoption-catplat-analyze-miller-facet"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--facet</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;facet&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-miller-f" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Facet of the surface i.e. 111, 100, 211.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-miller-i">
+<span id="cmdoption-catplat-analyze-miller-max-index"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--max-index</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_index&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-miller-i" title="Link to this definition"></a></dt>
+<dd><p>Maximum index to trial.</p>
+</dd></dl>
+
+</section>
+<section id="catplat-analyze-sites">
+<h5><a class="toc-backref" href="#id11" role="doc-backlink">sites</a><a class="headerlink" href="#catplat-analyze-sites" title="Link to this heading"></a></h5>
+<p>Analyze adsorption sites of a slab.</p>
+<dl class="simple">
+<dt>Example:</dt><dd><p>catplat analyze sites -n SLAB_POSCAR</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>analyze<span class="w"> </span>sites<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-sites-n">
+<span id="cmdoption-catplat-analyze-sites-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-sites-n" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-sites-sites-in-cell">
+<span id="cmdoption-catplat-analyze-sites-no-sites-in-cell"></span><span class="sig-name descname"><span class="pre">--sites-in-cell</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-sites-in-cell</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-analyze-sites-sites-in-cell" title="Link to this definition"></a></dt>
+<dd><p>Filter sites in cell.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-sites-c">
+<span id="cmdoption-catplat-analyze-sites-connectivity"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--connectivity</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;connectivity&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-sites-c" title="Link to this definition"></a></dt>
+<dd><p>Filter connectivity.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-sites-a">
+<span id="cmdoption-catplat-analyze-sites-avg-coord-num"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--avg-coord-num</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;avg_coord_num&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-sites-a" title="Link to this definition"></a></dt>
+<dd><p>Filter average coordination number.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-sites-i">
+<span id="cmdoption-catplat-analyze-sites-sites"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--sites</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;sites&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-sites-i" title="Link to this definition"></a></dt>
+<dd><p>Filter site indices.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-sites-unique">
+<span id="cmdoption-catplat-analyze-sites-no-unique"></span><span class="sig-name descname"><span class="pre">--unique</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-unique</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-analyze-sites-unique" title="Link to this definition"></a></dt>
+<dd><p>Filter unique site.</p>
+</dd></dl>
+
+</section>
+<section id="catplat-analyze-slab">
+<h5><a class="toc-backref" href="#id12" role="doc-backlink">slab</a><a class="headerlink" href="#catplat-analyze-slab" title="Link to this heading"></a></h5>
+<p>Analyze slab structure.</p>
+<dl class="simple">
+<dt>Example:</dt><dd><p>catplat analyze slab -n Pt111</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>analyze<span class="w"> </span>slab<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-analyze-slab-n">
+<span id="cmdoption-catplat-analyze-slab-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-analyze-slab-n" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+</section>
+</section>
+<section id="catplat-build">
+<h4><a class="toc-backref" href="#id13" role="doc-backlink">build</a><a class="headerlink" href="#catplat-build" title="Link to this heading"></a></h4>
+<p>Build/Write structures.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>build<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="catplat-build-adsorbate">
+<h5><a class="toc-backref" href="#id14" role="doc-backlink">adsorbate</a><a class="headerlink" href="#catplat-build-adsorbate" title="Link to this heading"></a></h5>
+<p>Create/Write adsorbate structures.</p>
+<dl>
+<dt>Example:</dt><dd><p># some adsorbates are available in the database
+catplat build adsorbate -n CO –box-size 10</p>
+<p># single atom adsorbates
+catplat build adsorbate -n atom:Cl –box-size 10</p>
+<p># generate adsorbate from smiles
+catplat build adsorbate -n “pubchem:CC(O)=O” –box-size 10</p>
+<p># generate adsorbate from pubchem id
+catplat build adsorbate -n pubchem:281 –box-size 10</p>
+<p># generate adsorbate from name
+catplat build adsorbate -n pubchem:Ethanol –box-size 10</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>build<span class="w"> </span>adsorbate<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-adsorbate-n">
+<span id="cmdoption-catplat-build-adsorbate-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-adsorbate-n" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-adsorbate-boxsize">
+<span id="cmdoption-catplat-build-adsorbate-box-size"></span><span class="sig-name descname"><span class="pre">--boxsize</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--box-size</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;boxsize&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-adsorbate-boxsize" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-adsorbate-write">
+<span id="cmdoption-catplat-build-adsorbate-no-write"></span><span class="sig-name descname"><span class="pre">--write</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-write</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-build-adsorbate-write" title="Link to this definition"></a></dt>
+<dd><p>Write structures into folders</p>
+</dd></dl>
+
+</section>
+<section id="catplat-build-bulk">
+<h5><a class="toc-backref" href="#id15" role="doc-backlink">bulk</a><a class="headerlink" href="#catplat-build-bulk" title="Link to this heading"></a></h5>
+<p>Create/Write bulk structures.</p>
+<dl>
+<dt>Example:</dt><dd><p># get the stable fcc Cu bulk
+catplat build bulk –chemsys Cu –e-above-hull “&lt;0.01” –spacegroup 225 –mpid mp-30</p>
+<p># get all the stable binary Cu-* bulks
+catplat build bulk –chemsys Cu-* –e-above-hull “&lt;0.01” –spacegroup 225</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>build<span class="w"> </span>bulk<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-bulk-c">
+<span id="cmdoption-catplat-build-bulk-chemsys"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--chemsys</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;chemsys&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-bulk-c" title="Link to this definition"></a></dt>
+<dd><p>Species of the system, sorted alphabetically and separated by dashes. eg. –chemsys Cu-Rh</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-bulk-e">
+<span id="cmdoption-catplat-build-bulk-e-above-hull"></span><span class="sig-name descname"><span class="pre">-e</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--e-above-hull</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;e_above_hull&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-bulk-e" title="Link to this definition"></a></dt>
+<dd><p>Energy above hull of the bulk structure as indicated on Materials Project. Comparator strings are preferred over float unless exact match is desired.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-bulk-f">
+<span id="cmdoption-catplat-build-bulk-bulk-formula"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--bulk-formula</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bulk_formula&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-bulk-f" title="Link to this definition"></a></dt>
+<dd><p>Bulk formula as indicated on Materials Project.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-bulk-s">
+<span id="cmdoption-catplat-build-bulk-spacegroup"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--spacegroup</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;spacegroup&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-bulk-s" title="Link to this definition"></a></dt>
+<dd><p>Spacegroup number of bulk as indicated on Materials Project.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-bulk-i">
+<span id="cmdoption-catplat-build-bulk-mpid"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--mpid</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;mpid&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-bulk-i" title="Link to this definition"></a></dt>
+<dd><p>Materials Project ID of bulk structure</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-bulk-write">
+<span id="cmdoption-catplat-build-bulk-no-write"></span><span class="sig-name descname"><span class="pre">--write</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-write</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-build-bulk-write" title="Link to this definition"></a></dt>
+<dd><p>Write structures into folders</p>
+</dd></dl>
+
+</section>
+<section id="catplat-build-complex">
+<h5><a class="toc-backref" href="#id16" role="doc-backlink">complex</a><a class="headerlink" href="#catplat-build-complex" title="Link to this heading"></a></h5>
+<p>Create/Write complex structures.</p>
+<dl>
+<dt>Example:</dt><dd><p># monodentate CH3 on top site, rotated 30 degrees
+catplat build complex -s Pt111 -a CH3 –bonds “[0]” –connectivity “[1]” –rotation 30</p>
+<p># bind adsorbate on site 40
+catplat build complex -s Pt111 -a CH3 –sites “[40]”</p>
+<p># bidentate O2 on top-top site
+catplat build complex -s Pt111 -a O2 –bonds “[0,1]” –connectivity “[1,1]”</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>build<span class="w"> </span>complex<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-complex-a">
+<span id="cmdoption-catplat-build-complex-adsorbate-atoms"></span><span id="cmdoption-catplat-build-complex-adsorbate"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--adsorbate-atoms</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--adsorbate</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;adsorbate_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-complex-a" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Name of adsorbate.Accepted inputs:(1) “path/to/X.xyz” (2) “X” if X.* in user/catplat adsorbate directory (3) “X” if X in ase.collections.g2 (4) “atom:X” (5) “pubchem:X”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-complex-b">
+<span id="cmdoption-catplat-build-complex-bonds"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--bonds</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bonds&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-complex-b" title="Link to this definition"></a></dt>
+<dd><p>Atom index of adsorbate to bind to the slab. e.g. -b 0 -b 0,1 -b monodentate”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-complex-c">
+<span id="cmdoption-catplat-build-complex-connectivity"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--connectivity</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;connectivity&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-complex-c" title="Link to this definition"></a></dt>
+<dd><p>Connectivity of adsorption site for adsorbate to bind. e.g. e.g. -c 1 -c 1,1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-complex-n">
+<span id="cmdoption-catplat-build-complex-avg-coord-num"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--avg-coord-num</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;avg_coord_num&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-complex-n" title="Link to this definition"></a></dt>
+<dd><p>Average coordination of adsorption site for adsorbate to bind. e.g. -n 7 -n 7,7 -n “&lt;=8”, -n “&lt;8,7”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-complex-i">
+<span id="cmdoption-catplat-build-complex-sites"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--sites</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;sites&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-complex-i" title="Link to this definition"></a></dt>
+<dd><p>Site indexes to be selected. e.g. e.g. -i 40 -i 40,41</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-complex-write">
+<span id="cmdoption-catplat-build-complex-no-write"></span><span class="sig-name descname"><span class="pre">--write</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-write</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-build-complex-write" title="Link to this definition"></a></dt>
+<dd><p>Write structures into folders</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-complex-rotation">
+<span class="sig-name descname"><span class="pre">--rotation</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rotation&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-complex-rotation" title="Link to this definition"></a></dt>
+<dd><p>Rotation of adsorbate.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-complex-s">
+<span id="cmdoption-catplat-build-complex-slab"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--slab</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;slab&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-complex-s" title="Link to this definition"></a></dt>
+<dd><p>Name of slab file in user slab directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-complex-unique">
+<span id="cmdoption-catplat-build-complex-no-unique"></span><span class="sig-name descname"><span class="pre">--unique</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-unique</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-build-complex-unique" title="Link to this definition"></a></dt>
+<dd><p>Whether or not to get unique sites only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-complex-write-schematic">
+<span id="cmdoption-catplat-build-complex-no-write-schematic"></span><span class="sig-name descname"><span class="pre">--write-schematic</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-write-schematic</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-build-complex-write-schematic" title="Link to this definition"></a></dt>
+<dd><p>Write schematics</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-complex-random">
+<span class="sig-name descname"><span class="pre">--random</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-build-complex-random" title="Link to this definition"></a></dt>
+<dd><p>Select a random adsorption site</p>
+</dd></dl>
+
+</section>
+<section id="catplat-build-multicomplex">
+<h5><a class="toc-backref" href="#id17" role="doc-backlink">multicomplex</a><a class="headerlink" href="#catplat-build-multicomplex" title="Link to this heading"></a></h5>
+<p>Create/Write multi-adsorbate complex structures.</p>
+<dl class="simple">
+<dt>Example:</dt><dd><p># coadsorb 2 x CO on Cu(100) slab. Only considering top and bridge sites, always include site 40,
+catplat build multicomplex -s Pt111 -a CO -q 2 –bonds 0 –connectivity 1,2 –sites 40</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>build<span class="w"> </span>multicomplex<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-multicomplex-a">
+<span id="cmdoption-catplat-build-multicomplex-adsorbate-atoms"></span><span id="cmdoption-catplat-build-multicomplex-adsorbate"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--adsorbate-atoms</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--adsorbate</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;adsorbate_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-multicomplex-a" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Name of adsorbate.Accepted inputs:(1) “path/to/X.xyz” (2) “X” if X.* in user/catplat adsorbate directory (3) “X” if X in ase.collections.g2 (4) “atom:X” (5) “pubchem:X”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-multicomplex-b">
+<span id="cmdoption-catplat-build-multicomplex-bonds"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--bonds</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bonds&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-multicomplex-b" title="Link to this definition"></a></dt>
+<dd><p>Atom index of adsorbate to bind to the slab. e.g. -b 0 -b 0,1 -b monodentate”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-multicomplex-c">
+<span id="cmdoption-catplat-build-multicomplex-connectivity"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--connectivity</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;connectivity&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-multicomplex-c" title="Link to this definition"></a></dt>
+<dd><p>Connectivity of adsorption site for adsorbate to bind. e.g. e.g. -c 1 -c 1,1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-multicomplex-n">
+<span id="cmdoption-catplat-build-multicomplex-avg-coord-num"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--avg-coord-num</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;avg_coord_num&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-multicomplex-n" title="Link to this definition"></a></dt>
+<dd><p>Average coordination of adsorption site for adsorbate to bind. e.g. -n 7 -n 7,7 -n “&lt;=8”, -n “&lt;8,7”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-multicomplex-i">
+<span id="cmdoption-catplat-build-multicomplex-sites"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--sites</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;sites&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-multicomplex-i" title="Link to this definition"></a></dt>
+<dd><p>Site indexes to be selected. e.g. e.g. -i 40 -i 40,41</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-multicomplex-write">
+<span id="cmdoption-catplat-build-multicomplex-no-write"></span><span class="sig-name descname"><span class="pre">--write</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-write</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-build-multicomplex-write" title="Link to this definition"></a></dt>
+<dd><p>Write structures into folders</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-multicomplex-s">
+<span id="cmdoption-catplat-build-multicomplex-slab-atoms"></span><span id="cmdoption-catplat-build-multicomplex-slab"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--slab-atoms</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--slab</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;slab_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-multicomplex-s" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Name of slab file in user slab directory. When slab is specified, other bulk and slab attributes should not be specified.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-multicomplex-q">
+<span id="cmdoption-catplat-build-multicomplex-quantity"></span><span class="sig-name descname"><span class="pre">-q</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--quantity</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;quantity&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-multicomplex-q" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Number of adsorbates to adsorb on the slab.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-multicomplex-dist-tol">
+<span class="sig-name descname"><span class="pre">--dist-tol</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dist_tol&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-multicomplex-dist-tol" title="Link to this definition"></a></dt>
+<dd><p>Filter structures that have adsorbates in close proximity, defaults to 0.8*{top-top distance}.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-multicomplex-write-schematic">
+<span id="cmdoption-catplat-build-multicomplex-no-write-schematic"></span><span class="sig-name descname"><span class="pre">--write-schematic</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-write-schematic</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-build-multicomplex-write-schematic" title="Link to this definition"></a></dt>
+<dd><p>Write schematics</p>
+</dd></dl>
+
+</section>
+<section id="catplat-build-slab">
+<h5><a class="toc-backref" href="#id18" role="doc-backlink">slab</a><a class="headerlink" href="#catplat-build-slab" title="Link to this heading"></a></h5>
+<p>Create/Write slab structures.</p>
+<dl>
+<dt>Example:</dt><dd><p># Cu(100) slab with 5 layers, 3 fixed layers, 15A vacuum, 4x4 unit cell and a Rh overlayer
+catplat build slab -n Cu_bulk –overlayer Rh –miller-index 1 0 0 –num-layers 5 –num-fixed-layers 3 –vacuum 15 –unitcell-size 4 4</p>
+<p># Cu(211) slab
+catplat build slab -n Cu_bulk –miller-index 2 1 1 –num-layers 12 –num-fixed-layers 6 –unitcell-size 1 3</p>
+<p># Specify slab size by minimum dimensions
+catplat build  slab -n Cu_bulk –miller-index 1 0 0 –length 10 10 –thickness 10</p>
+</dd>
+</dl>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>build<span class="w"> </span>slab<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-o">
+<span id="cmdoption-catplat-build-slab-overlayer"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--overlayer</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;overlayer&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-slab-o" title="Link to this definition"></a></dt>
+<dd><p>Replaces top layer atoms with overlayer atoms.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-m">
+<span id="cmdoption-catplat-build-slab-miller-index"></span><span id="cmdoption-catplat-build-slab-miller"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--miller-index</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--miller</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;miller_index&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-slab-m" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Miller idx of slab. eg. –miller-index 1 1 1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-s">
+<span id="cmdoption-catplat-build-slab-unitcell-size"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--unitcell-size</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;unitcell_size&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-slab-s" title="Link to this definition"></a></dt>
+<dd><p>Size of slab to be created.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-l">
+<span id="cmdoption-catplat-build-slab-num-layers"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-layers</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_layers&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-slab-l" title="Link to this definition"></a></dt>
+<dd><p>Number of layers of the slab.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-f">
+<span id="cmdoption-catplat-build-slab-num-fixed-layers"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-fixed-layers</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_fixed_layers&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-slab-f" title="Link to this definition"></a></dt>
+<dd><p>Number of layers to be fixed.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-v">
+<span id="cmdoption-catplat-build-slab-vacuum"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--vacuum</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;vacuum&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-slab-v" title="Link to this definition"></a></dt>
+<dd><p>Amount of vacuum (in angstroms) to add on “each side” of the slab (i.e., total vacuum = vauum x 2) Vacuum should be an int.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-conventional">
+<span class="sig-name descname"><span class="pre">--conventional</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;conventional&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-slab-conventional" title="Link to this definition"></a></dt>
+<dd><p>Toggle for creation of conventional slabs.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-length">
+<span class="sig-name descname"><span class="pre">--length</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;length&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-slab-length" title="Link to this definition"></a></dt>
+<dd><p>Length (Å) of the slab.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-thickness">
+<span class="sig-name descname"><span class="pre">--thickness</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;thickness&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-slab-thickness" title="Link to this definition"></a></dt>
+<dd><p>Thickness (Å) of the slab.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-write">
+<span id="cmdoption-catplat-build-slab-no-write"></span><span class="sig-name descname"><span class="pre">--write</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-write</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-build-slab-write" title="Link to this definition"></a></dt>
+<dd><p>Write structures into folders</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-n">
+<span id="cmdoption-catplat-build-slab-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-slab-n" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Path to bulk file or name of bulk file in user bulk directory</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-rotate">
+<span class="sig-name descname"><span class="pre">--rotate</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rotate&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-build-slab-rotate" title="Link to this definition"></a></dt>
+<dd><p>Rotate the slabs around the z-axis by the specified amount.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-sort-z">
+<span id="cmdoption-catplat-build-slab-no-sort-z"></span><span class="sig-name descname"><span class="pre">--sort-z</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-sort-z</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-build-slab-sort-z" title="Link to this definition"></a></dt>
+<dd><p>Sort slabs by their z-axis positions</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-build-slab-view">
+<span id="cmdoption-catplat-build-slab-no-view"></span><span class="sig-name descname"><span class="pre">--view</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-view</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-build-slab-view" title="Link to this definition"></a></dt>
+<dd><p>View slabs via GUI.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="catplat-calculate">
+<h4><a class="toc-backref" href="#id19" role="doc-backlink">calculate</a><a class="headerlink" href="#catplat-calculate" title="Link to this heading"></a></h4>
+<p>Run Catplat workflow calculations.</p>
+<p>Obtains results of specified system by first searching the database. If the results do not exist, calculate using DFT.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line">catplat calculate –project &lt;myproject&gt; –chemsys Cu</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>calculate<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-p">
+<span id="cmdoption-catplat-calculate-project"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--project</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-p" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Name of project to run. Contains information such as database_path, incar settings, etc.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-bulk-atoms">
+<span class="sig-name descname"><span class="pre">--bulk-atoms</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bulk_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-bulk-atoms" title="Link to this definition"></a></dt>
+<dd><p>Name of bulk file in user bulk directory. When bulk is specified, other bulk attributes such as e_above_hull should not be specified.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-chemsys">
+<span class="sig-name descname"><span class="pre">--chemsys</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;chemsys&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-chemsys" title="Link to this definition"></a></dt>
+<dd><p>Chemical species of the bulk. Multiple elements should be separated by dashes. e.g. –chemsys Cu-Rh</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-min-e-above-hull">
+<span class="sig-name descname"><span class="pre">--min-e-above-hull</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_e_above_hull&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-min-e-above-hull" title="Link to this definition"></a></dt>
+<dd><p>Minimum energy above hull of the bulk structure as indicated on Materials Project. [eV/atom]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-max-e-above-hull">
+<span class="sig-name descname"><span class="pre">--max-e-above-hull</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_e_above_hull&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-max-e-above-hull" title="Link to this definition"></a></dt>
+<dd><p>Maximum energy above hull of the bulk structure as indicated on Materials Project. [eV/atom]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-bulk-formula">
+<span class="sig-name descname"><span class="pre">--bulk-formula</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bulk_formula&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-bulk-formula" title="Link to this definition"></a></dt>
+<dd><p>Bulk formula as indicated on Materials Project. e.g. –bulk-formula Cu3Rh</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-spacegroup">
+<span class="sig-name descname"><span class="pre">--spacegroup</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;spacegroup&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-spacegroup" title="Link to this definition"></a></dt>
+<dd><p>Spacegroup number of bulk as indicated on Materials Project.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-mpid">
+<span class="sig-name descname"><span class="pre">--mpid</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;mpid&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-mpid" title="Link to this definition"></a></dt>
+<dd><p>Materials Project ID of bulk structure</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-s">
+<span id="cmdoption-catplat-calculate-slab-atoms"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--slab-atoms</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;slab_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-s" title="Link to this definition"></a></dt>
+<dd><p>Name of slab file in user slab directory. When slab is specified, other bulk and slab attributes should not be specified.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-termination">
+<span class="sig-name descname"><span class="pre">--termination</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;termination&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-termination" title="Link to this definition"></a></dt>
+<dd><p>Slab termination, defined as the composition of the surface layer..</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-o">
+<span id="cmdoption-catplat-calculate-overlayer"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--overlayer</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;overlayer&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-o" title="Link to this definition"></a></dt>
+<dd><p>If specified, replaces top layer atoms with overlayer atoms.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-m">
+<span id="cmdoption-catplat-calculate-miller-index"></span><span id="cmdoption-catplat-calculate-miller"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--miller-index</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--miller</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;miller_index&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-m" title="Link to this definition"></a></dt>
+<dd><p>Miller idx of slab. eg. –miller-index 1 1 1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-unitcell-size">
+<span class="sig-name descname"><span class="pre">--unitcell-size</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;unitcell_size&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-unitcell-size" title="Link to this definition"></a></dt>
+<dd><p>Size of slab to be created in terms of number of unit cell repeats.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-l">
+<span id="cmdoption-catplat-calculate-num-layers"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-layers</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_layers&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-l" title="Link to this definition"></a></dt>
+<dd><p>Number of layers of the slab.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-f">
+<span id="cmdoption-catplat-calculate-num-fixed-layers"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-fixed-layers</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_fixed_layers&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-f" title="Link to this definition"></a></dt>
+<dd><p>Number of layers to be fixed.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-v">
+<span id="cmdoption-catplat-calculate-min-vacuum"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--min-vacuum</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_vacuum&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-v" title="Link to this definition"></a></dt>
+<dd><p>Minimum vacuum to add on each side of the slab (i.e., total vacuum = vacuum x 2). [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-conventional">
+<span class="sig-name descname"><span class="pre">--conventional</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;conventional&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-conventional" title="Link to this definition"></a></dt>
+<dd><p>Toggle for creation of conventional slabs.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-min-length">
+<span class="sig-name descname"><span class="pre">--min-length</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_length&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-min-length" title="Link to this definition"></a></dt>
+<dd><p>Minimum length of the slab x and y vectors respectively. [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-min-thickness">
+<span class="sig-name descname"><span class="pre">--min-thickness</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_thickness&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-min-thickness" title="Link to this definition"></a></dt>
+<dd><p>Minimum thickness of the slab. [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-min-fixed-thickness">
+<span class="sig-name descname"><span class="pre">--min-fixed-thickness</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_fixed_thickness&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-min-fixed-thickness" title="Link to this definition"></a></dt>
+<dd><p>Minimum fixed layers thickness of the slab. [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-a">
+<span id="cmdoption-catplat-calculate-adsorbate-atoms"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--adsorbate-atoms</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;adsorbate_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-a" title="Link to this definition"></a></dt>
+<dd><p>Name of adsorbate.Accepted inputs:(1) “path/to/X.xyz” (2) “X” if X.* in user/catplat adsorbate directory (3) “X” if X in ase.collections.g2 (4) “atom:X” (5) “pubchem:X” if X is a pubchem id or name</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-b">
+<span id="cmdoption-catplat-calculate-bonds"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--bonds</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bonds&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-b" title="Link to this definition"></a></dt>
+<dd><p>Atom index of adsorbate to bind to the slab. Single integer for monodentate adsorbates. Comma-separated integers for bidentate adsorbates. “Monodentate”/”bidentate” can be specified for CatPlat to automatically determine the binding atoms.e.g. -b 0 -b 0,1 -b monodentate”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-c">
+<span id="cmdoption-catplat-calculate-connectivity"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--connectivity</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;connectivity&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-c" title="Link to this definition"></a></dt>
+<dd><p>Connectivity is the number of surface atoms of adsorption site that the adsorbate binds to. For a fcc(111) surface, for example, “1” is the top site, “2” is the bridge site. Single integer for monodentate adsorbates. Comma-separated integers for bidentate adsorbates. e.g. -c 1 -c 1,1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-n">
+<span id="cmdoption-catplat-calculate-avg-coord-num"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--avg-coord-num</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;avg_coord_num&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-n" title="Link to this definition"></a></dt>
+<dd><p>Average coordination number of adsorption site that the adsorbate binds to. Can be an integer e.g. 7, or comparator e.g. &lt;7. Single values for monodentate adsorbates. Comma-separated values for bidentate adsorbates. e.g. -n 7 -n 7,7 -n “&lt;=8”, -n “&lt;8,7”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-r">
+<span id="cmdoption-catplat-calculate-rotation"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--rotation</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rotation&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-r" title="Link to this definition"></a></dt>
+<dd><p>Rotation of adsorbate around the axis of adsorption. For monodentate adsorbates only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-ml-preoptimization">
+<span id="cmdoption-catplat-calculate-ml-preopt"></span><span class="sig-name descname"><span class="pre">--ml-preoptimization</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ml-preopt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-calculate-ml-preoptimization" title="Link to this definition"></a></dt>
+<dd><p>Flag to run preoptimization with MLPotential. Will default to True if –ml-potential-hash is specified.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-ml-potential-hash">
+<span class="sig-name descname"><span class="pre">--ml-potential-hash</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ml_potential_hash&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-ml-potential-hash" title="Link to this definition"></a></dt>
+<dd><p>Hash of the MLPotential to be used for preoptimization.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-skip-materials-project">
+<span class="sig-name descname"><span class="pre">--skip-materials-project</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-calculate-skip-materials-project" title="Link to this definition"></a></dt>
+<dd><p>Flag to skip querying Materials Project.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-0">
+<span id="cmdoption-catplat-calculate-num-nodes"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-nodes</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_nodes&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-0" title="Link to this definition"></a></dt>
+<dd><p>Number of nodes to assign for each num-job-run-slots.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-N">
+<span id="cmdoption-catplat-calculate-num-job-run-slots"></span><span class="sig-name descname"><span class="pre">-N</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-job-run-slots</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_job_run_slots&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-N" title="Link to this definition"></a></dt>
+<dd><p>Number of jobs to run in parallel.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-test">
+<span class="sig-name descname"><span class="pre">--test</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-calculate-test" title="Link to this definition"></a></dt>
+<dd><p>Flag for testing. Results will not be written to the database.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-server">
+<span class="sig-name descname"><span class="pre">--server</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;server&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-calculate-server" title="Link to this definition"></a></dt>
+<dd><p>Name of server to run the job on. Will try to determine this automatically if unspecified.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-fakerunner">
+<span class="sig-name descname"><span class="pre">--fakerunner</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-calculate-fakerunner" title="Link to this definition"></a></dt>
+<dd><p>Flag to use FakeVaspOverallJobRunner(). Results will be written to the database with placeholder energy value of 123.0 eV.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-calculate-write-db">
+<span id="cmdoption-catplat-calculate-no-write-db"></span><span class="sig-name descname"><span class="pre">--write-db</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-write-db</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-calculate-write-db" title="Link to this definition"></a></dt>
+<dd><p>If true, writes calculations of current session to {session_id}.db</p>
+</dd></dl>
+
+</section>
+<section id="catplat-config">
+<h4><a class="toc-backref" href="#id20" role="doc-backlink">config</a><a class="headerlink" href="#catplat-config" title="Link to this heading"></a></h4>
+<p>Set up new project/view current project settings.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>config<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-config-user-settings-dir">
+<span class="sig-name descname"><span class="pre">--user-settings-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;user_settings_dir&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-config-user-settings-dir" title="Link to this definition"></a></dt>
+<dd><p>For advanced use only.</p>
+</dd></dl>
+
+<section id="catplat-config-project">
+<h5><a class="toc-backref" href="#id21" role="doc-backlink">project</a><a class="headerlink" href="#catplat-config-project" title="Link to this heading"></a></h5>
+<p>Configures the project name and associated path where the calculations and database for the
+project will reside.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>config<span class="w"> </span>project<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-config-project-name">
+<span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;name&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-config-project-name" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Set project name</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-config-project-calculation-path">
+<span id="cmdoption-catplat-config-project-calc-path"></span><span class="sig-name descname"><span class="pre">--calculation-path</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--calc-path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;calculation_path&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-config-project-calculation-path" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Set calculation path for project.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-config-project-database-path">
+<span id="cmdoption-catplat-config-project-db-path"></span><span class="sig-name descname"><span class="pre">--database-path</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--db-path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;database_path&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-config-project-database-path" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Set database path for project.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-config-project-initial-magmom-threshold">
+<span class="sig-name descname"><span class="pre">--initial-magmom-threshold</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;initial_magmom_threshold&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-config-project-initial-magmom-threshold" title="Link to this definition"></a></dt>
+<dd><p>Sets the threshold below which, the bulk initial magmoms retrieved from the MaterialsProjectwill be removed to avoid triggering spin-polarized calculations.</p>
+</dd></dl>
+
+</section>
+<section id="catplat-config-show">
+<h5><a class="toc-backref" href="#id22" role="doc-backlink">show</a><a class="headerlink" href="#catplat-config-show" title="Link to this heading"></a></h5>
+<p>Displays the METADATA file in user_project_settings.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>config<span class="w"> </span>show<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="catplat-config-user">
+<h5><a class="toc-backref" href="#id23" role="doc-backlink">user</a><a class="headerlink" href="#catplat-config-user" title="Link to this heading"></a></h5>
+<p>Sets the main user catplat settings.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>config<span class="w"> </span>user<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-config-user-run-dir">
+<span class="sig-name descname"><span class="pre">--run-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;run_dir&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-config-user-run-dir" title="Link to this definition"></a></dt>
+<dd><p>Set catplat run directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-config-user-mysql-user">
+<span class="sig-name descname"><span class="pre">--mysql-user</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;mysql_user&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-config-user-mysql-user" title="Link to this definition"></a></dt>
+<dd><p>Set SQL user.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-config-user-mysql-pwd">
+<span class="sig-name descname"><span class="pre">--mysql-pwd</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;mysql_pwd&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-config-user-mysql-pwd" title="Link to this definition"></a></dt>
+<dd><p>Set sql password.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-config-user-mysql-host">
+<span class="sig-name descname"><span class="pre">--mysql-host</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;mysql_host&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-config-user-mysql-host" title="Link to this definition"></a></dt>
+<dd><p>Set sql host.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="catplat-database">
+<h4><a class="toc-backref" href="#id24" role="doc-backlink">database</a><a class="headerlink" href="#catplat-database" title="Link to this heading"></a></h4>
+<p>Perform operations involving the whole database.</p>
+<p>Can either specify a project name or a database file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>database<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-database-p">
+<span id="cmdoption-catplat-database-project"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--project</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-database-p" title="Link to this definition"></a></dt>
+<dd><p>Name of project containing the database_path.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-database-f">
+<span id="cmdoption-catplat-database-file"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;file&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-database-f" title="Link to this definition"></a></dt>
+<dd><p>Name of database file.</p>
+</dd></dl>
+
+<section id="catplat-database-backup">
+<h5><a class="toc-backref" href="#id25" role="doc-backlink">backup</a><a class="headerlink" href="#catplat-database-backup" title="Link to this heading"></a></h5>
+<p>Backup database to file.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line"># Backup database to file</div>
+<div class="line">catplat database -p project backup –dst backup.db</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>database<span class="w"> </span>backup<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-database-backup-dst">
+<span id="cmdoption-catplat-database-backup-destination"></span><span class="sig-name descname"><span class="pre">--dst</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--destination</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dst&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-database-backup-dst" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-database-backup-append">
+<span class="sig-name descname"><span class="pre">--append</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-database-backup-append" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-database-backup-overwrite">
+<span class="sig-name descname"><span class="pre">--overwrite</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-database-backup-overwrite" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="catplat-database-upgrade">
+<h5><a class="toc-backref" href="#id26" role="doc-backlink">upgrade</a><a class="headerlink" href="#catplat-database-upgrade" title="Link to this heading"></a></h5>
+<p>Upgrade database to a new version.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line"># Upgrade database to latest version</div>
+<div class="line">catplat database -p project upgrade –dst upgraded.db</div>
+</div>
+</div>
+<blockquote>
+<div><p># Upgrade database to a specific version
+catplat database -p project upgrade –dst upgraded.db –version 23.10.5</p>
+</div></blockquote>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>database<span class="w"> </span>upgrade<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-database-upgrade-dst">
+<span id="cmdoption-catplat-database-upgrade-destination"></span><span class="sig-name descname"><span class="pre">--dst</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--destination</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dst&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-database-upgrade-dst" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-database-upgrade-version">
+<span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;version&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-database-upgrade-version" title="Link to this definition"></a></dt>
+<dd><p>Version to upgrade to. If not specified, upgrade to latest version.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="catplat-download">
+<h4><a class="toc-backref" href="#id27" role="doc-backlink">download</a><a class="headerlink" href="#catplat-download" title="Link to this heading"></a></h4>
+<p>Download external resources for catplat.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>download<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="catplat-download-resources">
+<h5><a class="toc-backref" href="#id28" role="doc-backlink">resources</a><a class="headerlink" href="#catplat-download-resources" title="Link to this heading"></a></h5>
+<p>Download ML potentials for catplat to user directory.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>download<span class="w"> </span>resources<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="catplat-dryrun">
+<h4><a class="toc-backref" href="#id29" role="doc-backlink">dryrun</a><a class="headerlink" href="#catplat-dryrun" title="Link to this heading"></a></h4>
+<p>Quickly view structures created by catplat for the corresponding QuerySet.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line">catplat dryrun –chemsys Cu</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>dryrun<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-cleanup">
+<span id="cmdoption-catplat-dryrun-no-cleanup"></span><span class="sig-name descname"><span class="pre">--cleanup</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-cleanup</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-dryrun-cleanup" title="Link to this definition"></a></dt>
+<dd><p>Whether to clean up the project directory after calculation.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-bulk-atoms">
+<span class="sig-name descname"><span class="pre">--bulk-atoms</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bulk_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-bulk-atoms" title="Link to this definition"></a></dt>
+<dd><p>Name of bulk file in user bulk directory. When bulk is specified, other bulk attributes such as e_above_hull should not be specified.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-chemsys">
+<span class="sig-name descname"><span class="pre">--chemsys</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;chemsys&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-chemsys" title="Link to this definition"></a></dt>
+<dd><p>Chemical species of the bulk. Multiple elements should be separated by dashes. e.g. –chemsys Cu-Rh</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-min-e-above-hull">
+<span class="sig-name descname"><span class="pre">--min-e-above-hull</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_e_above_hull&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-min-e-above-hull" title="Link to this definition"></a></dt>
+<dd><p>Minimum energy above hull of the bulk structure as indicated on Materials Project. [eV/atom]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-max-e-above-hull">
+<span class="sig-name descname"><span class="pre">--max-e-above-hull</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_e_above_hull&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-max-e-above-hull" title="Link to this definition"></a></dt>
+<dd><p>Maximum energy above hull of the bulk structure as indicated on Materials Project. [eV/atom]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-bulk-formula">
+<span class="sig-name descname"><span class="pre">--bulk-formula</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bulk_formula&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-bulk-formula" title="Link to this definition"></a></dt>
+<dd><p>Bulk formula as indicated on Materials Project. e.g. –bulk-formula Cu3Rh</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-spacegroup">
+<span class="sig-name descname"><span class="pre">--spacegroup</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;spacegroup&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-spacegroup" title="Link to this definition"></a></dt>
+<dd><p>Spacegroup number of bulk as indicated on Materials Project.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-mpid">
+<span class="sig-name descname"><span class="pre">--mpid</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;mpid&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-mpid" title="Link to this definition"></a></dt>
+<dd><p>Materials Project ID of bulk structure</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-s">
+<span id="cmdoption-catplat-dryrun-slab-atoms"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--slab-atoms</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;slab_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-s" title="Link to this definition"></a></dt>
+<dd><p>Name of slab file in user slab directory. When slab is specified, other bulk and slab attributes should not be specified.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-termination">
+<span class="sig-name descname"><span class="pre">--termination</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;termination&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-termination" title="Link to this definition"></a></dt>
+<dd><p>Slab termination, defined as the composition of the surface layer..</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-o">
+<span id="cmdoption-catplat-dryrun-overlayer"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--overlayer</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;overlayer&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-o" title="Link to this definition"></a></dt>
+<dd><p>If specified, replaces top layer atoms with overlayer atoms.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-m">
+<span id="cmdoption-catplat-dryrun-miller-index"></span><span id="cmdoption-catplat-dryrun-miller"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--miller-index</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--miller</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;miller_index&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-m" title="Link to this definition"></a></dt>
+<dd><p>Miller idx of slab. eg. –miller-index 1 1 1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-unitcell-size">
+<span class="sig-name descname"><span class="pre">--unitcell-size</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;unitcell_size&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-unitcell-size" title="Link to this definition"></a></dt>
+<dd><p>Size of slab to be created in terms of number of unit cell repeats.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-l">
+<span id="cmdoption-catplat-dryrun-num-layers"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-layers</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_layers&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-l" title="Link to this definition"></a></dt>
+<dd><p>Number of layers of the slab.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-f">
+<span id="cmdoption-catplat-dryrun-num-fixed-layers"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-fixed-layers</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_fixed_layers&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-f" title="Link to this definition"></a></dt>
+<dd><p>Number of layers to be fixed.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-v">
+<span id="cmdoption-catplat-dryrun-min-vacuum"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--min-vacuum</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_vacuum&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-v" title="Link to this definition"></a></dt>
+<dd><p>Minimum vacuum to add on each side of the slab (i.e., total vacuum = vacuum x 2). [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-conventional">
+<span class="sig-name descname"><span class="pre">--conventional</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;conventional&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-conventional" title="Link to this definition"></a></dt>
+<dd><p>Toggle for creation of conventional slabs.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-min-length">
+<span class="sig-name descname"><span class="pre">--min-length</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_length&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-min-length" title="Link to this definition"></a></dt>
+<dd><p>Minimum length of the slab x and y vectors respectively. [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-min-thickness">
+<span class="sig-name descname"><span class="pre">--min-thickness</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_thickness&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-min-thickness" title="Link to this definition"></a></dt>
+<dd><p>Minimum thickness of the slab. [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-min-fixed-thickness">
+<span class="sig-name descname"><span class="pre">--min-fixed-thickness</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_fixed_thickness&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-min-fixed-thickness" title="Link to this definition"></a></dt>
+<dd><p>Minimum fixed layers thickness of the slab. [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-a">
+<span id="cmdoption-catplat-dryrun-adsorbate-atoms"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--adsorbate-atoms</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;adsorbate_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-a" title="Link to this definition"></a></dt>
+<dd><p>Name of adsorbate.Accepted inputs:(1) “path/to/X.xyz” (2) “X” if X.* in user/catplat adsorbate directory (3) “X” if X in ase.collections.g2 (4) “atom:X” (5) “pubchem:X” if X is a pubchem id or name</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-b">
+<span id="cmdoption-catplat-dryrun-bonds"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--bonds</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bonds&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-b" title="Link to this definition"></a></dt>
+<dd><p>Atom index of adsorbate to bind to the slab. Single integer for monodentate adsorbates. Comma-separated integers for bidentate adsorbates. “Monodentate”/”bidentate” can be specified for CatPlat to automatically determine the binding atoms.e.g. -b 0 -b 0,1 -b monodentate”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-c">
+<span id="cmdoption-catplat-dryrun-connectivity"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--connectivity</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;connectivity&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-c" title="Link to this definition"></a></dt>
+<dd><p>Connectivity is the number of surface atoms of adsorption site that the adsorbate binds to. For a fcc(111) surface, for example, “1” is the top site, “2” is the bridge site. Single integer for monodentate adsorbates. Comma-separated integers for bidentate adsorbates. e.g. -c 1 -c 1,1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-n">
+<span id="cmdoption-catplat-dryrun-avg-coord-num"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--avg-coord-num</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;avg_coord_num&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-n" title="Link to this definition"></a></dt>
+<dd><p>Average coordination number of adsorption site that the adsorbate binds to. Can be an integer e.g. 7, or comparator e.g. &lt;7. Single values for monodentate adsorbates. Comma-separated values for bidentate adsorbates. e.g. -n 7 -n 7,7 -n “&lt;=8”, -n “&lt;8,7”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-r">
+<span id="cmdoption-catplat-dryrun-rotation"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--rotation</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rotation&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-r" title="Link to this definition"></a></dt>
+<dd><p>Rotation of adsorbate around the axis of adsorption. For monodentate adsorbates only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-ml-preoptimization">
+<span id="cmdoption-catplat-dryrun-ml-preopt"></span><span class="sig-name descname"><span class="pre">--ml-preoptimization</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ml-preopt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-dryrun-ml-preoptimization" title="Link to this definition"></a></dt>
+<dd><p>Flag to run preoptimization with MLPotential. Will default to True if –ml-potential-hash is specified.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-ml-potential-hash">
+<span class="sig-name descname"><span class="pre">--ml-potential-hash</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ml_potential_hash&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-dryrun-ml-potential-hash" title="Link to this definition"></a></dt>
+<dd><p>Hash of the MLPotential to be used for preoptimization.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-dryrun-skip-materials-project">
+<span class="sig-name descname"><span class="pre">--skip-materials-project</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-dryrun-skip-materials-project" title="Link to this definition"></a></dt>
+<dd><p>Flag to skip querying Materials Project.</p>
+</dd></dl>
+
+</section>
+<section id="catplat-entry">
+<h4><a class="toc-backref" href="#id30" role="doc-backlink">entry</a><a class="headerlink" href="#catplat-entry" title="Link to this heading"></a></h4>
+<p>Perform operations on database entries. ie view attributes, set ignore flag etc.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>entry<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-p">
+<span id="cmdoption-catplat-entry-project"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--project</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-entry-p" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Name of project containing the database_path.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-id">
+<span class="sig-name descname"><span class="pre">--id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;id&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-entry-id" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Database id to be edited.</p>
+</dd></dl>
+
+<section id="catplat-entry-delete">
+<h5><a class="toc-backref" href="#id31" role="doc-backlink">delete</a><a class="headerlink" href="#catplat-entry-delete" title="Link to this heading"></a></h5>
+<p>Delete selected entries.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line"># delete id1 and id2</div>
+<div class="line">catplat entry -p project –id 1 –id 2 delete</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>entry<span class="w"> </span>delete<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="catplat-entry-delete-key">
+<h5><a class="toc-backref" href="#id32" role="doc-backlink">delete-key</a><a class="headerlink" href="#catplat-entry-delete-key" title="Link to this heading"></a></h5>
+<p>Delete attribute keys.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line"># remove <cite>version</cite> and <cite>ignored</cite> attributes from id 1</div>
+<div class="line">catplat entry -p project –id 1 delete-key –key version –key ignored</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>entry<span class="w"> </span>delete-key<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-delete-key-key">
+<span class="sig-name descname"><span class="pre">--key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;key&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-entry-delete-key-key" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Attribute keys to be deleted</p>
+</dd></dl>
+
+</section>
+<section id="catplat-entry-ignore">
+<h5><a class="toc-backref" href="#id33" role="doc-backlink">ignore</a><a class="headerlink" href="#catplat-entry-ignore" title="Link to this heading"></a></h5>
+<p>Ignore selected entries.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line"># ignore id1 and id2:</div>
+<div class="line">catplat entry -p project –id 1 –id 2 ignore</div>
+</div>
+</div>
+<blockquote>
+<div><p># undo ignore for id1 and id2:
+catplat entry -p project –id 1 –id 2 ignore –no-ignore</p>
+</div></blockquote>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>entry<span class="w"> </span>ignore<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-ignore-ignore">
+<span id="cmdoption-catplat-entry-ignore-no-ignore"></span><span class="sig-name descname"><span class="pre">--ignore</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-ignore</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-entry-ignore-ignore" title="Link to this definition"></a></dt>
+<dd><p>Flag to set ignored to True or False.</p>
+</dd></dl>
+
+</section>
+<section id="catplat-entry-update-key">
+<h5><a class="toc-backref" href="#id34" role="doc-backlink">update-key</a><a class="headerlink" href="#catplat-entry-update-key" title="Link to this heading"></a></h5>
+<p>Update existing values.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line"># update the value of <cite>ignored</cite> to True</div>
+<div class="line">catplat entry -p project –id 1 update-key –key ignored –value True –typing bool</div>
+</div>
+</div>
+<blockquote>
+<div><p># insert new attribute kvps
+catplat entry -p project –id 1 update-key –key keyname –value 100 –typing float</p>
+</div></blockquote>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>entry<span class="w"> </span>update-key<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-update-key-key">
+<span class="sig-name descname"><span class="pre">--key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;key&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-entry-update-key-key" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Attribute key to be updated.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-update-key-value">
+<span class="sig-name descname"><span class="pre">--value</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;value&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-entry-update-key-value" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Value to be updated to.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-update-key-typing">
+<span class="sig-name descname"><span class="pre">--typing</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;typing&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-entry-update-key-typing" title="Link to this definition"></a></dt>
+<dd><p>Data type of the value. Typing should be str, int, float or bool.</p>
+</dd></dl>
+
+</section>
+<section id="catplat-entry-view">
+<h5><a class="toc-backref" href="#id35" role="doc-backlink">view</a><a class="headerlink" href="#catplat-entry-view" title="Link to this heading"></a></h5>
+<p>View data from selected entries.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line"># prints details of id1, id2 and id3 and visualizes their structures</div>
+<div class="line">catplat entry -p project –id 1 –id 2 –id 3 view –struct</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>entry<span class="w"> </span>view<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-view-struct">
+<span id="cmdoption-catplat-entry-view-no-struct"></span><span class="sig-name descname"><span class="pre">--struct</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-struct</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-entry-view-struct" title="Link to this definition"></a></dt>
+<dd><p>Toggle to visualize the structure.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-view-traj">
+<span id="cmdoption-catplat-entry-view-no-traj"></span><span class="sig-name descname"><span class="pre">--traj</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-traj</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-entry-view-traj" title="Link to this definition"></a></dt>
+<dd><p>Toggle to visualize the relaxation trajectory in animation.</p>
+</dd></dl>
+
+</section>
+<section id="catplat-entry-write">
+<h5><a class="toc-backref" href="#id36" role="doc-backlink">write</a><a class="headerlink" href="#catplat-entry-write" title="Link to this heading"></a></h5>
+<p>Write data from selected entries.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line"># writes structures, full trajectories and the VASP files for id1, id2 and id3</div>
+<div class="line">catplat entry -p project –id 1 –id 2 –id 3 write –struct –full-traj –files</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>entry<span class="w"> </span>write<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-write-csv">
+<span id="cmdoption-catplat-entry-write-no-csv"></span><span class="sig-name descname"><span class="pre">--csv</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-csv</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-entry-write-csv" title="Link to this definition"></a></dt>
+<dd><p>Toggle to write the results in csv format.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-write-csv-filename">
+<span class="sig-name descname"><span class="pre">--csv-filename</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;csv_filename&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-entry-write-csv-filename" title="Link to this definition"></a></dt>
+<dd><p>name of the csv file to be written, can include a full path.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-write-id-path">
+<span class="sig-name descname"><span class="pre">--id-path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;id_path&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-entry-write-id-path" title="Link to this definition"></a></dt>
+<dd><p>the path corrspoding to the id(s) mentioned before where all relevant files will be written</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-write-struct">
+<span id="cmdoption-catplat-entry-write-no-struct"></span><span class="sig-name descname"><span class="pre">--struct</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-struct</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-entry-write-struct" title="Link to this definition"></a></dt>
+<dd><p>Toggle to write the structure in POSCAR format.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-write-full-traj">
+<span id="cmdoption-catplat-entry-write-no-full-traj"></span><span class="sig-name descname"><span class="pre">--full-traj</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-full-traj</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-entry-write-full-traj" title="Link to this definition"></a></dt>
+<dd><p>Toggle to write the full trajectyory in ASE traj format.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-write-traj-gif">
+<span id="cmdoption-catplat-entry-write-no-traj-gif"></span><span class="sig-name descname"><span class="pre">--traj-gif</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-traj-gif</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-entry-write-traj-gif" title="Link to this definition"></a></dt>
+<dd><p>Toggle to write an animated GIF file for the full trajectory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-entry-write-files">
+<span id="cmdoption-catplat-entry-write-no-files"></span><span class="sig-name descname"><span class="pre">--files</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-files</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-entry-write-files" title="Link to this definition"></a></dt>
+<dd><p>Toggle to write the INCAR, KPOINTS, POTCAR and outputs.json files.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="catplat-extract">
+<h4><a class="toc-backref" href="#id37" role="doc-backlink">extract</a><a class="headerlink" href="#catplat-extract" title="Link to this heading"></a></h4>
+<p>Extract calculation information from folders.</p>
+<p>Either update the corresponding relaxed entries in the database or store them anew.
+| Examples:
+|     catplat extract  -p projectname -f ‘/path/to/job1’ -f ‘/path/to/job2’ –id unrelaxedid1 –id unrelaxedid2 –parallel –np 2
+|     catplat extract  -p projectname -f ‘/path/to/lot_of_jobs/id*’ –overwrite –np -1</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>extract<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-extract-p">
+<span id="cmdoption-catplat-extract-project"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--project</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-extract-p" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Name of project containing the database_path.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-extract-f">
+<span id="cmdoption-catplat-extract-folder"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--folder</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;folder&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-extract-f" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> the path of the folder(s) from which to extract the caulation data from, must be provided under quotes, e.g. -f “some/path”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-extract-id">
+<span class="sig-name descname"><span class="pre">--id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;id&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-extract-id" title="Link to this definition"></a></dt>
+<dd><p>Database id of the unrelaxed entry whose corresponding relaxed entry is to be edited.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-extract-overwrite">
+<span id="cmdoption-catplat-extract-no-overwrite"></span><span class="sig-name descname"><span class="pre">--overwrite</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-overwrite</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-extract-overwrite" title="Link to this definition"></a></dt>
+<dd><p>Toggle to overwrite the existing data section, if one is found</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-extract-np">
+<span class="sig-name descname"><span class="pre">--np</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;np&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-extract-np" title="Link to this definition"></a></dt>
+<dd><p>Number of parallel threads. Use np=-1 to utilize the maximum number of available threads</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-extract-suppress-errors">
+<span id="cmdoption-catplat-extract-no-supress-errors"></span><span class="sig-name descname"><span class="pre">--suppress-errors</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-supress-errors</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-extract-suppress-errors" title="Link to this definition"></a></dt>
+<dd><p>Toggle to silently skip the undesired, normally error-raising cases</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-extract-backend">
+<span class="sig-name descname"><span class="pre">--backend</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;backend&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-extract-backend" title="Link to this definition"></a></dt>
+<dd><p>the parallelization backend. options are “joblib” and  “multiprocessing”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-extract-chunksize">
+<span class="sig-name descname"><span class="pre">--chunksize</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;chunksize&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-extract-chunksize" title="Link to this definition"></a></dt>
+<dd><p>the chunksize option of multiprocessing.Pool.starmap</p>
+</dd></dl>
+
+</section>
+<section id="catplat-laspinit">
+<h4><a class="toc-backref" href="#id38" role="doc-backlink">laspinit</a><a class="headerlink" href="#catplat-laspinit" title="Link to this heading"></a></h4>
+<p>Create Initial/Transition/Final structures for LASP-CBD.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>laspinit<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-f">
+<span id="cmdoption-catplat-laspinit-file"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;file&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-f" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Path to initial structure.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-i">
+<span id="cmdoption-catplat-laspinit-diss-idx"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--diss-idx</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;diss_idx&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-i" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> List indicating containing atom index of bond breaking. eg. -i 77 73</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-s">
+<span id="cmdoption-catplat-laspinit-slab-elements"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--slab-elements</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;slab_elements&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-s" title="Link to this definition"></a></dt>
+<dd><p>The element(s) of the slab. eg. -s Rh -s Pd</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-c1">
+<span id="cmdoption-catplat-laspinit-ads1-connectivity"></span><span class="sig-name descname"><span class="pre">-c1</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ads1-connectivity</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ads1_connectivity&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-c1" title="Link to this definition"></a></dt>
+<dd><p>Connectivity for adsorbate 1.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-c2">
+<span id="cmdoption-catplat-laspinit-ads2-connectivity"></span><span class="sig-name descname"><span class="pre">-c2</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ads2-connectivity</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ads2_connectivity&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-c2" title="Link to this definition"></a></dt>
+<dd><p>Connectivity for adsorbate 2.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-a1">
+<span id="cmdoption-catplat-laspinit-ads1-acn"></span><span class="sig-name descname"><span class="pre">-a1</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ads1-acn</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ads1_acn&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-a1" title="Link to this definition"></a></dt>
+<dd><p>avg_coord_num for adsorbate 1.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-a2">
+<span id="cmdoption-catplat-laspinit-ads2-acn"></span><span class="sig-name descname"><span class="pre">-a2</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ads2-acn</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ads2_acn&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-a2" title="Link to this definition"></a></dt>
+<dd><p>avg_coord_num for adsorbate 2</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-ads1-bind">
+<span id="cmdoption-catplat-laspinit-no-ads1-bind"></span><span class="sig-name descname"><span class="pre">--ads1-bind</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-ads1-bind</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-laspinit-ads1-bind" title="Link to this definition"></a></dt>
+<dd><p>Toggle to bind adsorbate 1 to the slab. (default=True)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-ads2-bind">
+<span id="cmdoption-catplat-laspinit-no-ads2-bind"></span><span class="sig-name descname"><span class="pre">--ads2-bind</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-ads2-bind</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-laspinit-ads2-bind" title="Link to this definition"></a></dt>
+<dd><p>Toggle to bind adsorbate 2 to the slab. (default=True)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-ads1-dir-filter">
+<span id="cmdoption-catplat-laspinit-no-ads1-dir-filter"></span><span class="sig-name descname"><span class="pre">--ads1-dir-filter</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-ads1-dir-filter</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-laspinit-ads1-dir-filter" title="Link to this definition"></a></dt>
+<dd><p>Toggle to filter sites for adsorbate 1 that are in the same direction as the dissociation vector. (default=True)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-ads2-dir-filter">
+<span id="cmdoption-catplat-laspinit-no-ads2-dir-filter"></span><span class="sig-name descname"><span class="pre">--ads2-dir-filter</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-ads2-dir-filter</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-laspinit-ads2-dir-filter" title="Link to this definition"></a></dt>
+<dd><p>Toggle to filter sites for adsorbate 2 that are in the same direction as the dissociation vector. (default=False)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-ads1-dist-filter">
+<span id="cmdoption-catplat-laspinit-no-ads1-dist-filter"></span><span class="sig-name descname"><span class="pre">--ads1-dist-filter</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-ads1-dist-filter</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-laspinit-ads1-dist-filter" title="Link to this definition"></a></dt>
+<dd><p>Toggle to filter sites for adsorbate 1 that are too close. (default=True)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-ads2-dist-filter">
+<span id="cmdoption-catplat-laspinit-no-ads2-dist-filter"></span><span class="sig-name descname"><span class="pre">--ads2-dist-filter</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-ads2-dist-filter</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-laspinit-ads2-dist-filter" title="Link to this definition"></a></dt>
+<dd><p>Toggle to filter sites for adsorbate 2 that are too close. (default=False)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-x1">
+<span id="cmdoption-catplat-laspinit-ads1-dist-tol"></span><span class="sig-name descname"><span class="pre">-x1</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ads1-dist-tol</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ads1_dist_tol&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-x1" title="Link to this definition"></a></dt>
+<dd><p>Tolerance parameter for ads1_dist_filter (default=1.5) Syntax: -x1 1.5</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-x2">
+<span id="cmdoption-catplat-laspinit-ads2-dist-tol"></span><span class="sig-name descname"><span class="pre">-x2</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ads2-dist-tol</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ads2_dist_tol&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-x2" title="Link to this definition"></a></dt>
+<dd><p>Tolerance parameter for ads2_dist_filter (default=1.5) Syntax: -x2 1.5</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-y1">
+<span id="cmdoption-catplat-laspinit-ads1-dir-tol"></span><span class="sig-name descname"><span class="pre">-y1</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ads1-dir-tol</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ads1_dir_tol&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-y1" title="Link to this definition"></a></dt>
+<dd><p>Tolerance parameter for ads1_dir_tol (default=0.5) Syntax: -y1 0.5</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-y2">
+<span id="cmdoption-catplat-laspinit-ads2-dir-tol"></span><span class="sig-name descname"><span class="pre">-y2</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ads2-dir-tol</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ads2_dir_tol&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-y2" title="Link to this definition"></a></dt>
+<dd><p>Tolerance parameter for ads2_dir_tol (default=0.5) Syntax: -y2 0.5</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-t">
+<span id="cmdoption-catplat-laspinit-ts-tol"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ts-tol</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;ts_tol&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-t" title="Link to this definition"></a></dt>
+<dd><p>Distance to increase bond length by for the transition state. (default=0.5) Syntax: -t 0.5</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-zoom">
+<span id="cmdoption-catplat-laspinit-no-zoom"></span><span class="sig-name descname"><span class="pre">--zoom</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-zoom</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-laspinit-zoom" title="Link to this definition"></a></dt>
+<dd><p>Toggle to select IS and FS that is closer to the TS. (default=True)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-laspinit-z">
+<span id="cmdoption-catplat-laspinit-zoom-tol"></span><span class="sig-name descname"><span class="pre">-z</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--zoom-tol</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;zoom_tol&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-laspinit-z" title="Link to this definition"></a></dt>
+<dd><p>Distance to of bond length dbetween IS-TS-FS. (default=0.3) Syntax: -z 0.3</p>
+</dd></dl>
+
+</section>
+<section id="catplat-mlp">
+<h4><a class="toc-backref" href="#id39" role="doc-backlink">mlp</a><a class="headerlink" href="#catplat-mlp" title="Link to this heading"></a></h4>
+<p>Commands related to ML potentials.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>mlp<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="catplat-mlp-view">
+<h5><a class="toc-backref" href="#id40" role="doc-backlink">view</a><a class="headerlink" href="#catplat-mlp-view" title="Link to this heading"></a></h5>
+<p>View all MLPs available to catplat.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>mlp<span class="w"> </span>view<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="catplat-projects">
+<h4><a class="toc-backref" href="#id41" role="doc-backlink">projects</a><a class="headerlink" href="#catplat-projects" title="Link to this heading"></a></h4>
+<p>View current projects.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>projects<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="catplat-retrieve">
+<h4><a class="toc-backref" href="#id42" role="doc-backlink">retrieve</a><a class="headerlink" href="#catplat-retrieve" title="Link to this heading"></a></h4>
+<p>Queries the database.</p>
+<p>Obtains results of specified system by searching the database only.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line">catplat retrieve –project &lt;myproject&gt; –chemsys Cu</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>retrieve<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-p">
+<span id="cmdoption-catplat-retrieve-project"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--project</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-p" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Name of project to run. Contains information such as database_path, incar settings, etc.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-bulk-atoms">
+<span class="sig-name descname"><span class="pre">--bulk-atoms</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bulk_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-bulk-atoms" title="Link to this definition"></a></dt>
+<dd><p>Name of bulk file in user bulk directory. When bulk is specified, other bulk attributes such as e_above_hull should not be specified.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-chemsys">
+<span class="sig-name descname"><span class="pre">--chemsys</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;chemsys&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-chemsys" title="Link to this definition"></a></dt>
+<dd><p>Chemical species of the bulk. Multiple elements should be separated by dashes. e.g. –chemsys Cu-Rh</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-min-e-above-hull">
+<span class="sig-name descname"><span class="pre">--min-e-above-hull</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_e_above_hull&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-min-e-above-hull" title="Link to this definition"></a></dt>
+<dd><p>Minimum energy above hull of the bulk structure as indicated on Materials Project. [eV/atom]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-max-e-above-hull">
+<span class="sig-name descname"><span class="pre">--max-e-above-hull</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_e_above_hull&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-max-e-above-hull" title="Link to this definition"></a></dt>
+<dd><p>Maximum energy above hull of the bulk structure as indicated on Materials Project. [eV/atom]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-bulk-formula">
+<span class="sig-name descname"><span class="pre">--bulk-formula</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bulk_formula&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-bulk-formula" title="Link to this definition"></a></dt>
+<dd><p>Bulk formula as indicated on Materials Project. e.g. –bulk-formula Cu3Rh</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-spacegroup">
+<span class="sig-name descname"><span class="pre">--spacegroup</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;spacegroup&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-spacegroup" title="Link to this definition"></a></dt>
+<dd><p>Spacegroup number of bulk as indicated on Materials Project.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-mpid">
+<span class="sig-name descname"><span class="pre">--mpid</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;mpid&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-mpid" title="Link to this definition"></a></dt>
+<dd><p>Materials Project ID of bulk structure</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-bulk-provenance">
+<span class="sig-name descname"><span class="pre">--bulk-provenance</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bulk_provenance&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-bulk-provenance" title="Link to this definition"></a></dt>
+<dd><p>String for the origin of bulk atoms.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-s">
+<span id="cmdoption-catplat-retrieve-slab-atoms"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--slab-atoms</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;slab_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-s" title="Link to this definition"></a></dt>
+<dd><p>Name of slab file in user slab directory. When slab is specified, other bulk and slab attributes should not be specified.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-termination">
+<span class="sig-name descname"><span class="pre">--termination</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;termination&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-termination" title="Link to this definition"></a></dt>
+<dd><p>Slab termination, defined as the composition of the surface layer..</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-o">
+<span id="cmdoption-catplat-retrieve-overlayer"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--overlayer</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;overlayer&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-o" title="Link to this definition"></a></dt>
+<dd><p>If specified, replaces top layer atoms with overlayer atoms.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-m">
+<span id="cmdoption-catplat-retrieve-miller-index"></span><span id="cmdoption-catplat-retrieve-miller"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--miller-index</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--miller</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;miller_index&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-m" title="Link to this definition"></a></dt>
+<dd><p>Miller idx of slab. eg. –miller-index 1 1 1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-unitcell-size">
+<span class="sig-name descname"><span class="pre">--unitcell-size</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;unitcell_size&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-unitcell-size" title="Link to this definition"></a></dt>
+<dd><p>Size of slab to be created in terms of number of unit cell repeats.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-l">
+<span id="cmdoption-catplat-retrieve-num-layers"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-layers</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_layers&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-l" title="Link to this definition"></a></dt>
+<dd><p>Number of layers of the slab.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-f">
+<span id="cmdoption-catplat-retrieve-num-fixed-layers"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-fixed-layers</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_fixed_layers&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-f" title="Link to this definition"></a></dt>
+<dd><p>Number of layers to be fixed.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-v">
+<span id="cmdoption-catplat-retrieve-min-vacuum"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--min-vacuum</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_vacuum&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-v" title="Link to this definition"></a></dt>
+<dd><p>Minimum vacuum to add on each side of the slab (i.e., total vacuum = vacuum x 2). [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-conventional">
+<span class="sig-name descname"><span class="pre">--conventional</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;conventional&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-conventional" title="Link to this definition"></a></dt>
+<dd><p>Toggle for creation of conventional slabs.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-min-length">
+<span class="sig-name descname"><span class="pre">--min-length</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_length&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-min-length" title="Link to this definition"></a></dt>
+<dd><p>Minimum length of the slab x and y vectors respectively. [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-min-thickness">
+<span class="sig-name descname"><span class="pre">--min-thickness</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_thickness&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-min-thickness" title="Link to this definition"></a></dt>
+<dd><p>Minimum thickness of the slab. [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-min-fixed-thickness">
+<span class="sig-name descname"><span class="pre">--min-fixed-thickness</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_fixed_thickness&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-min-fixed-thickness" title="Link to this definition"></a></dt>
+<dd><p>Minimum fixed layers thickness of the slab. [Å]</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-slab-provenance">
+<span class="sig-name descname"><span class="pre">--slab-provenance</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;slab_provenance&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-slab-provenance" title="Link to this definition"></a></dt>
+<dd><p>String for the origin of slab atoms.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-max-vacuum">
+<span class="sig-name descname"><span class="pre">--max-vacuum</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_vacuum&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-max-vacuum" title="Link to this definition"></a></dt>
+<dd><p>Maxmimum vacuum (in Angstroms) to add on each side of the slab (i.e., total vacuum = vauum x 2).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-max-length">
+<span class="sig-name descname"><span class="pre">--max-length</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_length&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-max-length" title="Link to this definition"></a></dt>
+<dd><p>Maxmimum length(Å) of the slab x and y vectors respectively.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-max-thickness">
+<span class="sig-name descname"><span class="pre">--max-thickness</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_thickness&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-max-thickness" title="Link to this definition"></a></dt>
+<dd><p>Maxmimum thickness(Å) of the slab.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-max-fixed-thickness">
+<span class="sig-name descname"><span class="pre">--max-fixed-thickness</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_fixed_thickness&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-max-fixed-thickness" title="Link to this definition"></a></dt>
+<dd><p>Maxmimum fixed layers thickness(Å) of the slab.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-slab-chemsys">
+<span class="sig-name descname"><span class="pre">--slab-chemsys</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;slab_chemsys&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-slab-chemsys" title="Link to this definition"></a></dt>
+<dd><p>Species of the slab, sorted alphabetically and separated by dashes.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-slab-formula">
+<span class="sig-name descname"><span class="pre">--slab-formula</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;slab_formula&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-slab-formula" title="Link to this definition"></a></dt>
+<dd><p>Formula of the slab.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-min-slab-acn">
+<span class="sig-name descname"><span class="pre">--min-slab-acn</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;min_slab_acn&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-min-slab-acn" title="Link to this definition"></a></dt>
+<dd><p>Minimum Average Coordination Number of the slab surface atoms.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-max-slab-acn">
+<span class="sig-name descname"><span class="pre">--max-slab-acn</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_slab_acn&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-max-slab-acn" title="Link to this definition"></a></dt>
+<dd><p>Maximum Average Coordination Number of the slab surface atoms.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-a">
+<span id="cmdoption-catplat-retrieve-adsorbate-atoms"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--adsorbate-atoms</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;adsorbate_atoms&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-a" title="Link to this definition"></a></dt>
+<dd><p>Name of adsorbate.Accepted inputs:(1) “path/to/X.xyz” (2) “X” if X.* in user/catplat adsorbate directory (3) “X” if X in ase.collections.g2 (4) “atom:X” (5) “pubchem:X” if X is a pubchem id or name</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-b">
+<span id="cmdoption-catplat-retrieve-bonds"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--bonds</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;bonds&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-b" title="Link to this definition"></a></dt>
+<dd><p>Atom index of adsorbate to bind to the slab. Single integer for monodentate adsorbates. Comma-separated integers for bidentate adsorbates. “Monodentate”/”bidentate” can be specified for CatPlat to automatically determine the binding atoms.e.g. -b 0 -b 0,1 -b monodentate”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-c">
+<span id="cmdoption-catplat-retrieve-connectivity"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--connectivity</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;connectivity&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-c" title="Link to this definition"></a></dt>
+<dd><p>Connectivity is the number of surface atoms of adsorption site that the adsorbate binds to. For a fcc(111) surface, for example, “1” is the top site, “2” is the bridge site. Single integer for monodentate adsorbates. Comma-separated integers for bidentate adsorbates. e.g. -c 1 -c 1,1</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-n">
+<span id="cmdoption-catplat-retrieve-avg-coord-num"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--avg-coord-num</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;avg_coord_num&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-n" title="Link to this definition"></a></dt>
+<dd><p>Average coordination number of adsorption site that the adsorbate binds to. Can be an integer e.g. 7, or comparator e.g. &lt;7. Single values for monodentate adsorbates. Comma-separated values for bidentate adsorbates. e.g. -n 7 -n 7,7 -n “&lt;=8”, -n “&lt;8,7”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-r">
+<span id="cmdoption-catplat-retrieve-rotation"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--rotation</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;rotation&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-r" title="Link to this definition"></a></dt>
+<dd><p>Rotation of adsorbate around the axis of adsorption. For monodentate adsorbates only.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-adsorbate-formula">
+<span class="sig-name descname"><span class="pre">--adsorbate-formula</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;adsorbate_formula&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-adsorbate-formula" title="Link to this definition"></a></dt>
+<dd><p>Formula of adsorbate.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-id">
+<span class="sig-name descname"><span class="pre">--id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;id&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-id" title="Link to this definition"></a></dt>
+<dd><p>Database id of query.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-workflow-type">
+<span class="sig-name descname"><span class="pre">--workflow-type</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;workflow_type&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-workflow-type" title="Link to this definition"></a></dt>
+<dd><p>Workflow type of query. Three workflow types, namely, “bulk”, “slab” and “adsorbate”.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-relaxed">
+<span class="sig-name descname"><span class="pre">--relaxed</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;relaxed&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-relaxed" title="Link to this definition"></a></dt>
+<dd><p>Boolean specifying if structures to be queried are relaxed or not.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-unrelaxed_id">
+<span class="sig-name descname"><span class="pre">--unrelaxed_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;unrelaxed_id&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-unrelaxed_id" title="Link to this definition"></a></dt>
+<dd><p>Unrelaxed database id of query.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-parent_id">
+<span class="sig-name descname"><span class="pre">--parent_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;parent_id&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-parent_id" title="Link to this definition"></a></dt>
+<dd><p>Parent id of query.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-ml-preoptimization">
+<span id="cmdoption-catplat-retrieve-ml-preopt"></span><span id="cmdoption-catplat-retrieve-no-ml-preoptimization"></span><span id="cmdoption-catplat-retrieve-no-ml-preopt"></span><span class="sig-name descname"><span class="pre">--ml-preoptimization</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ml-preopt</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-ml-preoptimization</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-ml-preopt</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-retrieve-ml-preoptimization" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-write-csv">
+<span id="cmdoption-catplat-retrieve-no-write-csv"></span><span class="sig-name descname"><span class="pre">--write-csv</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-write-csv</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-retrieve-write-csv" title="Link to this definition"></a></dt>
+<dd><p>Toggle to write the retrieved results in csv format.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-retrieve-csv-filename">
+<span class="sig-name descname"><span class="pre">--csv-filename</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;csv_filename&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-retrieve-csv-filename" title="Link to this definition"></a></dt>
+<dd><p>name of the csv file to be written, can include a full path.</p>
+</dd></dl>
+
+</section>
+<section id="catplat-statistics">
+<h4><a class="toc-backref" href="#id43" role="doc-backlink">statistics</a><a class="headerlink" href="#catplat-statistics" title="Link to this heading"></a></h4>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>statistics<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-statistics-p">
+<span id="cmdoption-catplat-statistics-project"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--project</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-statistics-p" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong> Name of project containing the database_path.</p>
+</dd></dl>
+
+<section id="catplat-statistics-entries">
+<h5><a class="toc-backref" href="#id44" role="doc-backlink">entries</a><a class="headerlink" href="#catplat-statistics-entries" title="Link to this heading"></a></h5>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>statistics<span class="w"> </span>entries<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="catplat-test">
+<h4><a class="toc-backref" href="#id45" role="doc-backlink">test</a><a class="headerlink" href="#catplat-test" title="Link to this heading"></a></h4>
+<p>Test catplat.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="catplat-test-db">
+<h5><a class="toc-backref" href="#id46" role="doc-backlink">db</a><a class="headerlink" href="#catplat-test-db" title="Link to this heading"></a></h5>
+<p>Test database integrity.
+1) Use –database-path if you want to test an existing database.
+2) Use –test-case-1 for quick testing of a new catplat_version.
+3) Use –test-case-1 and –calculate for comprehensive testing of a new catplat_version.</p>
+<div class="line-block">
+<div class="line">Examples:</div>
+<div class="line-block">
+<div class="line">catplat test db –database-path ~/path/to/database.db</div>
+<div class="line">catplat test db –test-case-1</div>
+<div class="line">catplat test db –test-case-1 –calculate –server asp2acpu -n 2 -N 2</div>
+<div class="line-block">
+<div class="line">–project &lt;myproject&gt; –chemsys Cu</div>
+</div>
+</div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span><span class="nb">test</span><span class="w"> </span>db<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-test-db-test-case-1">
+<span class="sig-name descname"><span class="pre">--test-case-1</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-test-db-test-case-1" title="Link to this definition"></a></dt>
+<dd><p>Flag to run “test-case-1”, tests the db output.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-test-db-calculate">
+<span class="sig-name descname"><span class="pre">--calculate</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-test-db-calculate" title="Link to this definition"></a></dt>
+<dd><p>Flag to define if real calculations should be done for “test-case-1”</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-test-db-database-path">
+<span id="cmdoption-catplat-test-db-db-path"></span><span class="sig-name descname"><span class="pre">--database-path</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--db-path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;database_path&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-test-db-database-path" title="Link to this definition"></a></dt>
+<dd><p>Path to database to be checked.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-test-db-server">
+<span class="sig-name descname"><span class="pre">--server</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;server&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-test-db-server" title="Link to this definition"></a></dt>
+<dd><p>Name of server to run the job on. Will try to determine this automatically if unspecified.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-test-db-n">
+<span id="cmdoption-catplat-test-db-num-nodes"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-nodes</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_nodes&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-test-db-n" title="Link to this definition"></a></dt>
+<dd><p>Number of nodes to assign for each num-job-run-slots.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-test-db-N">
+<span id="cmdoption-catplat-test-db-num-job-run-slots"></span><span class="sig-name descname"><span class="pre">-N</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--num-job-run-slots</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;num_job_run_slots&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-test-db-N" title="Link to this definition"></a></dt>
+<dd><p>Number of jobs to run in parallel.</p>
+</dd></dl>
+
+</section>
+<section id="catplat-test-self">
+<h5><a class="toc-backref" href="#id47" role="doc-backlink">self</a><a class="headerlink" href="#catplat-test-self" title="Link to this heading"></a></h5>
+<p>Quick test for tunnel and db integrity.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span><span class="nb">test</span><span class="w"> </span>self<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="catplat-test-tunnel">
+<h5><a class="toc-backref" href="#id48" role="doc-backlink">tunnel</a><a class="headerlink" href="#catplat-test-tunnel" title="Link to this heading"></a></h5>
+<p>Test sql tunnel.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span><span class="nb">test</span><span class="w"> </span>tunnel<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="catplat-tunnel">
+<h4><a class="toc-backref" href="#id49" role="doc-backlink">tunnel</a><a class="headerlink" href="#catplat-tunnel" title="Link to this heading"></a></h4>
+<p>Tunneling from compute nodes to the mysql server.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>tunnel<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="catplat-tunnel-create">
+<h5><a class="toc-backref" href="#id50" role="doc-backlink">create</a><a class="headerlink" href="#catplat-tunnel-create" title="Link to this heading"></a></h5>
+<p>Create the tunnel.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>tunnel<span class="w"> </span>create<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-tunnel-create-dst">
+<span id="cmdoption-catplat-tunnel-create-destination"></span><span class="sig-name descname"><span class="pre">--dst</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--destination</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dst&gt;</span></span><a class="headerlink" href="#cmdoption-catplat-tunnel-create-dst" title="Link to this definition"></a></dt>
+<dd><p><strong>Required</strong></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-catplat-tunnel-create-debug">
+<span class="sig-name descname"><span class="pre">--debug</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-catplat-tunnel-create-debug" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="catplat-tunnel-destroy">
+<h5><a class="toc-backref" href="#id51" role="doc-backlink">destroy</a><a class="headerlink" href="#catplat-tunnel-destroy" title="Link to this heading"></a></h5>
+<p>Destroy all tunnels.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>tunnel<span class="w"> </span>destroy<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="catplat-welcome">
+<h4><a class="toc-backref" href="#id52" role="doc-backlink">welcome</a><a class="headerlink" href="#catplat-welcome" title="Link to this heading"></a></h4>
+<p>Prints the welcome message.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>catplat<span class="w"> </span>welcome<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorials.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gallery.html" class="btn btn-neutral float-right" title="Gallery" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

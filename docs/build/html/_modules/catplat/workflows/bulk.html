@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.workflows.bulk &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.workflows.bulk</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.workflows.bulk</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module consists of classes that handles the bulk workflow.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+
+<span class="kn">from</span> <span class="nn">pyatoms.jobs.vasp</span> <span class="kn">import</span> <span class="n">VaspCellOptProcedure</span>
+
+<span class="kn">from</span> <span class="nn">catplat.workflows.slab</span> <span class="kn">import</span> <span class="n">SlabWorkflow</span>
+<span class="kn">from</span> <span class="nn">catplat.workflows.workflow</span> <span class="kn">import</span> <span class="n">Workflow</span><span class="p">,</span> <span class="n">WorkflowBuilder</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BulkStructureWorkflowBuilder">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.bulk.BulkStructureWorkflowBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">BulkStructureWorkflowBuilder</span><span class="p">(</span><span class="n">WorkflowBuilder</span><span class="p">):</span>
+    <span class="n">WORKFLOW_TYPE</span> <span class="o">=</span> <span class="s2">&quot;bulk&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_settings</span><span class="p">,</span> <span class="n">blueprint</span><span class="p">,</span> <span class="n">bulk_specs</span><span class="p">,</span> <span class="n">query_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">blueprint</span><span class="o">=</span><span class="n">blueprint</span><span class="p">,</span> <span class="n">parent_workflow</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">query_only</span><span class="o">=</span><span class="n">query_only</span><span class="p">,</span> <span class="n">project_settings</span><span class="o">=</span><span class="n">project_settings</span><span class="p">,</span>
+                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span> <span class="o">=</span> <span class="n">blueprint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bulk_specs</span> <span class="o">=</span> <span class="n">bulk_specs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">skip_materials_project</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="o">.</span><span class="n">skip_materials_project</span>
+
+<div class="viewcode-block" id="BulkStructureWorkflowBuilder.build">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.bulk.BulkStructureWorkflowBuilder.build">[docs]</a>
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Main function to build adsorbate workflows&quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Building bulk structure workflows&#39;</span><span class="p">)</span>
+        <span class="n">atoms</span><span class="p">,</span> <span class="n">entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_unrelaxed_atoms</span><span class="p">()</span>
+        <span class="n">workflows</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">entries</span><span class="p">):</span>
+            <span class="n">workflows</span> <span class="o">+=</span> <span class="p">[</span><span class="n">BulkStructureWorkflow</span><span class="p">(</span><span class="n">project_settings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_settings</span><span class="p">,</span>
+                                                <span class="n">blueprint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="p">,</span>
+                                                <span class="n">atoms</span><span class="o">=</span><span class="n">a</span><span class="p">,</span>
+                                                <span class="n">db_id</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                                <span class="n">query_only</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">query_only</span><span class="p">,</span>
+                                                <span class="n">output_writer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_writer</span><span class="p">)]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Built </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">workflows</span><span class="p">)</span><span class="si">}</span><span class="s2"> bulk structure workflows&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">workflows</span></div>
+
+
+<div class="viewcode-block" id="BulkStructureWorkflowBuilder.own_query_db_criteria">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.bulk.BulkStructureWorkflowBuilder.own_query_db_criteria">[docs]</a>
+    <span class="k">def</span> <span class="nf">own_query_db_criteria</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns dictionary of attribute:value pairs which are used in the db query criteria. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk_specs</span><span class="o">.</span><span class="n">own_query_db_criteria</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_generate_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">existing_atoms</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get bulk structure from MAPI or read bulk structure from user&#39;s bulk directory.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk_specs</span><span class="o">.</span><span class="n">generate_atoms</span><span class="p">(</span><span class="n">existing_atoms</span><span class="o">=</span><span class="n">existing_atoms</span><span class="p">,</span>
+                                              <span class="n">skip_materials_project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_materials_project</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BulkStructureWorkflowBuilder.from_blueprint">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.bulk.BulkStructureWorkflowBuilder.from_blueprint">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_blueprint</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">blueprint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Main factory method to instantiate BulkWorkflowBuilder.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="p">(</span><span class="n">blueprint</span><span class="o">=</span><span class="n">blueprint</span><span class="p">,</span> <span class="n">bulk_specs</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">blueprint</span><span class="o">.</span><span class="n">bulk_specs_list</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="BulkStructureWorkflow">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.bulk.BulkStructureWorkflow">[docs]</a>
+<span class="k">class</span> <span class="nc">BulkStructureWorkflow</span><span class="p">(</span><span class="n">Workflow</span><span class="p">):</span>
+    <span class="n">ENABLE_ML_PREOPTIMIZATION</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blueprint</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">db_id</span><span class="p">,</span> <span class="n">project_settings</span><span class="p">,</span> <span class="n">query_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">blueprint</span><span class="o">=</span><span class="n">blueprint</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="n">db_id</span><span class="o">=</span><span class="n">db_id</span><span class="p">,</span>
+                         <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">query_only</span><span class="o">=</span><span class="n">query_only</span><span class="p">,</span> <span class="n">project_settings</span><span class="o">=</span><span class="n">project_settings</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spacegroup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_entry</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">spacegroup</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">_optimization_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_entry</span><span class="o">.</span><span class="n">attributes</span>
+        <span class="n">bulk_formula</span> <span class="o">=</span> <span class="n">attributes</span><span class="o">.</span><span class="n">bulk_formula</span>
+        <span class="n">spacegroup</span> <span class="o">=</span> <span class="n">attributes</span><span class="o">.</span><span class="n">spacegroup</span>
+
+        <span class="n">folder</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;bulk.</span><span class="si">{</span><span class="n">bulk_formula</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">spacegroup</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="o">.</span><span class="n">calculation_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;id</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">db_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_optimization_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">relaxed_entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_relaxed_entry</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_only</span> <span class="ow">or</span> <span class="n">relaxed_entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimization_folder</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimization_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span>
+
+    <span class="k">def</span> <span class="nf">_base_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">VaspCellOptProcedure</span><span class="o">.</span><span class="n">retrieve_settings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project_settings</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BulkStructureWorkflow.optimization_job">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.bulk.BulkStructureWorkflow.optimization_job">[docs]</a>
+    <span class="k">def</span> <span class="nf">optimization_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">atoms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span>
+
+        <span class="n">settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span><span class="p">()</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_optimization_folder</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">VaspCellOptProcedure</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_create_child_workflows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating Miller Index child workflows for </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">relaxed_entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_relaxed_entry</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">relaxed_entry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">bulk_atoms</span> <span class="o">=</span> <span class="n">relaxed_entry</span><span class="o">.</span><span class="n">atoms</span>
+        <span class="n">child_workflows</span> <span class="o">=</span> <span class="n">SlabWorkflow</span><span class="o">.</span><span class="n">from_blueprint</span><span class="p">(</span><span class="n">bulk_atoms</span><span class="o">=</span><span class="n">bulk_atoms</span><span class="p">,</span>
+                                                      <span class="n">blueprint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="p">,</span>
+                                                      <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                                                      <span class="n">query_only</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">query_only</span><span class="p">,</span>
+                                                      <span class="n">project_settings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_settings</span><span class="p">,</span>
+                                                      <span class="n">output_writer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_writer</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">child_workflows</span><span class="p">)</span><span class="si">}</span><span class="s2"> Slab child workflows&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">child_workflows</span>
+
+<div class="viewcode-block" id="BulkStructureWorkflow.from_blueprint">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.bulk.BulkStructureWorkflow.from_blueprint">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_blueprint</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">blueprint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">builders</span> <span class="o">=</span> <span class="n">BulkStructureWorkflowBuilder</span><span class="o">.</span><span class="n">from_blueprint</span><span class="p">(</span><span class="n">blueprint</span><span class="o">=</span><span class="n">blueprint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">([</span><span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span> <span class="k">for</span> <span class="n">builder</span> <span class="ow">in</span> <span class="n">builders</span><span class="p">]))</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

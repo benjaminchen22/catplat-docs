@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.workflows.data_structure &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.workflows.data_structure</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.workflows.data_structure</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the workflow blueprint for workflows.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
+
+<span class="kn">from</span> <span class="nn">catplat.database.ase</span> <span class="kn">import</span> <span class="n">QuerySet</span>
+
+
+<div class="viewcode-block" id="WorkflowBlueprint">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.data_structure.WorkflowBlueprint">[docs]</a>
+<span class="k">class</span> <span class="nc">WorkflowBlueprint</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_set</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">database_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">calculation_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stop_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">ml_preoptimization</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">skip_materials_project</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">ml_potential_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Specifies the parameters for running the workflow.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            database_path (str): Path to the database in which the Workflow will store the results.</span>
+<span class="sd">            calculation_folder (str): Folder in which the Workflow will use to perform necessary calculations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">query_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">skip_materials_project</span> <span class="o">=</span> <span class="n">skip_materials_project</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ml_preoptimization</span> <span class="o">=</span> <span class="n">ml_preoptimization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_set</span> <span class="o">=</span> <span class="n">query_set</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_at</span> <span class="o">=</span> <span class="n">stop_at</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculation_folder</span> <span class="o">=</span> <span class="n">calculation_folder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_path</span> <span class="o">=</span> <span class="n">database_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ml_potential_hash</span> <span class="o">=</span> <span class="n">ml_potential_hash</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bulk_specs_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Expands the BulkSpecificationsSet to a list of BulkSpecs class.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_set</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">to_specifications</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">slab_specs_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Expands the SlabSpecificationsSet to a list of SlabSpecs class.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_set</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">to_specifications</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">adsorbate_specs_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Expands the AdsorbateSpecificationsSet to a list of AdsorbateSpecs class.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_set</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">to_specifications</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_user_slab</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Bool to check if user slab is defined. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_set</span><span class="o">.</span><span class="n">is_user_slab</span>
+
+<div class="viewcode-block" id="WorkflowBlueprint.specifications">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.data_structure.WorkflowBlueprint.specifications">[docs]</a>
+    <span class="k">def</span> <span class="nf">specifications</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+        <span class="n">Specifications</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Specifications&#39;</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_set</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">]</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">specs</span><span class="p">))</span>
+
+        <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span><span class="n">spec</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">specs</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">s</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">)]</span>
+        <span class="n">specs</span> <span class="o">=</span> <span class="p">[</span><span class="n">Specifications</span><span class="p">(</span><span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">specs</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">specs</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s1">&lt;query_set=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">query_set</span><span class="si">}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;calculation_folder=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">calculation_folder</span><span class="si">}</span><span class="s1">, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;database_path=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">database_path</span><span class="si">}</span><span class="s1">&gt;&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WorkflowBlueprint.from_folder">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.data_structure.WorkflowBlueprint.from_folder">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_folder</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">database_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;database.db&#39;</span><span class="p">)</span>
+        <span class="n">calculation_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;calculations&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">database_path</span><span class="o">=</span><span class="n">database_path</span><span class="p">,</span> <span class="n">calculation_folder</span><span class="o">=</span><span class="n">calculation_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WorkflowBlueprint.from_dict">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.data_structure.WorkflowBlueprint.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WorkflowBlueprint.empty">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.data_structure.WorkflowBlueprint.empty">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">query_set</span><span class="o">=</span><span class="n">QuerySet</span><span class="p">())</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

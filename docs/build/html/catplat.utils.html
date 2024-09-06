@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.utils package &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">catplat.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/catplat.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="catplat-utils-package">
+<h1>catplat.utils package<a class="headerlink" href="#catplat-utils-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-catplat.utils.comparator">
+<span id="catplat-utils-comparator-module"></span><h2>catplat.utils.comparator module<a class="headerlink" href="#module-catplat.utils.comparator" title="Link to this heading"></a></h2>
+<p>This module consists of the Comparator Class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.utils.comparator.</span></span><span class="sig-name descname"><span class="pre">Comparator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_inclusive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_inclusive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.1920928955078125e-07</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.comparator.Comparator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Converts min_val and max_val to a Comparator class where operations can be performed.
+Initialization by string/int/float can be done using the Comparator.new() method.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.min_val">
+<span class="sig-name descname"><span class="pre">min_val</span></span><a class="headerlink" href="#catplat.utils.comparator.Comparator.min_val" title="Link to this definition"></a></dt>
+<dd><p>Lower limit of comparator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, float, None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.max_val">
+<span class="sig-name descname"><span class="pre">max_val</span></span><a class="headerlink" href="#catplat.utils.comparator.Comparator.max_val" title="Link to this definition"></a></dt>
+<dd><p>Upper limit of the comparator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, float, None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.min_inclusive">
+<span class="sig-name descname"><span class="pre">min_inclusive</span></span><a class="headerlink" href="#catplat.utils.comparator.Comparator.min_inclusive" title="Link to this definition"></a></dt>
+<dd><p>“&gt;=” if True, “&gt;” otherwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.max_inclusive">
+<span class="sig-name descname"><span class="pre">max_inclusive</span></span><a class="headerlink" href="#catplat.utils.comparator.Comparator.max_inclusive" title="Link to this definition"></a></dt>
+<dd><p>“&gt;=” if True, “&gt;” otherwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.equal_tolerance">
+<span class="sig-name descname"><span class="pre">equal_tolerance</span></span><a class="headerlink" href="#catplat.utils.comparator.Comparator.equal_tolerance" title="Link to this definition"></a></dt>
+<dd><p>Rounding tolerance used for ‘==’, ‘&lt;=’ and ‘&gt;=’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.compare">
+<span class="sig-name descname"><span class="pre">compare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.compare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.comparator.Comparator.compare" title="Link to this definition"></a></dt>
+<dd><p>Returns True/False for each item in array if item passes/fails the comparator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.filtered_indices">
+<span class="sig-name descname"><span class="pre">filtered_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.filtered_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.comparator.Comparator.filtered_indices" title="Link to this definition"></a></dt>
+<dd><p>Returns index in a list that matches the comparator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.filtered_values">
+<span class="sig-name descname"><span class="pre">filtered_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.filtered_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.comparator.Comparator.filtered_values" title="Link to this definition"></a></dt>
+<dd><p>Returns the values in a list that matches the comparator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.get_tuple">
+<span class="sig-name descname"><span class="pre">get_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_upper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.get_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.comparator.Comparator.get_tuple" title="Link to this definition"></a></dt>
+<dd><p>Returns a tuple with the lower and upper boundaries of the comparator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.is_comparator">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_comparator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.is_comparator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.comparator.Comparator.is_comparator" title="Link to this definition"></a></dt>
+<dd><p>Simple check if comparator can be created from str.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.new">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.comparator.Comparator.new" title="Link to this definition"></a></dt>
+<dd><p>Convenience method to create Comparator from Comparator, int, float and str.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.to_sql_query">
+<span class="sig-name descname"><span class="pre">to_sql_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.to_sql_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.comparator.Comparator.to_sql_query" title="Link to this definition"></a></dt>
+<dd><p>Returns sql string i.e. _lower_limit&lt;=attribute&lt;=_upper_limit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.comparator.Comparator.to_str">
+<span class="sig-name descname"><span class="pre">to_str</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.to_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.comparator.Comparator.to_str" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-catplat.utils.displacement">
+<span id="catplat-utils-displacement-module"></span><h2>catplat.utils.displacement module<a class="headerlink" href="#module-catplat.utils.displacement" title="Link to this heading"></a></h2>
+<p>This module consists the RandomDisplacementBounds Class used by the ComplexBidentateBuilder class in autopy.structure.complex.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.utils.displacement.RandomDisplacementBounds">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.utils.displacement.</span></span><span class="sig-name descname"><span class="pre">RandomDisplacementBounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/displacement.html#RandomDisplacementBounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.displacement.RandomDisplacementBounds" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>random displacement with bounds:  see: <a class="reference external" href="https://stackoverflow.com/a/21967888/2320035">https://stackoverflow.com/a/21967888/2320035</a>
+Modified! (dropped acceptance-rejection sampling for a more specialized approach)</p>
+</dd></dl>
+
+</section>
+<section id="module-catplat.utils.slab">
+<span id="catplat-utils-slab-module"></span><h2>catplat.utils.slab module<a class="headerlink" href="#module-catplat.utils.slab" title="Link to this heading"></a></h2>
+<p>This module consists of the utilities functions used in SlabBuilder.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.slab.compact_bulk_in_unitcell">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.slab.</span></span><span class="sig-name descname"><span class="pre">compact_bulk_in_unitcell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GratomsWrapper</span></span></span><a class="reference internal" href="_modules/catplat/utils/slab.html#compact_bulk_in_unitcell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.slab.compact_bulk_in_unitcell" title="Link to this definition"></a></dt>
+<dd><p>Translates atoms in the bulk so that the bulk structure is ‘nice’ and compact.
+This prevents creation of multiple slabs if the bulk structure has some roughness.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.slab.get_avg_coord_num">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.slab.</span></span><span class="sig-name descname"><span class="pre">get_avg_coord_num</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slab</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/catplat/utils/slab.html#get_avg_coord_num"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.slab.get_avg_coord_num" title="Link to this definition"></a></dt>
+<dd><p>Returns the mean of all surface atoms’s avg_coord_num.
+i.e., fcc111 returns 9.0 and fcc100 returns 8.0</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.slab.get_unique_coordinates_cartesian_tol">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.slab.</span></span><span class="sig-name descname"><span class="pre">get_unique_coordinates_cartesian_tol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/slab.html#get_unique_coordinates_cartesian_tol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.slab.get_unique_coordinates_cartesian_tol" title="Link to this definition"></a></dt>
+<dd><p>Modified function from catkit.gen.utils.get_unique_coordinates.</p>
+<p>Changelog:
+1. tol changed to cartesian coords, i.e. units of Angstroms, instead of fraction coordinates.
+2. Use z component of 3rd cell vector only for determining cell length
+3. Added return_tag flag to return the tags instead of values</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.slab.list_gcd">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.slab.</span></span><span class="sig-name descname"><span class="pre">list_gcd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/slab.html#list_gcd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.slab.list_gcd" title="Link to this definition"></a></dt>
+<dd><p>Return the greatest common divisor of a list of values. Copied from catkit.gen.utils.utilities.py</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.slab.reduce_vector">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.slab.</span></span><span class="sig-name descname"><span class="pre">reduce_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/slab.html#reduce_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.slab.reduce_vector" title="Link to this definition"></a></dt>
+<dd><p>Copied from pymatgen.core.surface._reduce_vector</p>
+</dd></dl>
+
+</section>
+<section id="module-catplat.utils.typecheck">
+<span id="catplat-utils-typecheck-module"></span><h2>catplat.utils.typecheck module<a class="headerlink" href="#module-catplat.utils.typecheck" title="Link to this heading"></a></h2>
+<p>This module consists of functions used for type checking. Functions are called as class decorators.</p>
+<dl class="simple">
+<dt>For example:</dt><dd><p>&#64;enforce_types
+class XYZ(object):</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.typecheck.enforce_strict_types">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.typecheck.</span></span><span class="sig-name descname"><span class="pre">enforce_strict_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/typecheck.html#enforce_strict_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.typecheck.enforce_strict_types" title="Link to this definition"></a></dt>
+<dd><p>Module to be used as a decorater &#64;enforce_types</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.typecheck.enforce_types">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.typecheck.</span></span><span class="sig-name descname"><span class="pre">enforce_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/typecheck.html#enforce_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.typecheck.enforce_types" title="Link to this definition"></a></dt>
+<dd><p>Module to be used as a decorater &#64;enforce_types</p>
+</dd></dl>
+
+</section>
+<section id="module-catplat.utils.utils">
+<span id="catplat-utils-utils-module"></span><h2>catplat.utils.utils module<a class="headerlink" href="#module-catplat.utils.utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.utils.callback_min_max">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.utils.</span></span><span class="sig-name descname"><span class="pre">callback_min_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/utils/utils.html#callback_min_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.utils.callback_min_max" title="Link to this definition"></a></dt>
+<dd><p>Used in cli dryrun, calculate and retrieve.
+Converts min_val and max_val to the corresponding attributes of QuerySet
+For example:</p>
+<blockquote>
+<div><p>preprocess_min_max(0,10) -&gt; [‘&gt;=0,&lt;=10’]
+preprocess_min_max(0, None) -&gt; [‘&gt;=0’]
+preprocess_min_max(None, 10) -&gt; [‘&gt;=10’]
+preprocess_min_max(None, None) -&gt; [None]</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.utils.get_formula">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.utils.</span></span><span class="sig-name descname"><span class="pre">get_formula</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/catplat/utils/utils.html#get_formula"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.utils.get_formula" title="Link to this definition"></a></dt>
+<dd><p>Gets formula from atoms.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.utils.get_spacegroup">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.utils.</span></span><span class="sig-name descname"><span class="pre">get_spacegroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/catplat/utils/utils.html#get_spacegroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.utils.get_spacegroup" title="Link to this definition"></a></dt>
+<dd><p>Gets spacegroup from atoms.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.utils.num_unique_images">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.utils.</span></span><span class="sig-name descname"><span class="pre">num_unique_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/catplat/utils/utils.html#num_unique_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.utils.num_unique_images" title="Link to this definition"></a></dt>
+<dd><p>Returns the number of unique images from a list of images.</p>
+</dd></dl>
+
+</section>
+<section id="module-catplat.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-catplat.utils" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.utils.Comparator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">Comparator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_inclusive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_inclusive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.1920928955078125e-07</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.Comparator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Converts min_val and max_val to a Comparator class where operations can be performed.
+Initialization by string/int/float can be done using the Comparator.new() method.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.min_val">
+<span class="sig-name descname"><span class="pre">min_val</span></span><a class="headerlink" href="#catplat.utils.Comparator.min_val" title="Link to this definition"></a></dt>
+<dd><p>Lower limit of comparator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, float, None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.max_val">
+<span class="sig-name descname"><span class="pre">max_val</span></span><a class="headerlink" href="#catplat.utils.Comparator.max_val" title="Link to this definition"></a></dt>
+<dd><p>Upper limit of the comparator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, float, None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.min_inclusive">
+<span class="sig-name descname"><span class="pre">min_inclusive</span></span><a class="headerlink" href="#catplat.utils.Comparator.min_inclusive" title="Link to this definition"></a></dt>
+<dd><p>“&gt;=” if True, “&gt;” otherwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.max_inclusive">
+<span class="sig-name descname"><span class="pre">max_inclusive</span></span><a class="headerlink" href="#catplat.utils.Comparator.max_inclusive" title="Link to this definition"></a></dt>
+<dd><p>“&gt;=” if True, “&gt;” otherwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.equal_tolerance">
+<span class="sig-name descname"><span class="pre">equal_tolerance</span></span><a class="headerlink" href="#catplat.utils.Comparator.equal_tolerance" title="Link to this definition"></a></dt>
+<dd><p>Rounding tolerance used for ‘==’, ‘&lt;=’ and ‘&gt;=’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.compare">
+<span class="sig-name descname"><span class="pre">compare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.compare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.Comparator.compare" title="Link to this definition"></a></dt>
+<dd><p>Returns True/False for each item in array if item passes/fails the comparator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.filtered_indices">
+<span class="sig-name descname"><span class="pre">filtered_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.filtered_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.Comparator.filtered_indices" title="Link to this definition"></a></dt>
+<dd><p>Returns index in a list that matches the comparator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.filtered_values">
+<span class="sig-name descname"><span class="pre">filtered_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.filtered_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.Comparator.filtered_values" title="Link to this definition"></a></dt>
+<dd><p>Returns the values in a list that matches the comparator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.get_tuple">
+<span class="sig-name descname"><span class="pre">get_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_upper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.get_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.Comparator.get_tuple" title="Link to this definition"></a></dt>
+<dd><p>Returns a tuple with the lower and upper boundaries of the comparator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.is_comparator">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_comparator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.is_comparator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.Comparator.is_comparator" title="Link to this definition"></a></dt>
+<dd><p>Simple check if comparator can be created from str.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.new">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.Comparator.new" title="Link to this definition"></a></dt>
+<dd><p>Convenience method to create Comparator from Comparator, int, float and str.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.to_sql_query">
+<span class="sig-name descname"><span class="pre">to_sql_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attribute</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.to_sql_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.Comparator.to_sql_query" title="Link to this definition"></a></dt>
+<dd><p>Returns sql string i.e. _lower_limit&lt;=attribute&lt;=_upper_limit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.utils.Comparator.to_str">
+<span class="sig-name descname"><span class="pre">to_str</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/catplat/utils/comparator.html#Comparator.to_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.Comparator.to_str" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.utils.RandomDisplacementBounds">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">RandomDisplacementBounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/displacement.html#RandomDisplacementBounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.RandomDisplacementBounds" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>random displacement with bounds:  see: <a class="reference external" href="https://stackoverflow.com/a/21967888/2320035">https://stackoverflow.com/a/21967888/2320035</a>
+Modified! (dropped acceptance-rejection sampling for a more specialized approach)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.callback_min_max">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">callback_min_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/utils/utils.html#callback_min_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.callback_min_max" title="Link to this definition"></a></dt>
+<dd><p>Used in cli dryrun, calculate and retrieve.
+Converts min_val and max_val to the corresponding attributes of QuerySet
+For example:</p>
+<blockquote>
+<div><p>preprocess_min_max(0,10) -&gt; [‘&gt;=0,&lt;=10’]
+preprocess_min_max(0, None) -&gt; [‘&gt;=0’]
+preprocess_min_max(None, 10) -&gt; [‘&gt;=10’]
+preprocess_min_max(None, None) -&gt; [None]</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.compact_bulk_in_unitcell">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">compact_bulk_in_unitcell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GratomsWrapper</span></span></span><a class="reference internal" href="_modules/catplat/utils/slab.html#compact_bulk_in_unitcell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.compact_bulk_in_unitcell" title="Link to this definition"></a></dt>
+<dd><p>Translates atoms in the bulk so that the bulk structure is ‘nice’ and compact.
+This prevents creation of multiple slabs if the bulk structure has some roughness.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.enforce_strict_types">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">enforce_strict_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/typecheck.html#enforce_strict_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.enforce_strict_types" title="Link to this definition"></a></dt>
+<dd><p>Module to be used as a decorater &#64;enforce_types</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.enforce_types">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">enforce_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/typecheck.html#enforce_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.enforce_types" title="Link to this definition"></a></dt>
+<dd><p>Module to be used as a decorater &#64;enforce_types</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.get_avg_coord_num">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">get_avg_coord_num</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slab</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/catplat/utils/slab.html#get_avg_coord_num"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.get_avg_coord_num" title="Link to this definition"></a></dt>
+<dd><p>Returns the mean of all surface atoms’s avg_coord_num.
+i.e., fcc111 returns 9.0 and fcc100 returns 8.0</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.get_formula">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">get_formula</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/catplat/utils/utils.html#get_formula"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.get_formula" title="Link to this definition"></a></dt>
+<dd><p>Gets formula from atoms.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.get_spacegroup">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">get_spacegroup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/catplat/utils/utils.html#get_spacegroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.get_spacegroup" title="Link to this definition"></a></dt>
+<dd><p>Gets spacegroup from atoms.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.get_unique_coordinates_cartesian_tol">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">get_unique_coordinates_cartesian_tol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/slab.html#get_unique_coordinates_cartesian_tol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.get_unique_coordinates_cartesian_tol" title="Link to this definition"></a></dt>
+<dd><p>Modified function from catkit.gen.utils.get_unique_coordinates.</p>
+<p>Changelog:
+1. tol changed to cartesian coords, i.e. units of Angstroms, instead of fraction coordinates.
+2. Use z component of 3rd cell vector only for determining cell length
+3. Added return_tag flag to return the tags instead of values</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.list_gcd">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">list_gcd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/slab.html#list_gcd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.list_gcd" title="Link to this definition"></a></dt>
+<dd><p>Return the greatest common divisor of a list of values. Copied from catkit.gen.utils.utilities.py</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.num_unique_images">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">num_unique_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/catplat/utils/utils.html#num_unique_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.num_unique_images" title="Link to this definition"></a></dt>
+<dd><p>Returns the number of unique images from a list of images.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.utils.reduce_vector">
+<span class="sig-prename descclassname"><span class="pre">catplat.utils.</span></span><span class="sig-name descname"><span class="pre">reduce_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/utils/slab.html#reduce_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.utils.reduce_vector" title="Link to this definition"></a></dt>
+<dd><p>Copied from pymatgen.core.surface._reduce_vector</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

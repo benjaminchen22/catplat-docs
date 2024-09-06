@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.specifications.slab &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.specifications.slab</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.specifications.slab</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">pyatoms.io.ase.atoms</span> <span class="kn">import</span> <span class="n">AtomsWrapper</span>
+
+<span class="kn">from</span> <span class="nn">catplat.core.structure.slab</span> <span class="kn">import</span> <span class="n">Slab</span>
+<span class="kn">from</span> <span class="nn">catplat.create.structure</span> <span class="kn">import</span> <span class="n">CatplatStructureBuilder</span>
+<span class="kn">from</span> <span class="nn">catplat.io.gratoms</span> <span class="kn">import</span> <span class="n">GratomsWrapper</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.user</span> <span class="kn">import</span> <span class="n">CatplatUserSettings</span>
+<span class="kn">from</span> <span class="nn">catplat.specifications.specifications</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DictAttributesMetaclass</span><span class="p">,</span>
+                                                   <span class="n">Specifications</span><span class="p">,</span>
+                                                   <span class="n">SpecificationsSet</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catplat.structure.slab</span> <span class="kn">import</span> <span class="n">SlabBuilder</span>
+<span class="kn">from</span> <span class="nn">catplat.utils</span> <span class="kn">import</span> <span class="n">enforce_types</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># type hints and default values for SlabSpecs</span>
+<span class="n">SLAB_TYPE_HINTS</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;slab_atoms&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Atoms</span><span class="p">,</span> <span class="n">GratomsWrapper</span><span class="p">,</span> <span class="n">AtomsWrapper</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;termination&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;overlayer&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;miller_index&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;unitcell_size&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;num_layers&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;num_fixed_layers&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;vacuum&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;conventional&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;slab_provenance&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;x_length&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;y_length&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;slab_thickness&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;slab_fixed_thickness&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;slab_chemsys&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;slab_formula&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+                         <span class="s1">&#39;slab_acn&#39;</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+                         <span class="p">}</span>
+
+<span class="n">SLAB_ATTRIBUTES_LIST</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">SLAB_TYPE_HINTS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">SLAB_DEFAULT_VALUES</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">SLAB_ATTRIBUTES_LIST</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="c1"># type hints and default values for SlabSpecificationsSet</span>
+<span class="n">SLAB_SPECS_TYPE_HINTS</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">value</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">value</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SLAB_TYPE_HINTS</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+
+<div class="viewcode-block" id="SlabSpecifications">
+<a class="viewcode-back" href="../../../catplat.specifications.html#catplat.specifications.slab.SlabSpecifications">[docs]</a>
+<span class="nd">@enforce_types</span>
+<span class="nd">@dataclass</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">SlabSpecifications</span><span class="p">(</span><span class="n">Specifications</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span>
+
+<div class="viewcode-block" id="SlabSpecifications.generate_atoms">
+<a class="viewcode-back" href="../../../catplat.specifications.html#catplat.specifications.slab.SlabSpecifications.generate_atoms">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">generate_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_filter_terminations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slabs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">termination</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">slabs</span>
+
+        <span class="n">filtered</span> <span class="o">=</span> <span class="p">[</span><span class="n">slab</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">slabs</span> <span class="k">if</span> <span class="n">slab</span><span class="o">.</span><span class="n">termination</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">termination</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">filtered</span>
+
+<div class="viewcode-block" id="SlabSpecifications.from_attr">
+<a class="viewcode-back" href="../../../catplat.specifications.html#catplat.specifications.slab.SlabSpecifications.from_attr">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_attr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">slab_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">slab_atoms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">CatplatSlabSpecifications</span><span class="p">(</span><span class="n">slab_atoms</span><span class="o">=</span><span class="n">slab_atoms</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UserSlabSpecifications</span><span class="p">(</span><span class="n">slab_atoms</span><span class="o">=</span><span class="n">slab_atoms</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SlabSpecificationsSet">
+<a class="viewcode-back" href="../../../catplat.specifications.html#catplat.specifications.slab.SlabSpecificationsSet">[docs]</a>
+<span class="nd">@enforce_types</span>
+<span class="nd">@dataclass</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">SlabSpecificationsSet</span><span class="p">(</span><span class="n">SpecificationsSet</span><span class="p">,</span>
+                            <span class="n">metaclass</span><span class="o">=</span><span class="n">DictAttributesMetaclass</span><span class="p">,</span>
+                            <span class="n">other_attrs</span><span class="o">=</span><span class="n">SLAB_DEFAULT_VALUES</span><span class="p">,</span>
+                            <span class="n">types</span><span class="o">=</span><span class="n">SLAB_SPECS_TYPE_HINTS</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main class containing the slab attributes provided by the user.</span>
+
+<span class="sd">    Also contains some error checks for the attributes which are called in the QuerySet.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        slab_atoms (list, tuple): Name of slab file in user&#39;s slab directory. (~/.autopy/slab or ~/autopy/autopy/data/slab).</span>
+<span class="sd">                            When slab is specified, other bulk and slab attributes should not be specified.</span>
+<span class="sd">        termination (list, tuple, None): Slab termination of alloy.</span>
+<span class="sd">        overlayer (list, tuple, None): Replaces top layer atoms with overlayer atoms.</span>
+<span class="sd">        miller_index (list, tuple, None): Miller index of slab to be created.</span>
+<span class="sd">        unitcell_size (list, tuple, None): Size of slab to be created.</span>
+<span class="sd">        num_layers (list, tuple, None): Number of layers of the slab.</span>
+<span class="sd">        num_fixed_layers (list, tuple, None): Number of layers to be fixed.</span>
+<span class="sd">        slab_fixed_thickness (float, None): Fixed atoms cutoff in Angstroms.</span>
+<span class="sd">        vacuum (list, tuple, None): Amount of vacuum (in angstroms) to add on &quot;each side&quot; of the slab (i.e., total vacuum = vauum x 2) Vacuum should be an int.</span>
+<span class="sd">        conventional (list, tuple, None): Toggle for creation of conventional slabs.</span>
+<span class="sd">        slab_provenance (list, tuple, None): String for the origin of slab atoms. Can be [&#39;autopy-slab&#39;] or [&#39;user-bulk&#39;]</span>
+<span class="sd">        #TODO: Update documentation</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        slab_set = SlabSpecificationsSet()</span>
+<span class="sd">        slab_set.slab_atoms = [&#39;user_slab&#39;]</span>
+<span class="sd">        slab_set.termination = [&#39;Cu&#39;]</span>
+<span class="sd">        slab_set.overlayer = [&#39;Cu&#39;]</span>
+<span class="sd">        slab_set.miller_index = [(1,1,1)]</span>
+<span class="sd">        slab_set.unitcell_size = [(2,2)]</span>
+<span class="sd">        slab_set.num_layers = [4]</span>
+<span class="sd">        slab_set.num_fixed_layers = [2]</span>
+<span class="sd">        slab_set.slab_fixed_thickness = [2]</span>
+<span class="sd">        slab_set.vacuum = [10]</span>
+<span class="sd">        slab_set.conventional = [True]</span>
+<span class="sd">        slab_set.slab_provenance = [&#39;user-slab&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SPECIFICATIONS_CLASS</span> <span class="o">=</span> <span class="n">SlabSpecifications</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_user_slab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab_atoms</span> <span class="o">!=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+
+<div class="viewcode-block" id="SlabSpecificationsSet.mutually_excl_slab_attrs_check">
+<a class="viewcode-back" href="../../../catplat.specifications.html#catplat.specifications.slab.SlabSpecificationsSet.mutually_excl_slab_attrs_check">[docs]</a>
+    <span class="k">def</span> <span class="nf">mutually_excl_slab_attrs_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Check if mutually exclusive slab attrs are specified. &quot;&quot;&quot;</span>
+        <span class="n">mutually_exclusive</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;overlayer&quot;</span><span class="p">,</span> <span class="s2">&quot;miller_index&quot;</span><span class="p">,</span> <span class="s2">&quot;unitcell_size&quot;</span><span class="p">,</span> <span class="s2">&quot;num_layers&quot;</span><span class="p">,</span>
+                              <span class="s2">&quot;num_fixed_layers&quot;</span><span class="p">,</span> <span class="s2">&quot;vacuum&quot;</span><span class="p">,</span> <span class="s2">&quot;conventional&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mutually_exclusive</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">!=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Slab attributes cannot be specified when user slab_atoms are specified.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SlabSpecificationsSet.is_valid_user_slab_check">
+<a class="viewcode-back" href="../../../catplat.specifications.html#catplat.specifications.slab.SlabSpecificationsSet.is_valid_user_slab_check">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_valid_user_slab_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_user_slab</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab_atoms</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">CatplatStructureBuilder</span><span class="o">.</span><span class="n">build_slab</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Slab atoms (</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">) cannot be read. Please ensure that the file is in &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;the slab directory (</span><span class="si">{</span><span class="n">CatplatUserSettings</span><span class="p">()</span><span class="o">.</span><span class="n">user_slab_dir</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="UserSlabSpecifications">
+<a class="viewcode-back" href="../../../catplat.specifications.html#catplat.specifications.slab.UserSlabSpecifications">[docs]</a>
+<span class="nd">@enforce_types</span>
+<span class="nd">@dataclass</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">UserSlabSpecifications</span><span class="p">(</span><span class="n">SlabSpecifications</span><span class="p">,</span>
+                             <span class="n">metaclass</span><span class="o">=</span><span class="n">DictAttributesMetaclass</span><span class="p">,</span>
+                             <span class="n">other_attrs</span><span class="o">=</span><span class="n">SLAB_DEFAULT_VALUES</span><span class="p">,</span>
+                             <span class="n">types</span><span class="o">=</span><span class="n">SLAB_TYPE_HINTS</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slab_atoms</span> <span class="o">=</span> <span class="n">CatplatStructureBuilder</span><span class="o">.</span><span class="n">build_slab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab_atoms</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UserSlabSpecifications.generate_atoms">
+<a class="viewcode-back" href="../../../catplat.specifications.html#catplat.specifications.slab.UserSlabSpecifications.generate_atoms">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bulk_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">existing_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">slabs</span> <span class="o">=</span> <span class="p">[</span><span class="n">Slab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab_atoms</span><span class="p">,</span> <span class="n">provenance</span><span class="o">=</span><span class="s1">&#39;user-slab&#39;</span><span class="p">)]</span>
+        <span class="n">slabs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_terminations</span><span class="p">(</span><span class="n">slabs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">existing_atoms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">slabs</span> <span class="o">=</span> <span class="p">[</span><span class="n">slab</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">slabs</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_existing</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">slab</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">existing_atoms</span><span class="o">=</span><span class="n">existing_atoms</span><span class="p">)]</span>
+
+        <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">slab</span><span class="o">.</span><span class="n">atoms</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">slabs</span><span class="p">]</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;termination&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">termination</span><span class="p">,</span>
+                       <span class="s1">&#39;unitcell_size&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">unitcell_size</span><span class="p">,</span>
+                       <span class="s1">&#39;num_layers&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span>
+                       <span class="s1">&#39;num_fixed_layers&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">num_fixed_layers</span><span class="p">,</span>
+                       <span class="s1">&#39;vacuum&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">vacuum</span><span class="p">,</span>
+                       <span class="s1">&#39;x_length&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">x_length</span><span class="p">,</span>
+                       <span class="s1">&#39;y_length&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">y_length</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_thickness&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">thickness</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_chemsys&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">chemsys</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_formula&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">chemical_formula</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_provenance&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">provenance</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_acn&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">surface_acn</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_fixed_thickness&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">fixed_thickness</span><span class="p">}</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">slabs</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">images</span><span class="p">,</span> <span class="n">properties</span></div>
+
+
+<div class="viewcode-block" id="UserSlabSpecifications.own_query_db_criteria">
+<a class="viewcode-back" href="../../../catplat.specifications.html#catplat.specifications.slab.UserSlabSpecifications.own_query_db_criteria">[docs]</a>
+    <span class="k">def</span> <span class="nf">own_query_db_criteria</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">criteria_dict</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">criteria_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;slab_atoms&#39;</span><span class="p">:</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab_atoms</span><span class="p">)</span><span class="o">.</span><span class="n">md5hash</span><span class="p">()})</span>
+        <span class="k">return</span> <span class="n">criteria_dict</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CatplatSlabSpecifications">
+<a class="viewcode-back" href="../../../catplat.specifications.html#catplat.specifications.slab.CatplatSlabSpecifications">[docs]</a>
+<span class="nd">@enforce_types</span>
+<span class="nd">@dataclass</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">CatplatSlabSpecifications</span><span class="p">(</span><span class="n">SlabSpecifications</span><span class="p">,</span>
+                                <span class="n">metaclass</span><span class="o">=</span><span class="n">DictAttributesMetaclass</span><span class="p">,</span>
+                                <span class="n">other_attrs</span><span class="o">=</span><span class="n">SLAB_DEFAULT_VALUES</span><span class="p">,</span>
+                                <span class="n">types</span><span class="o">=</span><span class="n">SLAB_TYPE_HINTS</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CatplatSlabSpecifications.generate_atoms">
+<a class="viewcode-back" href="../../../catplat.specifications.html#catplat.specifications.slab.CatplatSlabSpecifications.generate_atoms">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bulk_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">existing_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get slab structure from SlabBuilder or read slab structure from user&#39;s slab directory.&quot;&quot;&quot;</span>
+
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">SlabBuilder</span><span class="p">(</span><span class="n">bulk</span><span class="o">=</span><span class="n">bulk_atoms</span><span class="p">,</span>
+                              <span class="n">miller_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">miller_index</span><span class="p">,</span>
+                              <span class="n">layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span>
+                              <span class="n">overlayer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overlayer</span><span class="p">,</span>
+                              <span class="n">fixed_layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_fixed_layers</span><span class="p">,</span>
+                              <span class="n">fixed_thickness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">slab_fixed_thickness</span><span class="p">,</span>
+                              <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unitcell_size</span><span class="p">,</span>
+                              <span class="n">x_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_length</span><span class="p">,</span>
+                              <span class="n">y_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y_length</span><span class="p">,</span>
+                              <span class="n">thickness</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">slab_thickness</span><span class="p">,</span>
+                              <span class="n">vacuum</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vacuum</span><span class="p">,</span>
+                              <span class="n">conventional</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">conventional</span><span class="p">)</span>
+        <span class="n">slabs</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">generate_surfaces</span><span class="p">()</span>  <span class="c1"># returns a list of Slab</span>
+
+        <span class="k">if</span> <span class="n">existing_atoms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">slabs</span> <span class="o">=</span> <span class="p">[</span><span class="n">slab</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">slabs</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_existing</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">slab</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">existing_atoms</span><span class="o">=</span><span class="n">existing_atoms</span><span class="p">)]</span>
+
+        <span class="n">slabs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_terminations</span><span class="p">(</span><span class="n">slabs</span><span class="p">)</span>
+        <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">slab</span><span class="o">.</span><span class="n">atoms</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">slabs</span><span class="p">]</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;termination&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">termination</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_provenance&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">provenance</span><span class="p">,</span>
+                       <span class="s1">&#39;unitcell_size&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">unitcell_size</span><span class="p">,</span>
+                       <span class="s1">&#39;num_layers&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span>
+                       <span class="s1">&#39;num_fixed_layers&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">num_fixed_layers</span><span class="p">,</span>
+                       <span class="s1">&#39;conventional&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">conventional</span><span class="p">,</span>
+                       <span class="s1">&#39;miller_index&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">miller_index</span><span class="p">,</span>
+                       <span class="s1">&#39;vacuum&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">vacuum</span><span class="p">,</span>
+                       <span class="s1">&#39;x_length&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">x_length</span><span class="p">,</span>
+                       <span class="s1">&#39;y_length&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">y_length</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_thickness&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">thickness</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_chemsys&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">chemsys</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_formula&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">chemical_formula</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_acn&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">surface_acn</span><span class="p">,</span>
+                       <span class="s1">&#39;slab_fixed_thickness&#39;</span><span class="p">:</span> <span class="n">slab</span><span class="o">.</span><span class="n">fixed_thickness</span><span class="p">}</span> <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="n">slabs</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">images</span><span class="p">,</span> <span class="n">properties</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

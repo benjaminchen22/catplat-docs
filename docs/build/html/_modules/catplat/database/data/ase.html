@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.database.data.ase &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../../about.html" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.database.data.ase</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.database.data.ase</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+
+<span class="kn">from</span> <span class="nn">atomistic_ml.calculators.calculator</span> <span class="kn">import</span> <span class="n">MLCalculator</span>
+<span class="kn">from</span> <span class="nn">pyatoms.io.monty</span> <span class="kn">import</span> <span class="n">MSONable</span>
+
+<span class="kn">from</span> <span class="nn">catplat.database.data.data</span> <span class="kn">import</span> <span class="n">Step</span><span class="p">,</span> <span class="n">Substep</span><span class="p">,</span> <span class="n">Data</span>
+
+
+<div class="viewcode-block" id="AseData">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.ase.AseData">[docs]</a>
+<span class="k">class</span> <span class="nc">AseData</span><span class="p">(</span><span class="n">MSONable</span><span class="p">,</span> <span class="n">Data</span><span class="p">):</span>
+    <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;ase&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;AseData&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">calculator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">calculator</span>
+
+<div class="viewcode-block" id="AseData.from_job">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.ase.AseData.from_job">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_job</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">job</span><span class="p">):</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">AseStep</span><span class="o">.</span><span class="n">from_job</span><span class="p">(</span><span class="n">job</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AseData.to_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.ase.AseData.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="AseData.summary">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.ase.AseData.summary">[docs]</a>
+    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; A summary of the data for printing to the console. &quot;&quot;&quot;</span>
+        <span class="n">calc_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculator</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span>
+        <span class="n">num_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">)</span>
+
+        <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                   <span class="sa">f</span><span class="s1">&#39;   •  Num Steps: </span><span class="si">{</span><span class="n">num_steps</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                   <span class="sa">f</span><span class="s1">&#39;   •  Calculator: </span><span class="si">{</span><span class="n">calc_type</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculator</span><span class="p">,</span> <span class="n">MLCalculator</span><span class="p">):</span>
+            <span class="n">kvps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculator</span><span class="o">.</span><span class="n">potential</span><span class="o">.</span><span class="n">key_value_pairs</span>
+
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kvps</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">strings</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;   •  MLP </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+
+            <span class="n">strings</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;   •  MLP MD5 Hash: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">calculator</span><span class="o">.</span><span class="n">potential</span><span class="o">.</span><span class="n">md5_hash</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AseStep">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.ase.AseStep">[docs]</a>
+<span class="k">class</span> <span class="nc">AseStep</span><span class="p">(</span><span class="n">MSONable</span><span class="p">,</span> <span class="n">Step</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">substeps</span><span class="p">,</span> <span class="n">stepname</span><span class="o">=</span><span class="s1">&#39;AseStep&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">substeps</span><span class="o">=</span><span class="n">substeps</span><span class="p">,</span> <span class="n">stepname</span><span class="o">=</span><span class="n">stepname</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">calculator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">substeps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">calculator</span>
+
+<div class="viewcode-block" id="AseStep.from_job">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.ase.AseStep.from_job">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_job</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">job</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an AseStep from an AseGeometryOptimizationJob.</span>
+
+<span class="sd">        Should only have one substep.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">substeps</span> <span class="o">=</span> <span class="p">[</span><span class="n">AseSubstep</span><span class="o">.</span><span class="n">from_job</span><span class="p">(</span><span class="n">job</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">substeps</span><span class="o">=</span><span class="n">substeps</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AseStep.to_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.ase.AseStep.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AseSubstep">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.ase.AseSubstep">[docs]</a>
+<span class="k">class</span> <span class="nc">AseSubstep</span><span class="p">(</span><span class="n">MSONable</span><span class="p">,</span> <span class="n">Substep</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">calculator</span><span class="p">,</span> <span class="n">jobclass</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">calculator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;calculator cannot be None&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">folder</span> <span class="o">=</span> <span class="n">folder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span> <span class="o">=</span> <span class="n">trajectory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculator</span> <span class="o">=</span> <span class="n">calculator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobclass</span> <span class="o">=</span> <span class="n">jobclass</span>
+
+<div class="viewcode-block" id="AseSubstep.write">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.ase.AseSubstep.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Write the substep to a folder. &quot;&quot;&quot;</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">FileExistsError</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;trajectory.traj&#39;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;POSCAR&#39;</span><span class="p">))</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="p">))</span>
+
+<div class="viewcode-block" id="AseSubstep.from_job">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.ase.AseSubstep.from_job">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_job</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">job</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">folder</span><span class="p">,</span>
+                   <span class="n">trajectory</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">trajectory</span><span class="p">(),</span>
+                   <span class="n">calculator</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">calculator</span><span class="p">,</span>
+                   <span class="n">jobclass</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AseSubstep.to_dict">
+<a class="viewcode-back" href="../../../../catplat.database.data.html#catplat.database.data.ase.AseSubstep.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

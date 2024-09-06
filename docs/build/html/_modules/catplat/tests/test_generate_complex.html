@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.tests.test_generate_complex &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.tests.test_generate_complex</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.tests.test_generate_complex</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">ase.io</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">ase.visualize</span> <span class="kn">import</span> <span class="n">view</span>
+<span class="kn">from</span> <span class="nn">catplat.adsorption.build</span> <span class="kn">import</span> <span class="n">ComplexBuilder</span><span class="p">,</span> <span class="n">ComplexMonodentateBuilder</span><span class="p">,</span> <span class="n">ComplexBidentateBuilder</span><span class="p">,</span> <span class="n">ComplexMultiBuilder</span>
+<span class="kn">from</span> <span class="nn">catplat.utils.utils</span> <span class="kn">import</span> <span class="n">num_unique_images</span>
+
+
+<div class="viewcode-block" id="write_complexes">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.write_complexes">[docs]</a>
+<span class="k">def</span> <span class="nf">write_complexes</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">tmpdir</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+        <span class="n">poscar</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;POSCAR&#39;</span><span class="p">)</span>
+        <span class="n">atoms</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">poscar</span><span class="p">,</span> <span class="n">vasp5</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">direct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TestComplexBuilder">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestComplexBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">TestComplexBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestComplexBuilder.test_initialization">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestComplexBuilder.test_initialization">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;kwargs, builder_type&#39;</span><span class="p">,</span> <span class="p">[({</span><span class="s1">&#39;bonds&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]},</span> <span class="n">ComplexMonodentateBuilder</span><span class="p">),</span>
+                                                      <span class="p">({</span><span class="s1">&#39;bonds&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                       <span class="s1">&#39;quantity&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span> <span class="n">ComplexMultiBuilder</span><span class="p">),</span>
+                                                      <span class="p">({</span><span class="s1">&#39;bonds&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]},</span>
+                                                       <span class="n">ComplexBidentateBuilder</span><span class="p">),</span>
+                                                      <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt111_slab</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">builder_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; New test to test class method. Ensures that the right class is returned based on the given inputs. &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_slab</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;O2&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">builder</span><span class="p">)</span> <span class="o">==</span> <span class="n">builder_type</span>
+
+        <span class="c1"># test attributes</span>
+        <span class="k">assert</span> <span class="n">builder</span><span class="o">.</span><span class="n">bonds</span> <span class="o">==</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;bonds&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">builder</span><span class="o">.</span><span class="n">connectivity</span> <span class="o">==</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;connectivity&#39;</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate">[docs]</a>
+<span class="k">class</span> <span class="nc">TestGenerateComplexMonodentate</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Test generation of monodentate complexes via ComplexBuilder. &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_relaxed_sites">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_relaxed_sites">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_relaxed_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rh211_relaxed</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Previous bug where unique relaxed 211 sites were not properly detected. &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh211_relaxed</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">builder</span><span class="o">.</span><span class="n">adsorption_sites_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">14</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_slabs">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_slabs">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;slab, expected&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;pt111_slab&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                                                <span class="p">(</span><span class="s1">&#39;rh111_4x4&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+                                                <span class="p">(</span><span class="s1">&#39;pt211_2x3_conv&#39;</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+                                                <span class="p">(</span><span class="s1">&#39;ago_4x4&#39;</span><span class="p">,</span> <span class="mi">36</span><span class="p">,),</span>
+                                                <span class="p">(</span><span class="s1">&#39;fev_4x4&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)])</span>
+    <span class="k">def</span> <span class="nf">test_slabs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">slab</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">slab</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">getfixturevalue</span><span class="p">(</span><span class="n">slab</span><span class="p">)</span>
+
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">slab</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">builder</span><span class="o">.</span><span class="n">adsorption_sites_indices</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_adsorption_sites_specify_connectivity">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_adsorption_sites_specify_connectivity">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;connectivity,expected&#39;</span><span class="p">,</span> <span class="p">[([</span><span class="mi">3</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span> <span class="p">([</span><span class="mi">2</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span> <span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)])</span>
+    <span class="k">def</span> <span class="nf">test_adsorption_sites_specify_connectivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt111_slab</span><span class="p">,</span> <span class="n">connectivity</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_slab</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">builder</span><span class="o">.</span><span class="n">adsorption_sites_indices</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_ads_broken_by_pbc">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_ads_broken_by_pbc">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_ads_broken_by_pbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rh111_4x4</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Tests that adsorbates broken up by PBC should still be well handled by ComplexBuilder. &quot;&quot;&quot;</span>
+        <span class="n">adsorbate</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="n">symbols</span><span class="o">=</span><span class="s1">&#39;CO2&#39;</span><span class="p">,</span> <span class="n">positions</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">16</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">cell</span><span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">cbd</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh111_4x4</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="n">adsorbate</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                            <span class="n">num_procs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">stol</span><span class="o">=</span><span class="mf">0.18</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">cbd</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_111_ch3_rotation">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_111_ch3_rotation">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_111_ch3_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rh111_4x4</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Tests that complex builder can create distinct structures from rotation of monodentate adsorbate</span>
+<span class="sd">        about the adsorption vector.</span>
+
+<span class="sd">        Should have 4 sites, 2 rotations each site = 8 total structures.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cbd</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh111_4x4</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;CH3&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                            <span class="n">num_procs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">stol</span><span class="o">=</span><span class="mf">0.18</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">30</span><span class="p">))</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">cbd</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_211_ch3coh_rotation">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_211_ch3coh_rotation">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_211_ch3coh_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt211_2x3_conv</span><span class="p">):</span>
+        <span class="n">cbd</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt211_2x3_conv</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;CH3COH&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                            <span class="n">num_procs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">stol</span><span class="o">=</span><span class="mf">0.18</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+                                            <span class="n">connectivity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="mi">30</span><span class="p">))</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">cbd</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_adsorbate_min_dist">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_adsorbate_min_dist">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;min_distance_to_slab&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_adsorbate_min_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rh100_4x4</span><span class="p">,</span> <span class="n">min_distance_to_slab</span><span class="p">):</span>
+        <span class="n">cbd</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh100_4x4</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;NH3&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                            <span class="n">num_procs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">stol</span><span class="o">=</span><span class="mf">0.18</span><span class="p">,</span>
+                                            <span class="n">connectivity</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                                            <span class="n">min_distance_to_slab</span><span class="o">=</span><span class="n">min_distance_to_slab</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">cbd</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">complexes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min_distance_to_slab</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">min_distance_to_slab</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_unique">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_unique">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;unique,expected&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>  <span class="c1"># 111 has 4 unique sites</span>
+                                                 <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="mi">96</span><span class="p">)</span>  <span class="c1"># 111 4x4 slab: 16 top + 42 bridge + 32 hollow = 96 sites</span>
+                                                 <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_unique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rh111_4x4</span><span class="p">,</span> <span class="n">unique</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">cbd</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh111_4x4</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_procs</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="n">unique</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">cbd</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_multiple_connectivity">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_multiple_connectivity">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_multiple_connectivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rh111_4x4</span><span class="p">):</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh111_4x4</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_multiple_avg_coord_num">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_multiple_avg_coord_num">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_multiple_avg_coord_num</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rh112_3x2</span><span class="p">,</span> <span class="n">rh112_coord_num_vs_sites</span><span class="p">):</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh112_3x2</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="p">[[</span><span class="mi">8</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">]])</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">rh112_coord_num_vs_sites</span><span class="p">[</span><span class="mf">8.0</span><span class="p">]</span> <span class="o">+</span> <span class="n">rh112_coord_num_vs_sites</span><span class="p">[</span><span class="mf">7.0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_avg_coord_num_comparator">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_avg_coord_num_comparator">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_avg_coord_num_comparator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rh112_3x2</span><span class="p">,</span> <span class="n">rh112_coord_num_vs_sites</span><span class="p">):</span>
+        <span class="n">results1</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh112_3x2</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span>
+                                                 <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="s1">&#39;&lt;8.0&#39;</span><span class="p">,</span> <span class="n">num_procs</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+        <span class="n">results2</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh112_3x2</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                 <span class="n">avg_coord_num</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&lt;=8.0&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+        <span class="n">results3</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh112_3x2</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                 <span class="n">avg_coord_num</span><span class="o">=</span><span class="s1">&#39;&gt;=9.5&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results1</span><span class="p">)</span> <span class="o">==</span> <span class="n">rh112_coord_num_vs_sites</span><span class="p">[</span><span class="mf">7.0</span><span class="p">]</span> <span class="o">+</span> <span class="n">rh112_coord_num_vs_sites</span><span class="p">[</span><span class="mf">7.7</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results2</span><span class="p">)</span> <span class="o">==</span> <span class="n">rh112_coord_num_vs_sites</span><span class="p">[</span><span class="mf">7.0</span><span class="p">]</span> <span class="o">+</span> \
+            <span class="n">rh112_coord_num_vs_sites</span><span class="p">[</span><span class="mf">7.7</span><span class="p">]</span> <span class="o">+</span> <span class="n">rh112_coord_num_vs_sites</span><span class="p">[</span><span class="mf">8.0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results3</span><span class="p">)</span> <span class="o">==</span> <span class="n">rh112_coord_num_vs_sites</span><span class="p">[</span><span class="mf">9.5</span><span class="p">]</span> <span class="o">+</span> \
+            <span class="n">rh112_coord_num_vs_sites</span><span class="p">[</span><span class="mf">9.7</span><span class="p">]</span> <span class="o">+</span> <span class="n">rh112_coord_num_vs_sites</span><span class="p">[</span><span class="mf">10.0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_connectivity_monodentate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_connectivity_monodentate">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_connectivity_monodentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt111_3x3</span><span class="p">):</span>
+        <span class="n">cbd</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">cbd</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexMonodentate.test_ptrh_alloy_surface">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexMonodentate.test_ptrh_alloy_surface">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_ptrh_alloy_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptrh110</span><span class="p">):</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">ptrh110</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmplx</span><span class="o">.</span><span class="n">atoms</span> <span class="k">for</span> <span class="n">cmplx</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_unique_images</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">16</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestGenerateComplexBidentate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexBidentate">[docs]</a>
+<span class="k">class</span> <span class="nc">TestGenerateComplexBidentate</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Test generation of bidentate complexes via ComplexBuilder. &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestGenerateComplexBidentate.test_edge_across_pbc">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexBidentate.test_edge_across_pbc">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_edge_across_pbc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt111_3x3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Ensure that neighbour sites are detected across pbc.</span>
+<span class="sd">        Also tests that specifying sites via sites_idx is working.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;O2&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">sites_idx</span><span class="o">=</span><span class="p">[[</span><span class="mi">35</span><span class="p">,</span> <span class="mi">42</span><span class="p">]])</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexBidentate.test_avg_coord_num_bidentate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexBidentate.test_avg_coord_num_bidentate">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;avg_coord_num, expected&#39;</span><span class="p">,</span> <span class="p">[([[</span><span class="s1">&#39;&lt;=8.5&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=8.5&#39;</span><span class="p">]],</span> <span class="mi">13</span><span class="p">),</span>
+                                                         <span class="p">([[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]],</span> <span class="mi">2</span><span class="p">)])</span>
+    <span class="k">def</span> <span class="nf">test_avg_coord_num_bidentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt211_2x3_conv</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt211_2x3_conv</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;O2&#39;</span><span class="p">,</span>
+                                                <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="n">avg_coord_num</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexBidentate.test_reverse">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexBidentate.test_reverse">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;slab, kwargs, expected&#39;</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;pt211_2x3_conv&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="s1">&#39;avg_coord_num&#39;</span><span class="p">:[[</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]]},</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;pt211_doped&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="s1">&#39;avg_coord_num&#39;</span><span class="p">:[[</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">]]},</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;pt211_2x3_conv&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;avg_coord_num&#39;</span><span class="p">:[[</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">]]},</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;pt211_doped&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;connectivity&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;avg_coord_num&#39;</span><span class="p">:[[</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">]]},</span> <span class="mi">2</span><span class="p">)])</span>
+    <span class="k">def</span> <span class="nf">test_reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slab</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For Pt211_doped slab:</span>
+<span class="sd">        AB == BA for symmmetric adsorbates -&gt; 1 structure.</span>
+<span class="sd">        AB != BA for asymmetric adsorbates -&gt; 2 structures.</span>
+
+<span class="sd">        For normal Pt211 slab:</span>
+<span class="sd">        AB == BA for both symmetric and asymmetric adsorbates -&gt; 1 structure.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">slab</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">getfixturevalue</span><span class="p">(</span><span class="n">slab</span><span class="p">)</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;CO&#39;</span><span class="p">,</span> <span class="n">slab</span><span class="o">=</span><span class="n">slab</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">cmplx</span><span class="o">.</span><span class="n">bonds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">cmplx</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">cmplx</span><span class="o">.</span><span class="n">connectivities</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;connectivity&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">cmplx</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">cmplx</span><span class="o">.</span><span class="n">avg_coord_num</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;avg_coord_num&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">cmplx</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexBidentate.test_111_symmetric_adsorbate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexBidentate.test_111_symmetric_adsorbate">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_111_symmetric_adsorbate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt111_3x3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Number of complexes manually checked to be unique.</span>
+<span class="sd">        Number of structures could change, depending on the bidentate algorithm.</span>
+<span class="sd">        Contains:</span>
+<span class="sd">            top-bridge(over hcp) | top-bridge(over fcc) | top-top | bridge-bridge (over bridge)</span>
+<span class="sd">            bridge-bridge (over top direct) | bridge-bridge (over top side) | fcc-fcc | hcp-hcp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;O2&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+
+        <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">atoms</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_unique_images</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexBidentate.test_111_asymmetric_adsorbate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexBidentate.test_111_asymmetric_adsorbate">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_111_asymmetric_adsorbate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt111_3x3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Number of complexes manually checked to be unique.</span>
+<span class="sd">        Number of structures could change, depending on the bidentate algorithm.</span>
+<span class="sd">        Contains:   format {species}{connectivity}-{species}{connectivity} (description)</span>
+<span class="sd">            C1-O2 (over hcp) | C1-O2 (over fcc) | C1-O1 | C2-O1 (over hcp) | C2-O2 (over top side) |</span>
+<span class="sd">            C2-O2 (over bridge) | C2-O2 (over top) | C2-O2 (over bridge reversed) | C2-O2 (over top side reversed) |</span>
+<span class="sd">            C2-O1 (over fcc) | C3-O3 (fcc-fcc) | C3-O3 (hcp-hcp)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;CO&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+
+        <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">atoms</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_unique_images</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">12</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexBidentate.test_long_adsorbate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexBidentate.test_long_adsorbate">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="n">reason</span><span class="o">=</span><span class="s1">&#39;Slow test&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_long_adsorbate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt111_3x3</span><span class="p">):</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;CH2CH2CH2CH2CH2O&#39;</span><span class="p">,</span>
+                                                <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">num_procs</span><span class="o">=</span><span class="mi">48</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">21</span>  <span class="c1"># possible to vary, only ran twice (both returned 21 structures)</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexBidentate.test_211_asymmetric_adsorbate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexBidentate.test_211_asymmetric_adsorbate">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="n">reason</span><span class="o">=</span><span class="s1">&#39;Slow test&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_211_asymmetric_adsorbate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt211_small</span><span class="p">):</span>
+        <span class="n">cbd</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt211_small</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;CH2CH2O&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">num_procs</span><span class="o">=</span><span class="mi">48</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">cbd</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">schematics</span> <span class="o">=</span> <span class="p">[</span><span class="nb">complex</span><span class="o">.</span><span class="n">adsorption_schematic</span><span class="p">()</span> <span class="k">for</span> <span class="nb">complex</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">]</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">schematics</span><span class="p">)</span>
+        <span class="c1"># can vary due to approximate nature of tilting/rotation</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">82</span>  <span class="c1"># possible to vary, only ran twice (both returned 82 structures)</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexBidentate.test_connectivity_bidentate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexBidentate.test_connectivity_bidentate">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_connectivity_bidentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt111_3x3</span><span class="p">):</span>
+        <span class="n">cbd</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;O2&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">connectivity</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">cbd</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexBidentate.test_new_tol">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexBidentate.test_new_tol">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;slab_name&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;POSCAR_Ni_111_3x3&#39;</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Au_111_3x3&#39;</span><span class="p">])</span>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;adsorbate, expected&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;O2&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;CH3CS&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)])</span>
+    <span class="k">def</span> <span class="nf">test_new_tol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">slab_name</span><span class="p">,</span> <span class="n">adsorbate</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test for dynamic upper and lower tolerance distance for sites selection.</span>
+<span class="sd">        Range must be long enough to accept top-top sites and short enough to include bridge-bridge sites.</span>
+<span class="sd">        Tested out 111 Ni (small dist between top sites) and 111 Au (larger dist between top sites).</span>
+<span class="sd">        Also tested out O2 (short ads dist) and CH3CS (long ads dist).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">slab</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">slab_name</span><span class="p">))</span>
+
+        <span class="n">cbd</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">slab</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="n">adsorbate</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span>
+                                            <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">connectivity</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="n">num_procs</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">cbd</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestGenerateComplexInputs">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexInputs">[docs]</a>
+<span class="k">class</span> <span class="nc">TestGenerateComplexInputs</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Test that we can handle a variety of sensible user inputs. &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestGenerateComplexInputs.test_monodentate_connectivity_inputs">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexInputs.test_monodentate_connectivity_inputs">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;connectivity&#39;</span><span class="p">,</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)]))</span>
+    <span class="k">def</span> <span class="nf">test_monodentate_connectivity_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">connectivity</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test that we can handle a variety of sensible user inputs. &quot;&quot;&quot;</span>
+        <span class="n">rh111_4x4</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Rh_111_4x4&#39;</span><span class="p">))</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh111_4x4</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">builder</span><span class="o">.</span><span class="n">connectivity</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">1</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexInputs.test_bidentate_connectivity_inputs">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexInputs.test_bidentate_connectivity_inputs">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;connectivity&#39;</span><span class="p">,</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)]))</span>
+    <span class="k">def</span> <span class="nf">test_bidentate_connectivity_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">connectivity</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test that we can handle a variety of sensible user inputs. &quot;&quot;&quot;</span>
+        <span class="n">rh111_4x4</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Rh_111_4x4&#39;</span><span class="p">))</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh111_4x4</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;O2&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">builder</span><span class="o">.</span><span class="n">connectivity</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexInputs.test_monodentate_avg_coord_num_inputs">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexInputs.test_monodentate_avg_coord_num_inputs">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;avg_coord_num&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="p">[[</span><span class="mi">7</span><span class="p">]]])</span>
+    <span class="k">def</span> <span class="nf">test_monodentate_avg_coord_num_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="p">):</span>
+        <span class="n">rh112_3x2</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Rh_112_3x2&#39;</span><span class="p">))</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh112_3x2</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                <span class="n">avg_coord_num</span><span class="o">=</span><span class="n">avg_coord_num</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">builder</span><span class="o">.</span><span class="n">avg_coord_num</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">7</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexInputs.test_bidentate_average_coord_num_inputs">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexInputs.test_bidentate_average_coord_num_inputs">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;avg_coord_num&#39;</span><span class="p">,</span> <span class="p">([[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">]],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">]))</span>
+    <span class="k">def</span> <span class="nf">test_bidentate_average_coord_num_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="p">):</span>
+        <span class="n">rh112_3x1</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Rh_112_3x1&#39;</span><span class="p">))</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">rh112_3x1</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;CH3CH2OH&#39;</span><span class="p">,</span>
+                                                <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="n">avg_coord_num</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">builder</span><span class="o">.</span><span class="n">avg_coord_num</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="TestGenerateComplexInputs.test_bonds">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestGenerateComplexInputs.test_bonds">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;bonds&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">def</span> <span class="nf">test_bonds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cu100_4x4</span><span class="p">,</span> <span class="n">bonds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test that bonds=1 binds CO via C instead of O.&quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">cu100_4x4</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;CO&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="n">bonds</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">builder</span><span class="o">.</span><span class="n">bonds</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">:</span>
+            <span class="n">atoms</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">atoms</span>
+            <span class="n">c_idx</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">o_idx</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="s1">&#39;O&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># test that C z-pos is greater than O</span>
+            <span class="k">assert</span> <span class="n">atoms</span><span class="p">[</span><span class="n">c_idx</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">atoms</span><span class="p">[</span><span class="n">o_idx</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestComplexMultiBuilder">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestComplexMultiBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">TestComplexMultiBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TestComplexMultiBuilder.test_multi_build">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestComplexMultiBuilder.test_multi_build">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;quantity, expected&#39;</span><span class="p">,</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">42</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">526</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_multi_build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">pt111_3x3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Basic test for 1, 2 and 3 adsorbates. &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                <span class="n">quantity</span><span class="o">=</span><span class="n">quantity</span><span class="p">,</span> <span class="n">distance_tol</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">num_adsorbates</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmplx</span><span class="o">.</span><span class="n">num_adsorbates</span> <span class="k">for</span> <span class="n">cmplx</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">quantity</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">num_adsorbates</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestComplexMultiBuilder.test_multi_sites_idx">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestComplexMultiBuilder.test_multi_sites_idx">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;sites_idx, expected&#39;</span><span class="p">,</span> <span class="p">(([</span><span class="mi">40</span><span class="p">],</span> <span class="mi">14</span><span class="p">),</span> <span class="p">([</span><span class="mi">40</span><span class="p">,</span> <span class="mi">41</span><span class="p">],</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_multi_sites_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">sites_idx</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test filtering of sites via sites_idx. &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                <span class="n">quantity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sites_idx</span><span class="o">=</span><span class="n">sites_idx</span><span class="p">,</span> <span class="n">distance_tol</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestComplexMultiBuilder.test_multi_distance_filter">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestComplexMultiBuilder.test_multi_distance_filter">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;distance_tol, expected&#39;</span><span class="p">,</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">42</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">29</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_multi_distance_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">distance_tol</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test filtering of sites via distance. &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                <span class="n">quantity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">distance_tol</span><span class="o">=</span><span class="n">distance_tol</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestComplexMultiBuilder.test_multi_connectivity">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestComplexMultiBuilder.test_multi_connectivity">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;connectivity, expected&#39;</span><span class="p">,</span> <span class="p">(([</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="mi">17</span><span class="p">),</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="mi">42</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_multi_connectivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">connectivity</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test filtering of sites via connectivity. &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt111_3x3</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                <span class="n">quantity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">distance_tol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span>
+
+        <span class="n">complexes_con</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmplx</span><span class="o">.</span><span class="n">connectivities</span> <span class="k">for</span> <span class="n">cmplx</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">c</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">connectivity</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">complexes_con</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestComplexMultiBuilder.test_multi_avg_coord_num">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestComplexMultiBuilder.test_multi_avg_coord_num">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;avg_coord_num, expected&#39;</span><span class="p">,</span> <span class="p">(([</span><span class="mi">7</span><span class="p">],</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;&lt;=8&#39;</span><span class="p">,</span> <span class="mi">48</span><span class="p">),</span> <span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="mi">31</span><span class="p">),</span> <span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="mi">69</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_multi_avg_coord_num</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt211_2x3_conv</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test filtering of sites via avg_coord_num. &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt211_2x3_conv</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                <span class="n">quantity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">distance_tol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="n">avg_coord_num</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span>
+
+        <span class="n">complexes_acn</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmplx</span><span class="o">.</span><span class="n">avg_coord_num</span> <span class="k">for</span> <span class="n">cmplx</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">avg_coord_num</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="nb">all</span><span class="p">([</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">8</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">acn</span><span class="p">])</span> <span class="k">for</span> <span class="n">acn</span> <span class="ow">in</span> <span class="n">complexes_acn</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">acn</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">avg_coord_num</span><span class="p">)</span> <span class="k">for</span> <span class="n">acn</span> <span class="ow">in</span> <span class="n">complexes_acn</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestComplexMultiBuilder.test_multi_integration">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_generate_complex.TestComplexMultiBuilder.test_multi_integration">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_multi_integration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt211_2x3_conv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Integration test for multiple arguments. &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBuilder</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">pt211_2x3_conv</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">quantity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                                <span class="n">avg_coord_num</span><span class="o">=</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">connectivity</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sites_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">84</span><span class="p">],</span> <span class="n">distance_tol</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">complexes</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">complexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+
+        <span class="n">complexes_sites</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmplx</span><span class="o">.</span><span class="n">sites</span> <span class="k">for</span> <span class="n">cmplx</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="mi">84</span> <span class="ow">in</span> <span class="n">sites</span> <span class="k">for</span> <span class="n">sites</span> <span class="ow">in</span> <span class="n">complexes_sites</span><span class="p">])</span>
+
+        <span class="n">complexes_con</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmplx</span><span class="o">.</span><span class="n">connectivities</span> <span class="k">for</span> <span class="n">cmplx</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="mi">1</span> <span class="ow">in</span> <span class="n">con</span> <span class="k">for</span> <span class="n">con</span> <span class="ow">in</span> <span class="n">complexes_con</span><span class="p">])</span>
+
+        <span class="n">complexes_acn</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmplx</span><span class="o">.</span><span class="n">avg_coord_num</span> <span class="k">for</span> <span class="n">cmplx</span> <span class="ow">in</span> <span class="n">complexes</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="mi">7</span> <span class="ow">in</span> <span class="n">acn</span> <span class="k">for</span> <span class="n">acn</span> <span class="ow">in</span> <span class="n">complexes_acn</span><span class="p">])</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

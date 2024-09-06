@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.tests.test_ase_db &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.tests.test_ase_db</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.tests.test_ase_db</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">pyatoms.database.mysql</span> <span class="kn">import</span> <span class="n">tmp_mysql_database</span>
+
+<span class="kn">from</span> <span class="nn">catplat.database.ase</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Database</span><span class="p">,</span> <span class="n">DatabaseAttributes</span><span class="p">,</span> <span class="n">DatabaseEntry</span><span class="p">,</span>
+                                  <span class="n">Query</span><span class="p">,</span> <span class="n">QuerySet</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catplat.database.data</span> <span class="kn">import</span> <span class="n">VaspData</span>
+<span class="kn">from</span> <span class="nn">catplat.workflows.manager</span> <span class="kn">import</span> <span class="n">Results</span>
+
+
+<div class="viewcode-block" id="bulk_objects">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.bulk_objects">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulk_objects</span><span class="p">():</span>
+    <span class="n">bulk_formula</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;Rh&#39;</span><span class="p">,</span> <span class="s1">&#39;Fe&#39;</span><span class="p">,</span> <span class="s1">&#39;FeCu3&#39;</span><span class="p">,</span> <span class="s1">&#39;Al2Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;CuPt7&#39;</span><span class="p">]</span>
+    <span class="n">chemsys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;Rh&#39;</span><span class="p">,</span> <span class="s1">&#39;Fe&#39;</span><span class="p">,</span> <span class="s1">&#39;Fe-Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;Al-Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;Cu-Pt&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">spacegroup</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span> <span class="n">relaxed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bulk_formula</span><span class="o">=</span><span class="n">bf</span><span class="p">,</span> <span class="n">chemsys</span><span class="o">=</span><span class="n">cs</span><span class="p">,</span> <span class="n">ignored</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">bf</span><span class="p">,</span> <span class="n">cs</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bulk_formula</span><span class="p">,</span> <span class="n">chemsys</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="miller_index_objects">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.miller_index_objects">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">miller_index_objects</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">spacegroup</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span>
+                                         <span class="n">relaxed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">bulk_formula</span><span class="o">=</span><span class="n">bf</span><span class="p">,</span>
+                                         <span class="n">miller_index</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                                         <span class="n">ignored</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">bf</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;Rh&#39;</span><span class="p">,</span> <span class="s1">&#39;Fe&#39;</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="adsorbate_objects">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.adsorbate_objects">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">adsorbate_objects</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">spacegroup</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span>
+                                         <span class="n">relaxed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">bulk_formula</span><span class="o">=</span><span class="n">bf</span><span class="p">,</span>
+                                         <span class="n">miller_index</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                                         <span class="n">adsorbate_atoms</span><span class="o">=</span><span class="s1">&#39;CO&#39;</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="p">[</span><span class="mf">7.0</span><span class="p">],</span>
+                                         <span class="n">ignored</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">bf</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;Rh&#39;</span><span class="p">,</span> <span class="s1">&#39;Fe&#39;</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="bidentate_adsorbate_objects">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.bidentate_adsorbate_objects">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bidentate_adsorbate_objects</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">spacegroup</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span>
+                                         <span class="n">relaxed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                         <span class="n">bulk_formula</span><span class="o">=</span><span class="n">bf</span><span class="p">,</span>
+                                         <span class="n">miller_index</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                                         <span class="n">adsorbate_atoms</span><span class="o">=</span><span class="s1">&#39;O2&#39;</span><span class="p">,</span>
+                                         <span class="n">avg_coord_num</span><span class="o">=</span><span class="p">[</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">],</span>
+                                         <span class="n">ignored</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">bf</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Au&#39;</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="database">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.database">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">database</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="n">bulk_objects</span><span class="p">,</span> <span class="n">miller_index_objects</span><span class="p">,</span> <span class="n">adsorbate_objects</span><span class="p">,</span> <span class="n">bidentate_adsorbate_objects</span><span class="p">):</span>
+    <span class="n">db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;hts.db&#39;</span><span class="p">)</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">bulk_objects</span> <span class="o">+</span> <span class="n">miller_index_objects</span> <span class="o">+</span> <span class="n">adsorbate_objects</span> <span class="o">+</span> <span class="n">bidentate_adsorbate_objects</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">entry</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">db</span></div>
+
+
+
+<div class="viewcode-block" id="database_repeated_entries">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.database_repeated_entries">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">database_repeated_entries</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="n">bulk_objects</span><span class="p">):</span>
+    <span class="n">db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;hts.db&#39;</span><span class="p">)</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">db_path</span><span class="p">)</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">bulk_objects</span><span class="p">:</span>
+        <span class="c1"># Store twice</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">entry</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">entry</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">db</span></div>
+
+
+
+<div class="viewcode-block" id="hts_database">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.hts_database">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">hts_database</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">):</span>
+    <span class="n">db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;hts.db&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Database</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">db_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TestDatabaseAttributes">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabaseAttributes">[docs]</a>
+<span class="k">class</span> <span class="nc">TestDatabaseAttributes</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDatabaseAttributes.test_to_dict">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabaseAttributes.test_to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">bulk_formula</span><span class="o">=</span><span class="s1">&#39;Cu8&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="nb">dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestDatabaseAttributes.test_retrieve_adsorbate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabaseAttributes.test_retrieve_adsorbate">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_retrieve_adsorbate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hts_database</span><span class="p">):</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">bulk_formula</span><span class="o">=</span><span class="s1">&#39;Cu8Mn4&#39;</span><span class="p">,</span> <span class="n">adsorbate_atoms</span><span class="o">=</span><span class="s1">&#39;CO&#39;</span><span class="p">)</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="s1">&#39;Cu8Mn4CO&#39;</span><span class="p">,</span> <span class="n">magmoms</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">*</span> <span class="mi">14</span><span class="p">)</span>
+        <span class="n">hts_database</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">hts_database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">({</span><span class="s1">&#39;adsorbate_atoms&#39;</span><span class="p">:</span> <span class="s1">&#39;CO&#39;</span><span class="p">})</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">adsorbate_atoms</span> <span class="o">==</span> <span class="s1">&#39;CO&#39;</span>
+        <span class="k">assert</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_initial_magnetic_moments</span><span class="p">()</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">([</span><span class="mi">10</span><span class="p">]</span> <span class="o">*</span> <span class="mi">14</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestDatabase">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase">[docs]</a>
+<span class="k">class</span> <span class="nc">TestDatabase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDatabase.test_retrieve_all">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_retrieve_all">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_retrieve_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve_all</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">13</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_retrieve_chemsys">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_retrieve_chemsys">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;chemsys, expected&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s1">&#39;Fe-Cu&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                                                   <span class="p">(</span><span class="s1">&#39;Cu-Fe&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                                                   <span class="p">(</span><span class="s1">&#39;Cu-*&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                                                   <span class="p">(</span><span class="s1">&#39;Cu-[Fe,Al,Pt]&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)])</span>
+    <span class="k">def</span> <span class="nf">test_retrieve_chemsys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">chemsys</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test that order of specified chemsys does not matter. &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;chemsys&#39;</span><span class="p">:</span> <span class="n">chemsys</span><span class="p">}</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_query_by_ids">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_query_by_ids">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_query_by_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">DatabaseEntry</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_query_repeated_entries">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_query_repeated_entries">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_query_repeated_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database_repeated_entries</span><span class="p">):</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bulk_formula&#39;</span><span class="p">:</span> <span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;spacegroup&#39;</span><span class="p">:</span> <span class="mi">225</span><span class="p">}</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database_repeated_entries</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_query_single_entry">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_query_single_entry">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_query_single_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;spacegroup&#39;</span><span class="p">:</span> <span class="mi">225</span><span class="p">,</span> <span class="s1">&#39;bulk_formula&#39;</span><span class="p">:</span> <span class="s1">&#39;Cu&#39;</span><span class="p">}</span>
+
+        <span class="c1"># Retrieve two entries, one with miller index (111) and other miller index None</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">attributes</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="k">assert</span> <span class="n">entries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">miller_index</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">entries</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">miller_index</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_query_with_set">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_query_with_set">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_query_with_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">bulk</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;bulk_formula&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;Rh&#39;</span><span class="p">]})</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>  <span class="c1"># 3 bulk, 3 miller index</span>
+
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">bulk</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;bulk_formula&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;Rh&#39;</span><span class="p">]},</span> <span class="n">slab</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;miller_index&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]})</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>  <span class="c1"># 4 miller index</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_query_ids">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_query_ids">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_query_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;&gt;1&#39;</span><span class="p">]})</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">12</span>
+
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="p">()</span>
+        <span class="n">query_set</span><span class="o">.</span><span class="n">other</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_query_id_empty">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_query_id_empty">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_query_id_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Should give no results. Previously used to  &quot;&quot;&quot;</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">()})</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="p">[]})</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_update">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_update">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Unit test for updating attribute keys.&quot;&quot;&quot;</span>
+        <span class="c1"># 13 entries</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">database</span><span class="o">.</span><span class="n">retrieve_all</span><span class="p">())</span> <span class="o">==</span> <span class="mi">13</span>
+        <span class="c1"># update ignored to True</span>
+        <span class="n">database</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;ignored&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">database</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_ignored</span>
+        <span class="c1"># update ignored to False</span>
+        <span class="n">database</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;ignored&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">database</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">is_ignored</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_delete_keys">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_delete_keys">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_delete_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Unit test for updating attribute keys.&quot;&quot;&quot;</span>
+        <span class="c1"># insert 2 new attributes</span>
+        <span class="n">database</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;new_attr_1&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">database</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;new_attr_2&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># expected TypeError as 2 new attributes not defined in DatabaseAttributes</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">database</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># remove 2 new attributes</span>
+        <span class="n">database</span><span class="o">.</span><span class="n">delete_keys</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;new_attr_1&#39;</span><span class="p">,</span> <span class="s1">&#39;new_attr_2&#39;</span><span class="p">])</span>
+
+        <span class="c1"># no errors raised</span>
+        <span class="k">assert</span> <span class="n">database</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_delete">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_delete">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Unit test for deletion of data. &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="o">==</span> <span class="mi">13</span>
+        <span class="c1"># delete id 1,2 and 3</span>
+        <span class="n">database</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">db_ids</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        <span class="c1"># 10 entries left</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">database</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>
+
+        <span class="c1"># ensure existing ids are unchanged</span>
+        <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">14</span><span class="p">):</span>
+            <span class="n">database</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">database</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_ignored">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_ignored">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_ignored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="n">ignored_false_qs</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;ignored&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">]})</span>
+        <span class="n">ignored_true_qs</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;ignored&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]})</span>
+
+        <span class="c1"># 13 entries with ignored==False</span>
+        <span class="n">ignored_false_entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">ignored_false_qs</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ignored_false_entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">13</span>
+
+        <span class="c1"># ignore id1</span>
+        <span class="n">database</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">db_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;ignored&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># still able to get all 13 entries.</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">database</span><span class="o">.</span><span class="n">retrieve_all</span><span class="p">())</span> <span class="o">==</span> <span class="mi">13</span>
+
+        <span class="c1"># ignored == False -&gt; 12 entries</span>
+        <span class="n">ignored_false_entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">ignored_false_qs</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ignored_false_entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">12</span>
+        <span class="c1"># ignored == True -&gt; 1 entry</span>
+        <span class="n">ignored_true_entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">ignored_true_qs</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ignored_true_entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_retrieve_attributes_from_sql_database">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_retrieve_attributes_from_sql_database">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;attributes&#39;</span><span class="p">,</span> <span class="p">[{</span><span class="s1">&#39;spacegroup&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;relaxed&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;bulk_atoms&#39;</span><span class="p">:</span> <span class="s1">&#39;valid_bulk&#39;</span><span class="p">}])</span>
+    <span class="k">def</span> <span class="nf">test_retrieve_attributes_from_sql_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">mysql_server</span><span class="p">):</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tmp_mysql_database</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">mysql_server</span><span class="p">)</span> <span class="k">as</span> <span class="n">db_path</span><span class="p">:</span>
+            <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+            <span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">db_path</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">attr</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">)</span>
+
+            <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+            <span class="n">entries</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_compatibility_with_old_dbs">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_compatibility_with_old_dbs">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;old_db&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;project_v22_12_8.db&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_compatibility_with_old_dbs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">,</span> <span class="n">old_db</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        project_v22_12_8: Test compatibility with new `errored` key in database.</span>
+<span class="sd">                        Also test compatibility with new `ignored` key in databse.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;dbs&#39;</span><span class="p">,</span> <span class="n">old_db</span><span class="p">)</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">bulk</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;bulk_formula&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Ni&#39;</span><span class="p">]},</span> <span class="n">slab</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;miller_index&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]})</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span>
+
+        <span class="c1"># When retrieving from old database, catplat will populate the &quot;errored&quot; key with the default</span>
+        <span class="c1"># value of False as it does not exist in the DB</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span>
+        <span class="k">assert</span> <span class="n">entries</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">errored</span> <span class="o">==</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="n">entries</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">relaxed</span> <span class="o">==</span> <span class="kc">True</span>
+        <span class="k">assert</span> <span class="n">entries</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">ignored</span> <span class="o">==</span> <span class="kc">False</span>
+
+        <span class="c1"># However, cannot query &quot;errored&quot; key. So best to upgrade the DB to the latest version.</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;errored&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">]})</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+
+        <span class="c1"># same for ignored flag.</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;ignored&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">]})</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="TestDatabase.test_update_from_relaxed_folder">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestDatabase.test_update_from_relaxed_folder">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;path, job , unrelaxed_id, relaxed_id&#39;</span><span class="p">,</span>
+                             <span class="p">[(</span><span class="s1">&#39;bulk_path_twostep&#39;</span><span class="p">,</span> <span class="s1">&#39;bulk_job_twostep&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;surface_path_twostep&#39;</span><span class="p">,</span> <span class="s1">&#39;surface_job_twostep&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;adsorbed_path_twostep&#39;</span><span class="p">,</span> <span class="s1">&#39;adsorbed_job_twostep&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]),</span>
+                              <span class="p">(</span><span class="s1">&#39;bulk_path_unstarted_twostep&#39;</span><span class="p">,</span> <span class="s1">&#39;bulk_job_unstarted_twostep&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="kc">None</span><span class="p">)])</span>
+    <span class="k">def</span> <span class="nf">test_update_from_relaxed_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">unrelaxed_id</span><span class="p">,</span> <span class="n">relaxed_id</span><span class="p">,</span>
+                                        <span class="n">test_project</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">getfixturevalue</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">VaspData</span><span class="o">.</span><span class="n">from_job</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">getfixturevalue</span><span class="p">(</span><span class="n">job</span><span class="p">))</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">test_project</span><span class="o">.</span><span class="n">database</span><span class="p">()</span>
+
+        <span class="c1"># extract and try to push to db</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">update_from_relaxed_folder</span><span class="p">(</span><span class="n">unrelaxed_id</span><span class="o">=</span><span class="n">unrelaxed_id</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">msg</span><span class="p">,</span> <span class="n">calc_path</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">rid</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># for adsorbed job two relaxed entries, checking 2nd first</span>
+
+        <span class="k">if</span> <span class="n">job</span> <span class="o">==</span> <span class="s1">&#39;bulk_job_unstarted_twostep&#39;</span><span class="p">:</span>
+            <span class="n">data_reconstructed</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_reconstructed</span> <span class="o">=</span> <span class="n">VaspData</span><span class="o">.</span><span class="n">from_database_id</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="n">db</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">rid</span><span class="p">)</span>
+
+        <span class="c1"># check whether we get expected results and VaspData object for different cases</span>
+        <span class="k">assert</span> <span class="n">uid</span> <span class="o">==</span> <span class="n">unrelaxed_id</span>
+        <span class="k">if</span> <span class="n">job</span> <span class="o">==</span> <span class="s1">&#39;bulk_job_twostep&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">assert</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;skipped&#39;</span>
+            <span class="k">assert</span> <span class="n">rid</span> <span class="o">==</span> <span class="n">relaxed_id</span>
+            <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="n">data_reconstructed</span>
+        <span class="k">elif</span> <span class="n">job</span> <span class="o">==</span> <span class="s1">&#39;surface_job_twostep&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">assert</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;updated&#39;</span>
+            <span class="k">assert</span> <span class="n">rid</span> <span class="o">==</span> <span class="n">relaxed_id</span>
+            <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="n">data_reconstructed</span>
+        <span class="k">elif</span> <span class="n">job</span> <span class="o">==</span> <span class="s1">&#39;adsorbed_job_twostep&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="k">assert</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;updated&#39;</span>
+            <span class="k">assert</span> <span class="n">rid</span> <span class="o">==</span> <span class="n">relaxed_id</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># for adsorbed job two relaxed entries, checking 2nd first</span>
+            <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="n">data_reconstructed</span>
+        <span class="k">elif</span> <span class="n">job</span> <span class="o">==</span> <span class="s1">&#39;bulk_job_unstarted_twostep&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">assert</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;unconverged&#39;</span>
+            <span class="k">assert</span> <span class="n">rid</span> <span class="o">==</span> <span class="n">relaxed_id</span>
+
+        <span class="c1"># extract and try to push to db for a second time, overwrite</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">update_from_relaxed_folder</span><span class="p">(</span><span class="n">unrelaxed_id</span><span class="o">=</span><span class="n">unrelaxed_id</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">calc_path</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">rid</span><span class="p">)</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># for adsorbed job two relaxed entries, checking 1st now</span>
+        <span class="k">if</span> <span class="n">job</span> <span class="o">==</span> <span class="s1">&#39;bulk_job_unstarted_twostep&#39;</span><span class="p">:</span>
+            <span class="n">data_reconstructed</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_reconstructed</span> <span class="o">=</span> <span class="n">VaspData</span><span class="o">.</span><span class="n">from_database_id</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="n">db</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">rid</span><span class="p">)</span>
+
+        <span class="c1"># check whether we get expected results and VaspData object for different cases</span>
+        <span class="k">assert</span> <span class="n">uid</span> <span class="o">==</span> <span class="n">unrelaxed_id</span>
+        <span class="k">if</span> <span class="n">job</span> <span class="o">==</span> <span class="s1">&#39;bulk_job_twostep&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">assert</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;overwritten&#39;</span>
+            <span class="k">assert</span> <span class="n">rid</span> <span class="o">==</span> <span class="n">relaxed_id</span>
+            <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="n">data_reconstructed</span>
+        <span class="k">elif</span> <span class="n">job</span> <span class="o">==</span> <span class="s1">&#39;surface_job_twostep&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">assert</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;overwritten&#39;</span>
+            <span class="k">assert</span> <span class="n">rid</span> <span class="o">==</span> <span class="n">relaxed_id</span>
+            <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="n">data_reconstructed</span>
+        <span class="k">elif</span> <span class="n">job</span> <span class="o">==</span> <span class="s1">&#39;adsorbed_job_twostep&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="k">assert</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;overwritten&#39;</span>
+            <span class="k">assert</span> <span class="n">rid</span> <span class="o">==</span> <span class="n">relaxed_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="n">data_reconstructed</span>
+        <span class="k">elif</span> <span class="n">job</span> <span class="o">==</span> <span class="s1">&#39;bulk_job_unstarted_twostep&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">assert</span> <span class="n">msg</span> <span class="o">==</span> <span class="s1">&#39;unconverged&#39;</span>
+            <span class="k">assert</span> <span class="n">rid</span> <span class="o">==</span> <span class="n">relaxed_id</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestProjectResults">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestProjectResults">[docs]</a>
+<span class="k">class</span> <span class="nc">TestProjectResults</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TestProjectResults.test_filter">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestProjectResults.test_filter">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">bulk</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;bulk_formula&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="s1">&#39;Rh&#39;</span><span class="p">]})</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">Results</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span>
+
+        <span class="n">results_filtered</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">bulk_formula</span><span class="o">=</span><span class="s1">&#39;Cu&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_filtered</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+
+        <span class="n">results_filtered</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">bulk_formula</span><span class="o">=</span><span class="s1">&#39;Cu&#39;</span><span class="p">,</span> <span class="n">miller_index</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_filtered</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+
+        <span class="n">results_filtered</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">bulk_formula</span><span class="o">=</span><span class="s1">&#39;Pt&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_filtered</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+</div>
+
+
+
+<span class="n">atoms_ag</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="s1">&#39;Ag&#39;</span><span class="p">,</span> <span class="n">cell</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="TestQuery">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuery">[docs]</a>
+<span class="k">class</span> <span class="nc">TestQuery</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TestQuery.test_to_string">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuery.test_to_string">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;keyword,value,expected&#39;</span><span class="p">,</span>
+                             <span class="p">[(</span><span class="s1">&#39;e_above_hull&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;e_above_hull&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;0.05&#39;</span><span class="p">,</span> <span class="s1">&#39;e_above_hull&lt;0.05&#39;</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;adsorbate_atoms&#39;</span><span class="p">,</span> <span class="s1">&#39;CO&#39;</span><span class="p">,</span> <span class="s1">&#39;adsorbate_atoms=CO&#39;</span><span class="p">),</span>
+                              <span class="c1"># chemsys always sorted</span>
+                              <span class="p">(</span><span class="s1">&#39;chemsys&#39;</span><span class="p">,</span> <span class="s1">&#39;Cu-Ag&#39;</span><span class="p">,</span> <span class="s1">&#39;chemsys=Ag-Cu&#39;</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;chemsys&#39;</span><span class="p">,</span> <span class="s1">&#39;Cu-*&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>  <span class="c1"># chemsys not converted as we will use filter if wildcard</span>
+                              <span class="p">(</span><span class="s1">&#39;spacegroup&#39;</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="s1">&#39;spacegroup=225&#39;</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;bulk_atoms&#39;</span><span class="p">,</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="s1">&#39;bulk_atoms=abc&#39;</span><span class="p">),</span>
+                              <span class="c1"># atoms converted to hash</span>
+                              <span class="p">(</span><span class="s1">&#39;bulk_atoms&#39;</span><span class="p">,</span> <span class="n">atoms_ag</span><span class="p">,</span> <span class="s1">&#39;bulk_atoms=ac46e210b4e71f7dbc37596891de95f7&#39;</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;slab_atoms&#39;</span><span class="p">,</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="s1">&#39;slab_atoms=abc&#39;</span><span class="p">),</span>
+                              <span class="c1"># atoms converted to hash</span>
+                              <span class="p">(</span><span class="s1">&#39;slab_atoms&#39;</span><span class="p">,</span> <span class="n">atoms_ag</span><span class="p">,</span> <span class="s1">&#39;slab_atoms=ac46e210b4e71f7dbc37596891de95f7&#39;</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;miller_index&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;miller_index=(1, 1, 1)&#39;</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;unitcell_size&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s1">&#39;unitcell_size=(3, 3)&#39;</span><span class="p">),</span>
+                              <span class="c1"># average coordination number not converted as we will use filter</span>
+                              <span class="p">(</span><span class="s1">&#39;avg_coord_num&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="kc">None</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;ignored&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;ignored=True&#39;</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;errored&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;errored=True&#39;</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;id=1&#39;</span><span class="p">),</span>
+                              <span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">keyword</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+        <span class="n">query_strings</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">to_strings</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">expected</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">expected</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="n">expected</span><span class="p">]</span>
+
+        <span class="k">assert</span> <span class="n">query_strings</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestQuery.test_to_essential_strings_chemsys_selected_if_no_id">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuery.test_to_essential_strings_chemsys_selected_if_no_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_to_essential_strings_chemsys_selected_if_no_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">chemsys</span><span class="o">=</span><span class="s1">&#39;Cu-Ag&#39;</span><span class="p">,</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span> <span class="n">miller_index</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="p">[</span><span class="mf">7.0</span><span class="p">])</span>
+        <span class="n">selection_kwargs</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">to_essential_selection_kwargs</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">selection_kwargs</span><span class="p">[</span><span class="s1">&#39;selection&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;chemsys=Ag-Cu&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestQuery.test_to_essential_strings_chemsys_not_selected_if_complex">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuery.test_to_essential_strings_chemsys_not_selected_if_complex">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_to_essential_strings_chemsys_not_selected_if_complex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">chemsys</span><span class="o">=</span><span class="s1">&#39;Cu-*&#39;</span><span class="p">,</span> <span class="n">spacegroup</span><span class="o">=</span><span class="mi">225</span><span class="p">,</span> <span class="n">miller_index</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="p">[</span><span class="mf">7.0</span><span class="p">])</span>
+        <span class="n">selection_kwargs</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">to_essential_selection_kwargs</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">selection_kwargs</span><span class="p">[</span><span class="s1">&#39;selection&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;spacegroup=225&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestQuery.test_to_essential_strings_id_selected">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuery.test_to_essential_strings_id_selected">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_to_essential_strings_id_selected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">chemsys</span><span class="o">=</span><span class="s1">&#39;Cu-Ag&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mpid</span><span class="o">=</span><span class="s1">&#39;mp123&#39;</span><span class="p">)</span>
+        <span class="n">selection_kwargs</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">to_essential_selection_kwargs</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">selection_kwargs</span><span class="p">[</span><span class="s1">&#39;selection&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;id=2&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestQuery.test_create_comparator">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuery.test_create_comparator">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_create_comparator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">e_above_hull</span><span class="o">=</span><span class="s1">&#39;&lt;0.05&#39;</span><span class="p">)</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">create_comparator</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="s1">&#39;e_above_hull&#39;</span><span class="p">)</span>
+
+        <span class="n">e_above_hulls</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">]</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">[</span><span class="n">comp</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">e_above_hulls</span><span class="p">]</span>
+
+        <span class="k">assert</span> <span class="n">mask</span> <span class="o">==</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestQuery.test_spacegroup">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuery.test_spacegroup">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_spacegroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">spacegroup</span><span class="o">=</span><span class="mi">225</span><span class="p">)</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">13</span></div>
+
+
+<div class="viewcode-block" id="TestQuery.test_avg_coord_number_monodentate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuery.test_avg_coord_number_monodentate">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_avg_coord_number_monodentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">avg_coord_num</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&lt;=7&#39;</span><span class="p">])</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">avg_coord_num</span><span class="o">=</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span></div>
+
+
+<div class="viewcode-block" id="TestQuery.test_avg_coord_number_bidentate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuery.test_avg_coord_number_bidentate">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_avg_coord_number_bidentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">avg_coord_num</span><span class="o">=</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">avg_coord_num</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&lt;=7&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TestQuerySet">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuerySet">[docs]</a>
+<span class="k">class</span> <span class="nc">TestQuerySet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TestQuerySet.test_to_queries">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuerySet.test_to_queries">[docs]</a>
+    <span class="k">def</span> <span class="nf">test_to_queries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;miller_index&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]},</span>
+                                       <span class="n">adsorbate</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;adsorbate_atoms&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;CO&#39;</span><span class="p">]})</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">query_set</span><span class="o">.</span><span class="n">to_queries</span><span class="p">())</span> <span class="o">==</span> <span class="mi">4</span></div>
+
+
+<div class="viewcode-block" id="TestQuerySet.test_invalid_bulk">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuerySet.test_invalid_bulk">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;bulk_atoms&quot;</span><span class="p">,</span> <span class="p">[[</span><span class="s1">&#39;invalid_bulk&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;valid_bulk&#39;</span><span class="p">,</span> <span class="s1">&#39;invalid_bulk&#39;</span><span class="p">]])</span>
+    <span class="k">def</span> <span class="nf">test_invalid_bulk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bulk_atoms</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Ensure that errors are raised for incorrect bulk inputs&quot;&quot;&quot;</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">bulk</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;bulk_atoms&#39;</span><span class="p">:</span> <span class="n">bulk_atoms</span><span class="p">})</span>
+
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">query_set</span><span class="o">.</span><span class="n">check_attr</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestQuerySet.test_bulk_mutually_exclusive_attr">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuerySet.test_bulk_mutually_exclusive_attr">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;extra_attr&quot;</span><span class="p">,</span> <span class="p">(</span>
+            <span class="p">{</span><span class="s1">&#39;e_above_hull&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">]},</span> <span class="p">{</span><span class="s1">&#39;bulk_formula&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">]},</span> <span class="p">{</span><span class="s1">&#39;chemsys&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">]},</span> <span class="p">{</span><span class="s1">&#39;spacegroup&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">225</span><span class="p">]}))</span>
+    <span class="k">def</span> <span class="nf">test_bulk_mutually_exclusive_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extra_attr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Check if error is raised for specifying bulk_attr &quot;&quot;&quot;</span>
+        <span class="n">bulk_attr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bulk_atoms&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;valid_bulk&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">extra_attr</span><span class="p">}</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">bulk</span><span class="o">=</span><span class="n">bulk_attr</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">query_set</span><span class="o">.</span><span class="n">check_attr</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestQuerySet.test_invalid_slab">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuerySet.test_invalid_slab">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;slab_atoms&quot;</span><span class="p">,</span> <span class="p">([</span><span class="s1">&#39;invalid_slab&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;valid_slab&#39;</span><span class="p">,</span> <span class="s1">&#39;invalid_slab&#39;</span><span class="p">]))</span>
+    <span class="k">def</span> <span class="nf">test_invalid_slab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slab_atoms</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Ensure that errors are raised for incorrect slab inputs&quot;&quot;&quot;</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;slab_atoms&#39;</span><span class="p">:</span> <span class="n">slab_atoms</span><span class="p">})</span>
+
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">query_set</span><span class="o">.</span><span class="n">check_attr</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestQuerySet.test_slab_mutually_exclusive_attr_1">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuerySet.test_slab_mutually_exclusive_attr_1">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;extra_attr&#39;</span><span class="p">,</span> <span class="p">[{</span><span class="s1">&#39;bulk_atoms&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;valid_bulk&#39;</span><span class="p">]},</span> <span class="p">{</span><span class="s1">&#39;e_above_hull&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">]},</span>
+                                            <span class="p">{</span><span class="s1">&#39;bulk_formula&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">]},</span> <span class="p">{</span><span class="s1">&#39;chemsys&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">]},</span>
+                                            <span class="p">{</span><span class="s1">&#39;spacegroup&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">225</span><span class="p">]}])</span>
+    <span class="k">def</span> <span class="nf">test_slab_mutually_exclusive_attr_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extra_attr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Check if error is raised for specifying mutually exclusive attributes. </span>
+<span class="sd">        i.e., [&#39;bulk_atoms&#39;, &#39;e_above_hull&#39;, &#39;bulk_formula&#39;, &#39;chemsys&#39;, &#39;spacegroup&#39;, &#39;overlayer&#39;, &#39;miller_index&#39;, &#39;unitcell_size&#39;] &quot;&quot;&quot;</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">bulk</span><span class="o">=</span><span class="n">extra_attr</span><span class="p">)</span>
+        <span class="n">query_set</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">slab_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;valid_slab&#39;</span><span class="p">]</span>
+
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">query_set</span><span class="o">.</span><span class="n">check_attr</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestQuerySet.test_slab_mutually_exclusive_attr_2">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuerySet.test_slab_mutually_exclusive_attr_2">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;extra_attr&#39;</span><span class="p">,</span>
+                             <span class="p">({</span><span class="s1">&#39;overlayer&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">]},</span> <span class="p">{</span><span class="s1">&#39;miller_index&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]},</span> <span class="p">{</span><span class="s1">&#39;unitcell_size&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]}))</span>
+    <span class="k">def</span> <span class="nf">test_slab_mutually_exclusive_attr_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extra_attr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Check if error is raised for specifying mutually exclusive attributes. </span>
+<span class="sd">        i.e., [&#39;bulk_atoms&#39;, &#39;e_above_hull&#39;, &#39;bulk_formula&#39;, &#39;chemsys&#39;, &#39;spacegroup&#39;, &#39;overlayer&#39;, &#39;miller_index&#39;, &#39;unitcell_size&#39;] &quot;&quot;&quot;</span>
+        <span class="n">slab_attr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;slab_atoms&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;valid_slab&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">extra_attr</span><span class="p">}</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="o">.</span><span class="n">from_attr</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="n">slab_attr</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">query_set</span><span class="o">.</span><span class="n">check_attr</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TestQuerySet.test_invalid_adsorbate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_ase_db.TestQuerySet.test_invalid_adsorbate">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;adsorbate&quot;</span><span class="p">,</span> <span class="p">((</span><span class="s1">&#39;invalid_adsorbate&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;valid_adsorbate&#39;</span><span class="p">,</span> <span class="s1">&#39;invalid_adsorbate&#39;</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_invalid_adsorbate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">adsorbate</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Ensure that errors are raised for incorrect adsorbate inputs&quot;&quot;&quot;</span>
+        <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="p">()</span>
+        <span class="n">query_set</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">adsorbate_atoms</span> <span class="o">=</span> <span class="n">adsorbate</span>
+
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">query_set</span><span class="o">.</span><span class="n">check_attr</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

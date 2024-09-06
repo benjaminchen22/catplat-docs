@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.cli.specifications &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.cli.specifications</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.cli.specifications</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="kn">import</span> <span class="nn">click</span>
+
+
+<div class="viewcode-block" id="check_required_ml_modules">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.check_required_ml_modules">[docs]</a>
+<span class="k">def</span> <span class="nf">check_required_ml_modules</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Callback to check if required modules are installed. &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="n">modules</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;atomistic_ml&#39;</span><span class="p">,</span> <span class="s1">&#39;mace&#39;</span><span class="p">,</span> <span class="s1">&#39;ocpmodels&#39;</span><span class="p">,</span> <span class="s1">&#39;torch_geometric&#39;</span><span class="p">,</span> <span class="s1">&#39;lmdb&#39;</span><span class="p">,</span> <span class="s1">&#39;orjson&#39;</span><span class="p">,</span> <span class="s1">&#39;wandb&#39;</span><span class="p">,</span> <span class="s1">&#39;torch_sparse&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;torch_scatter&#39;</span><span class="p">]</span>
+    <span class="n">missing_modules</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">__import__</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;No module named: &#39;</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">&#39;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">e</span>
+            <span class="n">missing_modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">missing_modules</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The following modules are required for the </span><span class="si">{</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> option (value=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">) &#39;</span>
+                          <span class="sa">f</span><span class="s1">&#39;but are not installed: </span><span class="si">{</span><span class="n">missing_modules</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="stripped_str">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.stripped_str">[docs]</a>
+<span class="k">def</span> <span class="nf">stripped_str</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Custom type for removing whitespace in strings, a common error when using the CLI. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="validate_nargs">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.validate_nargs">[docs]</a>
+<span class="k">def</span> <span class="nf">validate_nargs</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SpecificationsSet requires (None,) or [None] to rperesent no choice. However, click default will</span>
+<span class="sd">    only accepts iterable since `nargs` was specified. We manually change the default back to [None]</span>
+<span class="sd">    in this callback.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="kc">None</span> <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">i</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">v</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="bonds_type">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.bonds_type">[docs]</a>
+<span class="k">def</span> <span class="nf">bonds_type</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Custom type for bonds to type cast click string inputs. </span>
+
+<span class="sd">    Valid examples:</span>
+<span class="sd">    - 0 </span>
+<span class="sd">    - 0,1 </span>
+<span class="sd">    - monodentate/bidentate</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="s1">&#39;monodentate&#39;</span> <span class="ow">or</span> <span class="n">s</span> <span class="o">==</span> <span class="s1">&#39;bidentate&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported input for --bonds: </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="connectivity_type">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.connectivity_type">[docs]</a>
+<span class="k">def</span> <span class="nf">connectivity_type</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Custom type for connectivity to type cast click string inputs.</span>
+
+<span class="sd">    Valid examples:</span>
+<span class="sd">    - 1 </span>
+<span class="sd">    - 1,1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported input for --connectivity: </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="sites_type">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.sites_type">[docs]</a>
+<span class="k">def</span> <span class="nf">sites_type</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Custom type for site to type cast click string inputs.</span>
+
+<span class="sd">    Valid examples:</span>
+<span class="sd">    - 40 </span>
+<span class="sd">    - 40,41</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported input for --index: </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="avg_coord_num_type">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.avg_coord_num_type">[docs]</a>
+<span class="k">def</span> <span class="nf">avg_coord_num_type</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Custom type for avg_coord_num to type cast click string inputs.</span>
+
+<span class="sd">    Valid examples:</span>
+<span class="sd">    - 7 </span>
+<span class="sd">    - 7,7 </span>
+<span class="sd">    - &lt;=8</span>
+<span class="sd">    - &lt;8,7</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">type_cast</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot; Average coordination can be comparator string, int, or float. &quot;&quot;&quot;</span>
+            <span class="kn">from</span> <span class="nn">catplat.utils.comparator</span> <span class="kn">import</span> <span class="n">Comparator</span>
+            <span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
+
+            <span class="k">if</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">is_comparator</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">string</span>
+
+            <span class="n">numeric</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">numeric</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported input for --avg-coord-num: </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">numeric</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="n">type_cast</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported input for --avg-coord-num: </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="click_bulk_options_calculate">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_bulk_options_calculate">[docs]</a>
+<span class="k">def</span> <span class="nf">click_bulk_options_calculate</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Common click options relevant to bulk calculation specifications. &quot;&quot;&quot;</span>
+
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--bulk-atoms&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name of bulk file in user bulk directory. &#39;</span>
+                       <span class="s1">&#39;When bulk is specified, other bulk attributes such as e_above_hull should not be specified.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--chemsys&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Chemical species of the bulk. Multiple elements should be separated by dashes. e.g. --chemsys Cu-Rh&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--min-e-above-hull&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Minimum energy above hull of the bulk structure as indicated on Materials Project. [eV/atom]&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--max-e-above-hull&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Maximum energy above hull of the bulk structure as indicated on Materials Project. [eV/atom]&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--bulk-formula&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Bulk formula as indicated on Materials Project. e.g. --bulk-formula Cu3Rh&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--spacegroup&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Spacegroup number of bulk as indicated on Materials Project.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--mpid&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Materials Project ID of bulk structure&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_bulk_options_retrieve">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_bulk_options_retrieve">[docs]</a>
+<span class="k">def</span> <span class="nf">click_bulk_options_retrieve</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Common click options relevant to bulk retrieval specifications. &quot;&quot;&quot;</span>
+
+    <span class="nd">@click_bulk_options_calculate</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--bulk-provenance&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;String for the origin of bulk atoms.&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_slab_options_calculate">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_slab_options_calculate">[docs]</a>
+<span class="k">def</span> <span class="nf">click_slab_options_calculate</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Common click options relevant to slab calculation specifications.</span>
+<span class="sd">    (None,) is our standard default value as it is interpreted by SpecificationsSet to represent no choice.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--slab-atoms&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name of slab file in user slab directory. When slab is specified, other bulk and slab attributes should not be specified.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--termination&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Slab termination, defined as the composition of the surface layer..&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--overlayer&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;If specified, replaces top layer atoms with overlayer atoms.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;--miller-index&#39;</span><span class="p">,</span> <span class="s1">&#39;--miller&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)],</span>
+                  <span class="n">callback</span><span class="o">=</span><span class="n">validate_nargs</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Miller idx of slab. eg. --miller-index 1 1 1&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--unitcell-size&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)],</span> <span class="n">callback</span><span class="o">=</span><span class="n">validate_nargs</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Size of slab to be created in terms of number of unit cell repeats.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="s1">&#39;--num-layers&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of layers of the slab.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="s1">&#39;--num-fixed-layers&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of layers to be fixed.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="s1">&#39;--min-vacuum&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Minimum vacuum to add on each side of the slab (i.e., total vacuum = vacuum x 2). [Å]&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--conventional&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Toggle for creation of conventional slabs.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--min-length&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Minimum length of the slab x and y vectors respectively. [Å]&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--min-thickness&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Minimum thickness of the slab. [Å]&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--min-fixed-thickness&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Minimum fixed layers thickness of the slab. [Å]&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_slab_options_retrieve">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_slab_options_retrieve">[docs]</a>
+<span class="k">def</span> <span class="nf">click_slab_options_retrieve</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Common click options relevant to slab retrieval specifications.&quot;&quot;&quot;</span>
+
+    <span class="nd">@click_slab_options_calculate</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--slab-provenance&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;String for the origin of slab atoms.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--max-vacuum&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Maxmimum vacuum (in Angstroms) to add on each side of the slab (i.e., total vacuum = vauum x 2).&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--max-length&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Maxmimum length(Å) of the slab x and y vectors respectively.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--max-thickness&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Maxmimum thickness(Å) of the slab.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--max-fixed-thickness&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Maxmimum fixed layers thickness(Å) of the slab.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--slab-chemsys&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Species of the slab, sorted alphabetically and separated by dashes.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--slab-formula&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Formula of the slab.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--min-slab-acn&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Minimum Average Coordination Number of the slab surface atoms.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--max-slab-acn&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Maximum Average Coordination Number of the slab surface atoms.&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_adsorbate_options_calculate">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_adsorbate_options_calculate">[docs]</a>
+<span class="k">def</span> <span class="nf">click_adsorbate_options_calculate</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Common click options relevant to adsorbate calculation specifications. &quot;&quot;&quot;</span>
+
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="s1">&#39;--adsorbate-atoms&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name of adsorbate.&#39;</span>
+                       <span class="s1">&#39;Accepted inputs:&#39;</span>
+                       <span class="s1">&#39;(1) &quot;path/to/X.xyz&quot; &#39;</span>
+                       <span class="s1">&#39;(2) &quot;X&quot; if X.* in user/catplat adsorbate directory &#39;</span>
+                       <span class="s1">&#39;(3) &quot;X&quot; if X in ase.collections.g2 &#39;</span>
+                       <span class="s1">&#39;(4) &quot;atom:X&quot; &#39;</span>
+                       <span class="s1">&#39;(5) &quot;pubchem:X&quot; if X is a pubchem id or name&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="s1">&#39;--bonds&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">bonds_type</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Atom index of adsorbate to bind to the slab. &#39;</span>
+                       <span class="s1">&#39;Single integer for monodentate adsorbates. &#39;</span>
+                       <span class="s1">&#39;Comma-separated integers for bidentate adsorbates. &#39;</span>
+                       <span class="s1">&#39;&quot;Monodentate&quot;/&quot;bidentate&quot; can be specified for CatPlat to automatically &#39;</span>
+                       <span class="s1">&#39;determine the binding atoms.&#39;</span>
+                       <span class="s1">&#39;e.g. -b 0 -b 0,1 -b monodentate&quot;&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--connectivity&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">connectivity_type</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Connectivity is the number of surface atoms of adsorption site that the adsorbate binds to. &#39;</span>
+                       <span class="s1">&#39;For a fcc(111) surface, for example, &quot;1&quot; is the top site, &quot;2&quot; is the bridge site. &#39;</span>
+                       <span class="s1">&#39;Single integer for monodentate adsorbates. &#39;</span>
+                       <span class="s1">&#39;Comma-separated integers for bidentate adsorbates.&#39;</span>
+                       <span class="s1">&#39; e.g. -c 1 -c 1,1&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span> <span class="s1">&#39;--avg-coord-num&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">avg_coord_num_type</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Average coordination number of adsorption site that the adsorbate binds to. &#39;</span>
+                       <span class="s1">&#39;Can be an integer e.g. 7, or comparator e.g. &lt;7. &#39;</span>
+                       <span class="s1">&#39;Single values for monodentate adsorbates. &#39;</span>
+                       <span class="s1">&#39;Comma-separated values for bidentate adsorbates.&#39;</span>
+                       <span class="s1">&#39; e.g. -n 7 -n 7,7 -n &quot;&lt;=8&quot;, -n &quot;&lt;8,7&quot;&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;--rotation&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Rotation of adsorbate around the axis of adsorption. For monodentate adsorbates only.&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_adsorbate_options_retrieve">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_adsorbate_options_retrieve">[docs]</a>
+<span class="k">def</span> <span class="nf">click_adsorbate_options_retrieve</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Common click options relevant to adsorbate retrieval specifications. &quot;&quot;&quot;</span>
+
+    <span class="nd">@click_adsorbate_options_calculate</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--adsorbate-formula&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Formula of adsorbate.&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_other_options_retrieve">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_other_options_retrieve">[docs]</a>
+<span class="k">def</span> <span class="nf">click_other_options_retrieve</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Common click options relevant to other specifications. &quot;&quot;&quot;</span>
+
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--id&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Database id of query.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--workflow-type&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Workflow type of query. Three workflow types, namely, &quot;bulk&quot;, &quot;slab&quot; and &quot;adsorbate&quot;.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--relaxed&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Boolean specifying if structures to be queried are relaxed or not.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--unrelaxed_id&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Unrelaxed database id of query.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--parent_id&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Parent id of query.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--ml-preoptimization/--no-ml-preoptimization&#39;</span><span class="p">,</span> <span class="s1">&#39;--ml-preopt/--no-ml-preopt&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span>
+                  <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_run_options">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_run_options">[docs]</a>
+<span class="k">def</span> <span class="nf">click_run_options</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Common click options relevant to running catplat. &quot;&quot;&quot;</span>
+
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span> <span class="s1">&#39;--num-nodes&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of nodes to assign for each num-job-run-slots.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-N&#39;</span><span class="p">,</span> <span class="s1">&#39;--num-job-run-slots&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of jobs to run in parallel.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--test&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Flag for testing. Results will not be written to the database.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--server&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name of server to run the job on. Will try to determine this automatically if unspecified.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--fakerunner&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Flag to use FakeVaspOverallJobRunner(). Results will be written to the database with placeholder energy value of 123.0 eV.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--write-db/--no-write-db&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;If true, writes calculations of current session to </span><span class="si">{session_id}</span><span class="s1">.db&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_workflow_overall_options">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_workflow_overall_options">[docs]</a>
+<span class="k">def</span> <span class="nf">click_workflow_overall_options</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Common click options relevant to the arguments for the workflows. &quot;&quot;&quot;</span>
+
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--ml-preoptimization&#39;</span><span class="p">,</span> <span class="s1">&#39;--ml-preopt&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Flag to run preoptimization with MLPotential. Will default to True if &#39;</span>
+                       <span class="s1">&#39;--ml-potential-hash is specified.&#39;</span><span class="p">,</span>
+                  <span class="n">callback</span><span class="o">=</span><span class="n">check_required_ml_modules</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--ml-potential-hash&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Hash of the MLPotential to be used for preoptimization.&#39;</span><span class="p">,</span>
+                  <span class="n">callback</span><span class="o">=</span><span class="n">check_required_ml_modules</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--skip-materials-project&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Flag to skip querying Materials Project.&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_project">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_project">[docs]</a>
+<span class="k">def</span> <span class="nf">click_project</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--project&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name of project to run. Contains information such as database_path, incar settings, etc.&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_write_option">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_write_option">[docs]</a>
+<span class="k">def</span> <span class="nf">click_write_option</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--write/--no-write&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Write structures into folders&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_bulk_builder_options">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_bulk_builder_options">[docs]</a>
+<span class="k">def</span> <span class="nf">click_bulk_builder_options</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Options for bulk creation. &quot;&quot;&quot;</span>
+
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--chemsys&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Species of the system, sorted alphabetically and separated by dashes. eg. --chemsys Cu-Rh&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-e&#39;</span><span class="p">,</span> <span class="s1">&#39;--e-above-hull&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Energy above hull of the bulk structure as indicated on Materials Project. Comparator strings are preferred over float unless exact match is desired.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="s1">&#39;--bulk-formula&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Bulk formula as indicated on Materials Project.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--spacegroup&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Spacegroup number of bulk as indicated on Materials Project.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--mpid&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Materials Project ID of bulk structure&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_slab_builder_options">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_slab_builder_options">[docs]</a>
+<span class="k">def</span> <span class="nf">click_slab_builder_options</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Options for slab creation. &quot;&quot;&quot;</span>
+
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--overlayer&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Replaces top layer atoms with overlayer atoms.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;--miller-index&#39;</span><span class="p">,</span> <span class="s1">&#39;--miller&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Miller idx of slab. eg. --miller-index 1 1 1&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--unitcell-size&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Size of slab to be created.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="s1">&#39;--num-layers&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of layers of the slab.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="s1">&#39;--num-fixed-layers&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of layers to be fixed.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="s1">&#39;--vacuum&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Amount of vacuum (in angstroms) to add on &quot;each side&quot; of the slab (i.e., total vacuum = vauum x 2) Vacuum should be an int.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--conventional&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Toggle for creation of conventional slabs.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--length&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Length (Å) of the slab.&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--thickness&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Thickness (Å) of the slab.&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+
+
+<div class="viewcode-block" id="click_adsorbate_placement_options">
+<a class="viewcode-back" href="../../../catplat.cli.html#catplat.cli.specifications.click_adsorbate_placement_options">[docs]</a>
+<span class="k">def</span> <span class="nf">click_adsorbate_placement_options</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Options for adsorbate creation and placement. &quot;&quot;&quot;</span>
+
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="s1">&#39;--adsorbate-atoms&#39;</span><span class="p">,</span> <span class="s1">&#39;--adsorbate&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">stripped_str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name of adsorbate.&#39;</span>
+                       <span class="s1">&#39;Accepted inputs:&#39;</span>
+                       <span class="s1">&#39;(1) &quot;path/to/X.xyz&quot; &#39;</span>
+                       <span class="s1">&#39;(2) &quot;X&quot; if X.* in user/catplat adsorbate directory &#39;</span>
+                       <span class="s1">&#39;(3) &quot;X&quot; if X in ase.collections.g2 &#39;</span>
+                       <span class="s1">&#39;(4) &quot;atom:X&quot; &#39;</span>
+                       <span class="s1">&#39;(5) &quot;pubchem:X&quot; &#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="s1">&#39;--bonds&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">bonds_type</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Atom index of adsorbate to bind to the slab. e.g. -b 0 -b 0,1 -b monodentate&quot;&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--connectivity&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">connectivity_type</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Connectivity of adsorption site for adsorbate to bind. e.g. e.g. -c 1 -c 1,1&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span> <span class="s1">&#39;--avg-coord-num&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">avg_coord_num_type</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Average coordination of adsorption site for adsorbate to bind. e.g. -n 7 -n 7,7 -n &quot;&lt;=8&quot;, -n &quot;&lt;8,7&quot;&#39;</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--sites&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">sites_type</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Site indexes to be selected. e.g. e.g. -i 40 -i 40,41&#39;</span><span class="p">)</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper_common_options</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper_common_options</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.workflows package &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">catplat.workflows package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/catplat.workflows.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="catplat-workflows-package">
+<h1>catplat.workflows package<a class="headerlink" href="#catplat-workflows-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-catplat.workflows.adsorbate">
+<span id="catplat-workflows-adsorbate-module"></span><h2>catplat.workflows.adsorbate module<a class="headerlink" href="#module-catplat.workflows.adsorbate" title="Link to this heading"></a></h2>
+<p>This module consists of classes that handles the adsorbate workflow.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.adsorbate.</span></span><span class="sig-name descname"><span class="pre">AdsorbateWorkflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/adsorbate.html#AdsorbateWorkflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.workflows.workflow.Workflow" title="catplat.workflows.workflow.Workflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">Workflow</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflow.ENABLE_ML_PREOPTIMIZATION">
+<span class="sig-name descname"><span class="pre">ENABLE_ML_PREOPTIMIZATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflow.ENABLE_ML_PREOPTIMIZATION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflow.adsorbate_atoms">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adsorbate_atoms</span></span><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflow.adsorbate_atoms" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflow.avg_coord_num">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">avg_coord_num</span></span><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflow.avg_coord_num" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflow.connectivity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">connectivity</span></span><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflow.connectivity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflow.from_blueprint">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_blueprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surface_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/adsorbate.html#AdsorbateWorkflow.from_blueprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflow.from_blueprint" title="Link to this definition"></a></dt>
+<dd><p>Main method to instantiate AdsorbateWorkflowBuilder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflow.optimization_job">
+<span class="sig-name descname"><span class="pre">optimization_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/adsorbate.html#AdsorbateWorkflow.optimization_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflow.optimization_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflowBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.adsorbate.</span></span><span class="sig-name descname"><span class="pre">AdsorbateWorkflowBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surface_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adsorbate_specs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/adsorbate.html#AdsorbateWorkflowBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflowBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.workflows.workflow.WorkflowBuilder" title="catplat.workflows.workflow.WorkflowBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowBuilder</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflowBuilder.WORKFLOW_TYPE">
+<span class="sig-name descname"><span class="pre">WORKFLOW_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'adsorbate'</span></em><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflowBuilder.WORKFLOW_TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflowBuilder.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/adsorbate.html#AdsorbateWorkflowBuilder.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflowBuilder.build" title="Link to this definition"></a></dt>
+<dd><p>Main function to build adsorbate workflows</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflowBuilder.from_blueprint">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_blueprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/workflows/adsorbate.html#AdsorbateWorkflowBuilder.from_blueprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflowBuilder.from_blueprint" title="Link to this definition"></a></dt>
+<dd><p>Factory method to instantiate [MillerIndexWorkflowBuilder] from blueprint.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflowBuilder.from_specs">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_specs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adsorbate_specs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/adsorbate.html#AdsorbateWorkflowBuilder.from_specs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflowBuilder.from_specs" title="Link to this definition"></a></dt>
+<dd><p>Factory method to instantiate AdsorbateWorkflowBuilder from AdsorbateSpecs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.adsorbate.AdsorbateWorkflowBuilder.own_query_db_criteria">
+<span class="sig-name descname"><span class="pre">own_query_db_criteria</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/adsorbate.html#AdsorbateWorkflowBuilder.own_query_db_criteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.adsorbate.AdsorbateWorkflowBuilder.own_query_db_criteria" title="Link to this definition"></a></dt>
+<dd><p>Returns dictionary of attribute:value pairs which are used in the db query criteria.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-catplat.workflows.bulk">
+<span id="catplat-workflows-bulk-module"></span><h2>catplat.workflows.bulk module<a class="headerlink" href="#module-catplat.workflows.bulk" title="Link to this heading"></a></h2>
+<p>This module consists of classes that handles the bulk workflow.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.bulk.BulkStructureWorkflow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.bulk.</span></span><span class="sig-name descname"><span class="pre">BulkStructureWorkflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/bulk.html#BulkStructureWorkflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.bulk.BulkStructureWorkflow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.workflows.workflow.Workflow" title="catplat.workflows.workflow.Workflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">Workflow</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.workflows.bulk.BulkStructureWorkflow.ENABLE_ML_PREOPTIMIZATION">
+<span class="sig-name descname"><span class="pre">ENABLE_ML_PREOPTIMIZATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#catplat.workflows.bulk.BulkStructureWorkflow.ENABLE_ML_PREOPTIMIZATION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.bulk.BulkStructureWorkflow.from_blueprint">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_blueprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/bulk.html#BulkStructureWorkflow.from_blueprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.bulk.BulkStructureWorkflow.from_blueprint" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.bulk.BulkStructureWorkflow.optimization_job">
+<span class="sig-name descname"><span class="pre">optimization_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/bulk.html#BulkStructureWorkflow.optimization_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.bulk.BulkStructureWorkflow.optimization_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.bulk.BulkStructureWorkflow.spacegroup">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spacegroup</span></span><a class="headerlink" href="#catplat.workflows.bulk.BulkStructureWorkflow.spacegroup" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.bulk.BulkStructureWorkflowBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.bulk.</span></span><span class="sig-name descname"><span class="pre">BulkStructureWorkflowBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bulk_specs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/bulk.html#BulkStructureWorkflowBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.bulk.BulkStructureWorkflowBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.workflows.workflow.WorkflowBuilder" title="catplat.workflows.workflow.WorkflowBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowBuilder</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.workflows.bulk.BulkStructureWorkflowBuilder.WORKFLOW_TYPE">
+<span class="sig-name descname"><span class="pre">WORKFLOW_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bulk'</span></em><a class="headerlink" href="#catplat.workflows.bulk.BulkStructureWorkflowBuilder.WORKFLOW_TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.bulk.BulkStructureWorkflowBuilder.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/bulk.html#BulkStructureWorkflowBuilder.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.bulk.BulkStructureWorkflowBuilder.build" title="Link to this definition"></a></dt>
+<dd><p>Main function to build adsorbate workflows</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.bulk.BulkStructureWorkflowBuilder.from_blueprint">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_blueprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/workflows/bulk.html#BulkStructureWorkflowBuilder.from_blueprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.bulk.BulkStructureWorkflowBuilder.from_blueprint" title="Link to this definition"></a></dt>
+<dd><p>Main factory method to instantiate BulkWorkflowBuilder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.bulk.BulkStructureWorkflowBuilder.own_query_db_criteria">
+<span class="sig-name descname"><span class="pre">own_query_db_criteria</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/catplat/workflows/bulk.html#BulkStructureWorkflowBuilder.own_query_db_criteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.bulk.BulkStructureWorkflowBuilder.own_query_db_criteria" title="Link to this definition"></a></dt>
+<dd><p>Returns dictionary of attribute:value pairs which are used in the db query criteria.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.bulk.BulkStructureWorkflowBuilder.skip_materials_project">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">skip_materials_project</span></span><a class="headerlink" href="#catplat.workflows.bulk.BulkStructureWorkflowBuilder.skip_materials_project" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-catplat.workflows.data_structure">
+<span id="catplat-workflows-data-structure-module"></span><h2>catplat.workflows.data_structure module<a class="headerlink" href="#module-catplat.workflows.data_structure" title="Link to this heading"></a></h2>
+<p>This module contains the workflow blueprint for workflows.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.data_structure.WorkflowBlueprint">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.data_structure.</span></span><span class="sig-name descname"><span class="pre">WorkflowBlueprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_set</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calculation_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_at</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ml_preoptimization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_materials_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ml_potential_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/data_structure.html#WorkflowBlueprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.data_structure.WorkflowBlueprint" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.data_structure.WorkflowBlueprint.adsorbate_specs_list">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adsorbate_specs_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><a class="headerlink" href="#catplat.workflows.data_structure.WorkflowBlueprint.adsorbate_specs_list" title="Link to this definition"></a></dt>
+<dd><p>Expands the AdsorbateSpecificationsSet to a list of AdsorbateSpecs class.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.data_structure.WorkflowBlueprint.bulk_specs_list">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bulk_specs_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><a class="headerlink" href="#catplat.workflows.data_structure.WorkflowBlueprint.bulk_specs_list" title="Link to this definition"></a></dt>
+<dd><p>Expands the BulkSpecificationsSet to a list of BulkSpecs class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.data_structure.WorkflowBlueprint.empty">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/data_structure.html#WorkflowBlueprint.empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.data_structure.WorkflowBlueprint.empty" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.data_structure.WorkflowBlueprint.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/data_structure.html#WorkflowBlueprint.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.data_structure.WorkflowBlueprint.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.data_structure.WorkflowBlueprint.from_folder">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/data_structure.html#WorkflowBlueprint.from_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.data_structure.WorkflowBlueprint.from_folder" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.data_structure.WorkflowBlueprint.is_user_slab">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_user_slab</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#catplat.workflows.data_structure.WorkflowBlueprint.is_user_slab" title="Link to this definition"></a></dt>
+<dd><p>Bool to check if user slab is defined.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.data_structure.WorkflowBlueprint.slab_specs_list">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">slab_specs_list</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span></em><a class="headerlink" href="#catplat.workflows.data_structure.WorkflowBlueprint.slab_specs_list" title="Link to this definition"></a></dt>
+<dd><p>Expands the SlabSpecificationsSet to a list of SlabSpecs class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.data_structure.WorkflowBlueprint.specifications">
+<span class="sig-name descname"><span class="pre">specifications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attributes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/data_structure.html#WorkflowBlueprint.specifications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.data_structure.WorkflowBlueprint.specifications" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-catplat.workflows.manager">
+<span id="catplat-workflows-manager-module"></span><h2>catplat.workflows.manager module<a class="headerlink" href="#module-catplat.workflows.manager" title="Link to this heading"></a></h2>
+<p>This module consists of classes that handles the main workflow.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.manager.EverLastingProcess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.manager.</span></span><span class="sig-name descname"><span class="pre">EverLastingProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daemon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#EverLastingProcess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.EverLastingProcess" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Process</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.EverLastingProcess.join">
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#EverLastingProcess.join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.EverLastingProcess.join" title="Link to this definition"></a></dt>
+<dd><p>Wait until child process terminates</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.manager.HighThroughputScreening">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.manager.</span></span><span class="sig-name descname"><span class="pre">HighThroughputScreening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_job_run_slots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jobrunner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_writer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#HighThroughputScreening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.HighThroughputScreening" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class is the main entry point to the high throughput screening</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.HighThroughputScreening.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#HighThroughputScreening.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.HighThroughputScreening.start" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.manager.MaterialJob">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.manager.</span></span><span class="sig-name descname"><span class="pre">MaterialJob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_only</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_writer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#MaterialJob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.MaterialJob" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Job</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.MaterialJob.from_blueprint">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_blueprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#MaterialJob.from_blueprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.MaterialJob.from_blueprint" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.MaterialJob.is_complete">
+<span class="sig-name descname"><span class="pre">is_complete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#MaterialJob.is_complete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.MaterialJob.is_complete" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.manager.MaterialJob.starting_workflows">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">starting_workflows</span></span><a class="headerlink" href="#catplat.workflows.manager.MaterialJob.starting_workflows" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Project">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.manager.</span></span><span class="sig-name descname"><span class="pre">Project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jobrunner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calculation_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_writer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_job_run_slots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_create_folders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ml_preoptimization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ml_potential_hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_materials_project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Project"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Project" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This is a boundary class in which the users interact with. This class contains user settings as
+mentioned in the attributes below.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the pyatoms settings folder in .pyatoms/vasp.</p></li>
+<li><p><strong>calculation_path</strong> (<em>str</em>) – Directory of project folder.</p></li>
+<li><p><strong>jobrunner</strong> (<em>OverallJobRunner</em><em>, </em><em>FakeVaspOverallJobRunner</em>) – Jobrunner class that contains
+server information and how to run VASP.</p></li>
+<li><p><strong>num_job_run_slots</strong> (<em>int</em>) – Number of jobs to run in parallel.</p></li>
+<li><p><strong>auto_create_folders</strong> (<em>bool</em>) – Flag to automatically create calculation and database folders.</p></li>
+<li><p><strong>ml_preoptimization</strong> (<em>bool</em>) – Flag to use machine learning preoptimization. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Project.database">
+<span class="sig-name descname"><span class="pre">database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Project.database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Project.database" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Project.for_testing">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">for_testing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Project.for_testing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Project.for_testing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Project.from_folder">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calculation_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'calculations'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_folder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'database'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Project.from_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Project.from_folder" title="Link to this definition"></a></dt>
+<dd><p>Default calculation path: &lt;folder&gt;/calculations
+Default database path: &lt;folder&gt;/database/project.db</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Project.is_mysql_database">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_mysql_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Project.is_mysql_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Project.is_mysql_database" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Project.num_nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_nodes</span></span><a class="headerlink" href="#catplat.workflows.manager.Project.num_nodes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Project.retrieve">
+<span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calculate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#catplat.workflows.manager.Results" title="catplat.workflows.manager.Results"><span class="pre">Results</span></a></span></span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Project.retrieve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Project.retrieve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Project.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Project.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Project.save" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Project.settings">
+<span class="sig-name descname"><span class="pre">settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Project.settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Project.settings" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Project.test_mode">
+<span class="sig-name descname"><span class="pre">test_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cleanup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Project.test_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Project.test_mode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.manager.</span></span><span class="sig-name descname"><span class="pre">Results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Results" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This is a class instatiated by the Project class using Project.retreive(QuerySet).
+This class contains the entries and helps to easily access the database to get the DatabaseAttibutes.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results.attributes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attributes</span></span><a class="headerlink" href="#catplat.workflows.manager.Results.attributes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results.avg_coord_num">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">avg_coord_num</span></span><a class="headerlink" href="#catplat.workflows.manager.Results.avg_coord_num" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results.connectivity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">connectivity</span></span><a class="headerlink" href="#catplat.workflows.manager.Results.connectivity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results.dataframe">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataframe</span></span><a class="headerlink" href="#catplat.workflows.manager.Results.dataframe" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results.energies">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">energies</span></span><a class="headerlink" href="#catplat.workflows.manager.Results.energies" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Results.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Results.filter" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results.id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#catplat.workflows.manager.Results.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results.structures">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structures</span></span><a class="headerlink" href="#catplat.workflows.manager.Results.structures" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results.view">
+<span class="sig-name descname"><span class="pre">view</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Results.view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Results.view" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Results.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Results.write" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.manager.Results.write_csv">
+<span class="sig-name descname"><span class="pre">write_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data.csv'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/manager.html#Results.write_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.manager.Results.write_csv" title="Link to this definition"></a></dt>
+<dd><p>Note: Does not check if file exists, as that may easily lead to race conditions.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-catplat.workflows.slab">
+<span id="catplat-workflows-slab-module"></span><h2>catplat.workflows.slab module<a class="headerlink" href="#module-catplat.workflows.slab" title="Link to this heading"></a></h2>
+<p>This module consists of classes that handles the slab workflow.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.slab.</span></span><span class="sig-name descname"><span class="pre">SlabWorkflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/slab.html#SlabWorkflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.workflows.workflow.Workflow" title="catplat.workflows.workflow.Workflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">Workflow</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflow.ENABLE_ML_PREOPTIMIZATION">
+<span class="sig-name descname"><span class="pre">ENABLE_ML_PREOPTIMIZATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflow.ENABLE_ML_PREOPTIMIZATION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflow.from_blueprint">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_blueprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bulk_atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/slab.html#SlabWorkflow.from_blueprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflow.from_blueprint" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflow.miller_index">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">miller_index</span></span><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflow.miller_index" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflow.num_fixed_layers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_fixed_layers</span></span><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflow.num_fixed_layers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflow.num_layers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_layers</span></span><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflow.num_layers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflow.optimization_job">
+<span class="sig-name descname"><span class="pre">optimization_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/slab.html#SlabWorkflow.optimization_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflow.optimization_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflow.slab_atoms">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">slab_atoms</span></span><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflow.slab_atoms" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflow.unitcell_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unitcell_size</span></span><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflow.unitcell_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflowBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.slab.</span></span><span class="sig-name descname"><span class="pre">SlabWorkflowBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slab_specs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bulk_atoms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/slab.html#SlabWorkflowBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflowBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.workflows.workflow.WorkflowBuilder" title="catplat.workflows.workflow.WorkflowBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">WorkflowBuilder</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflowBuilder.WORKFLOW_TYPE">
+<span class="sig-name descname"><span class="pre">WORKFLOW_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'slab'</span></em><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflowBuilder.WORKFLOW_TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflowBuilder.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/slab.html#SlabWorkflowBuilder.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflowBuilder.build" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflowBuilder.from_blueprint">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_blueprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bulk_atoms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/workflows/slab.html#SlabWorkflowBuilder.from_blueprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflowBuilder.from_blueprint" title="Link to this definition"></a></dt>
+<dd><p>Factory method to instantiate [SlabWorkflowBuilder] from blueprint.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.slab.SlabWorkflowBuilder.own_query_db_criteria">
+<span class="sig-name descname"><span class="pre">own_query_db_criteria</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/slab.html#SlabWorkflowBuilder.own_query_db_criteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.slab.SlabWorkflowBuilder.own_query_db_criteria" title="Link to this definition"></a></dt>
+<dd><p>Returns dictionary of attribute:value pairs which are used in the db query criteria.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-catplat.workflows.workflow">
+<span id="catplat-workflows-workflow-module"></span><h2>catplat.workflows.workflow module<a class="headerlink" href="#module-catplat.workflows.workflow" title="Link to this heading"></a></h2>
+<p>This module consists of the abstract base class templates in which the bulk, slab and adsorbate workflows inherit from.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.workflow.</span></span><span class="sig-name descname"><span class="pre">Workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_writer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_ml_preoptimization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_optimization</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#Workflow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.Workflow" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract base class for all workflows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>disable_ml_preoptimization</strong> (<em>bool</em>) – If True, disables ML preoptimization. For debugging purposes only.</p></li>
+<li><p><strong>disable_optimization</strong> (<em>bool</em>) – If True, disables optimization. For debugging purposes only.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.ENABLE_ML_PREOPTIMIZATION">
+<span class="sig-name descname"><span class="pre">ENABLE_ML_PREOPTIMIZATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">NotImplemented</span></em><a class="headerlink" href="#catplat.workflows.workflow.Workflow.ENABLE_ML_PREOPTIMIZATION" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.calculation_folder">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculation_folder</span></span><a class="headerlink" href="#catplat.workflows.workflow.Workflow.calculation_folder" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.child_workflows">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">child_workflows</span></span><a class="headerlink" href="#catplat.workflows.workflow.Workflow.child_workflows" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#Workflow.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.Workflow.copy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.database">
+<span class="sig-name descname"><span class="pre">database</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#Workflow.database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.Workflow.database" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.database_path">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">database_path</span></span><a class="headerlink" href="#catplat.workflows.workflow.Workflow.database_path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.db_entry">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">db_entry</span></span><a class="headerlink" href="#catplat.workflows.workflow.Workflow.db_entry" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.from_blueprint">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_blueprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#Workflow.from_blueprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.Workflow.from_blueprint" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.is_complete">
+<span class="sig-name descname"><span class="pre">is_complete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#Workflow.is_complete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.Workflow.is_complete" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.machine_learning_preoptimization">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">machine_learning_preoptimization</span></span><a class="headerlink" href="#catplat.workflows.workflow.Workflow.machine_learning_preoptimization" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.ml_preoptimization_job">
+<span class="sig-name descname"><span class="pre">ml_preoptimization_job</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#Workflow.ml_preoptimization_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.Workflow.ml_preoptimization_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.optimization_job">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">optimization_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#Workflow.optimization_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.Workflow.optimization_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.optimized_energy">
+<span class="sig-name descname"><span class="pre">optimized_energy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#Workflow.optimized_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.Workflow.optimized_energy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.query_parameters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query_parameters</span></span><a class="headerlink" href="#catplat.workflows.workflow.Workflow.query_parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.Workflow.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobrunner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queue_manager</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#Workflow.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.Workflow.run" title="Link to this definition"></a></dt>
+<dd><p>Runs the workflow and child workflows (if any).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.WorkflowBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.workflows.workflow.</span></span><span class="sig-name descname"><span class="pre">WorkflowBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_workflow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_only</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_writer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#WorkflowBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.WorkflowBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.WorkflowBuilder.WORKFLOW_TYPE">
+<span class="sig-name descname"><span class="pre">WORKFLOW_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">NotImplemented</span></em><a class="headerlink" href="#catplat.workflows.workflow.WorkflowBuilder.WORKFLOW_TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.WorkflowBuilder.build">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#WorkflowBuilder.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.WorkflowBuilder.build" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.WorkflowBuilder.calculation_folder">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculation_folder</span></span><a class="headerlink" href="#catplat.workflows.workflow.WorkflowBuilder.calculation_folder" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.WorkflowBuilder.database">
+<span class="sig-name descname"><span class="pre">database</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#WorkflowBuilder.database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.WorkflowBuilder.database" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.WorkflowBuilder.database_path">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">database_path</span></span><a class="headerlink" href="#catplat.workflows.workflow.WorkflowBuilder.database_path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.WorkflowBuilder.from_blueprint">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_blueprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blueprint</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#WorkflowBuilder.from_blueprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.WorkflowBuilder.from_blueprint" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.WorkflowBuilder.own_query_db_criteria">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">own_query_db_criteria</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#WorkflowBuilder.own_query_db_criteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.WorkflowBuilder.own_query_db_criteria" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.WorkflowBuilder.parent_criteria">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parent_criteria</span></span><a class="headerlink" href="#catplat.workflows.workflow.WorkflowBuilder.parent_criteria" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.workflows.workflow.WorkflowBuilder.query_db_criteria">
+<span class="sig-name descname"><span class="pre">query_db_criteria</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/workflows/workflow.html#WorkflowBuilder.query_db_criteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.workflows.workflow.WorkflowBuilder.query_db_criteria" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-catplat.workflows">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-catplat.workflows" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

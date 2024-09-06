@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.bonding package &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">catplat.bonding package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/catplat.bonding.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="catplat-bonding-package">
+<h1>catplat.bonding package<a class="headerlink" href="#catplat-bonding-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-catplat.bonding.lewis">
+<span id="catplat-bonding-lewis-module"></span><h2>catplat.bonding.lewis module<a class="headerlink" href="#module-catplat.bonding.lewis" title="Link to this heading"></a></h2>
+<p>This module consist of code to solve the Lewis Structure of a chemical species.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.bonding.lewis.</span></span><span class="sig-name descname"><span class="pre">LewisStructure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Atoms</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomsWrapper</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">GratomsWrapper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_bonds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/bonding/lewis.html#LewisStructure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Lewis structure of a chemical species.</p>
+<p>A list of bonding attributes can be obtained:</p>
+<dl>
+<dt>For Example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span> <span class="o">=</span> <span class="n">LewisStructure</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="s1">&#39;CO&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">num_lone_pairs</span><span class="p">()</span>
+<span class="go">[0, 1]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.atoms">
+<span class="sig-name descname"><span class="pre">atoms</span></span><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.atoms" title="Link to this definition"></a></dt>
+<dd><p>Structure of chemical species</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Atoms</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.multiple_bonds">
+<span class="sig-name descname"><span class="pre">multiple_bonds</span></span><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.multiple_bonds" title="Link to this definition"></a></dt>
+<dd><p>Toggle on whether multiple bonds (e.g. C=C should be considered)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.VALENCES">
+<span class="sig-name descname"><span class="pre">VALENCES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'C':</span> <span class="pre">4,</span> <span class="pre">'Cl':</span> <span class="pre">7,</span> <span class="pre">'H':</span> <span class="pre">1,</span> <span class="pre">'N':</span> <span class="pre">5,</span> <span class="pre">'O':</span> <span class="pre">6,</span> <span class="pre">'P':</span> <span class="pre">5,</span> <span class="pre">'S':</span> <span class="pre">6}</span></em><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.VALENCES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.from_adsorbate_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_adsorbate_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/bonding/lewis.html#LewisStructure.from_adsorbate_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.from_adsorbate_name" title="Link to this definition"></a></dt>
+<dd><p>Convenient way to initiate LewisStructure from adsorbate name.
+:param name: Name of adsorbate to analyze
+:type name: str</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.get_bonds">
+<span class="sig-name descname"><span class="pre">get_bonds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">denticity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/bonding/lewis.html#LewisStructure.get_bonds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.get_bonds" title="Link to this definition"></a></dt>
+<dd><p>Returns the Bonds of an adsorbate. Uses the bond priority list (self.bonds_index) to return the predicted adsorbate bonds.
+By default, this function returns the bonds which has the same length as denticity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>denticity</strong> (<em>int</em><em>, </em><em>str</em><em>, </em><em>None</em>) – Denticity of adsorbate. Defaults to ‘monodentate’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.is_single_atom">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_single_atom</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.is_single_atom" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.num_bonds">
+<span class="sig-name descname"><span class="pre">num_bonds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/bonding/lewis.html#LewisStructure.num_bonds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.num_bonds" title="Link to this definition"></a></dt>
+<dd><p>Number of covalent and dative bonds on each atom.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.num_free_electrons">
+<span class="sig-name descname"><span class="pre">num_free_electrons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/bonding/lewis.html#LewisStructure.num_free_electrons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.num_free_electrons" title="Link to this definition"></a></dt>
+<dd><p>Number of free electrons on each atom.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.num_lone_pairs">
+<span class="sig-name descname"><span class="pre">num_lone_pairs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/bonding/lewis.html#LewisStructure.num_lone_pairs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.num_lone_pairs" title="Link to this definition"></a></dt>
+<dd><p>Number of lone pairs on each atom.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.num_unsaturated_bonds">
+<span class="sig-name descname"><span class="pre">num_unsaturated_bonds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/bonding/lewis.html#LewisStructure.num_unsaturated_bonds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.num_unsaturated_bonds" title="Link to this definition"></a></dt>
+<dd><p>Number of unsaturated bonds on each atom.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.radical_atoms">
+<span class="sig-name descname"><span class="pre">radical_atoms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/bonding/lewis.html#LewisStructure.radical_atoms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.radical_atoms" title="Link to this definition"></a></dt>
+<dd><p>Indices of radical atoms with odd numbers of free electrons.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.LewisStructure.unsaturated_atoms">
+<span class="sig-name descname"><span class="pre">unsaturated_atoms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/catplat/bonding/lewis.html#LewisStructure.unsaturated_atoms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.bonding.lewis.LewisStructure.unsaturated_atoms" title="Link to this definition"></a></dt>
+<dd><p>Indices of unsaturated atoms with one or more unsaturated bonds.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.bonding.lewis.is_odd">
+<span class="sig-prename descclassname"><span class="pre">catplat.bonding.lewis.</span></span><span class="sig-name descname"><span class="pre">is_odd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/bonding/lewis.html#is_odd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.bonding.lewis.is_odd" title="Link to this definition"></a></dt>
+<dd><p>Returns True/False for value if they are odd/even.</p>
+</dd></dl>
+
+</section>
+<section id="module-catplat.bonding">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-catplat.bonding" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

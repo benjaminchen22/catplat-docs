@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.database.data package &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">catplat.database.data package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/catplat.database.data.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="catplat-database-data-package">
+<h1>catplat.database.data package<a class="headerlink" href="#catplat-database-data-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-catplat.database.data.ase">
+<span id="catplat-database-data-ase-module"></span><h2>catplat.database.data.ase module<a class="headerlink" href="#module-catplat.database.data.ase" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.ase.</span></span><span class="sig-name descname"><span class="pre">AseData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AseData'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/ase.html#AseData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.ase.AseData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code>, <a class="reference internal" href="#catplat.database.data.data.Data" title="catplat.database.data.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseData.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ase'</span></em><a class="headerlink" href="#catplat.database.data.ase.AseData.TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseData.calculator">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculator</span></span><a class="headerlink" href="#catplat.database.data.ase.AseData.calculator" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseData.from_job">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/ase.html#AseData.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.ase.AseData.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseData.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/ase.html#AseData.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.ase.AseData.summary" title="Link to this definition"></a></dt>
+<dd><p>A summary of the data for printing to the console.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseData.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/ase.html#AseData.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.ase.AseData.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseStep">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.ase.</span></span><span class="sig-name descname"><span class="pre">AseStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">substeps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AseStep'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/ase.html#AseStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.ase.AseStep" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code>, <a class="reference internal" href="#catplat.database.data.data.Step" title="catplat.database.data.data.Step"><code class="xref py py-class docutils literal notranslate"><span class="pre">Step</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseStep.calculator">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculator</span></span><a class="headerlink" href="#catplat.database.data.ase.AseStep.calculator" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseStep.from_job">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/ase.html#AseStep.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.ase.AseStep.from_job" title="Link to this definition"></a></dt>
+<dd><p>Create an AseStep from an AseGeometryOptimizationJob.</p>
+<p>Should only have one substep.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseStep.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/ase.html#AseStep.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.ase.AseStep.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseSubstep">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.ase.</span></span><span class="sig-name descname"><span class="pre">AseSubstep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calculator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/ase.html#AseSubstep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.ase.AseSubstep" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code>, <a class="reference internal" href="#catplat.database.data.data.Substep" title="catplat.database.data.data.Substep"><code class="xref py py-class docutils literal notranslate"><span class="pre">Substep</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseSubstep.from_job">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/ase.html#AseSubstep.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.ase.AseSubstep.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseSubstep.label">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#catplat.database.data.ase.AseSubstep.label" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseSubstep.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/ase.html#AseSubstep.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.ase.AseSubstep.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.ase.AseSubstep.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/ase.html#AseSubstep.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.ase.AseSubstep.write" title="Link to this definition"></a></dt>
+<dd><p>Write the substep to a folder.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-catplat.database.data.data">
+<span id="catplat-database-data-data-module"></span><h2>catplat.database.data.data module<a class="headerlink" href="#module-catplat.database.data.data" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.data.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Data" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">NotImplemented</span></em><a class="headerlink" href="#catplat.database.data.data.Data.TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data.from_database_id">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_database_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Data.from_database_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Data.from_database_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Data.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Data.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data.from_job">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Data.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Data.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data.num_steps">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_steps</span></span><a class="headerlink" href="#catplat.database.data.data.Data.num_steps" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data.summary">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Data.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Data.summary" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data.to_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Data.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Data.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data.trajectory">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trajectory</span></span><a class="headerlink" href="#catplat.database.data.data.Data.trajectory" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Data.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Data.write" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data.write_full_traj">
+<span class="sig-name descname"><span class="pre">write_full_traj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Data.write_full_traj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Data.write_full_traj" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Data.write_gif">
+<span class="sig-name descname"><span class="pre">write_gif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Data.write_gif"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Data.write_gif" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.data.Input">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.data.</span></span><span class="sig-name descname"><span class="pre">Input</span></span><a class="reference internal" href="_modules/catplat/database/data/data.html#Input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Input" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Input.from_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Input.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Input.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Input.from_job">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Input.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Input.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Input.to_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Input.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Input.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.data.Output">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.data.</span></span><span class="sig-name descname"><span class="pre">Output</span></span><a class="reference internal" href="_modules/catplat/database/data/data.html#Output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Output" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Output.from_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Output.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Output.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Output.from_job">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Output.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Output.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Output.to_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Output.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Output.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.data.Step">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.data.</span></span><span class="sig-name descname"><span class="pre">Step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">substeps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Step" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Step.from_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Step.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Step.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Step.from_job">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Step.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Step.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.data.Step.label">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#catplat.database.data.data.Step.label" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.data.Step.num_substeps">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_substeps</span></span><a class="headerlink" href="#catplat.database.data.data.Step.num_substeps" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Step.to_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Step.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Step.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.data.Step.trajectory">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">trajectory</span></span><a class="headerlink" href="#catplat.database.data.data.Step.trajectory" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Step.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Step.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Step.write" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.data.Substep">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.data.</span></span><span class="sig-name descname"><span class="pre">Substep</span></span><a class="reference internal" href="_modules/catplat/database/data/data.html#Substep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Substep" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Substep.from_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Substep.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Substep.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Substep.from_job">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Substep.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Substep.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.data.Substep.label">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#catplat.database.data.data.Substep.label" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Substep.to_dict">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Substep.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Substep.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.data.Substep.write">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/data.html#Substep.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.data.Substep.write" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-catplat.database.data.vasp">
+<span id="catplat-database-data-vasp-module"></span><h2>catplat.database.data.vasp module<a class="headerlink" href="#module-catplat.database.data.vasp" title="Link to this heading"></a></h2>
+<p>This module implements functions that processes vasp inputs and outputs to be written to or read from database.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.vasp.</span></span><span class="sig-name descname"><span class="pre">VaspData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'VASPData'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.database.data.data.Data" title="catplat.database.data.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspData.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'vasp'</span></em><a class="headerlink" href="#catplat.database.data.vasp.VaspData.TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspData.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspData.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspData.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspData.from_job">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_dos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspData.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspData.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspData.is_converged">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_converged</span></span><a class="headerlink" href="#catplat.database.data.vasp.VaspData.is_converged" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspData.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspData.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspData.summary" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspData.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspData.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspData.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspInput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.vasp.</span></span><span class="sig-name descname"><span class="pre">VaspInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">incar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kpoints</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">potcar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspInput" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.database.data.data.Input" title="catplat.database.data.data.Input"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspInput.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspInput.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspInput.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspInput.from_job">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">substep_job</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspInput.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspInput.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspInput.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspInput.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspInput.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspInput.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspInput.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspInput.write" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspOutput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.vasp.</span></span><span class="sig-name descname"><span class="pre">VaspOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vaspinfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspOutput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspOutput" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.database.data.data.Output" title="catplat.database.data.data.Output"><code class="xref py py-class docutils literal notranslate"><span class="pre">Output</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspOutput.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspOutput.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspOutput.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspOutput.from_job">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_substep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_dos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspOutput.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspOutput.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspOutput.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspOutput.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspOutput.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspOutput.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspOutput.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspOutput.write" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspStep">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.vasp.</span></span><span class="sig-name descname"><span class="pre">VaspStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">substeps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspStep" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.database.data.data.Step" title="catplat.database.data.data.Step"><code class="xref py py-class docutils literal notranslate"><span class="pre">Step</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspStep.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspStep.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspStep.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspStep.from_job">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_dos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspStep.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspStep.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspStep.is_converged">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_converged</span></span><a class="headerlink" href="#catplat.database.data.vasp.VaspStep.is_converged" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspStep.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspStep.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspStep.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspSubstep">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">catplat.database.data.vasp.</span></span><span class="sig-name descname"><span class="pre">VaspSubstep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajectory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jobname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspSubstep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspSubstep" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catplat.database.data.data.Substep" title="catplat.database.data.data.Substep"><code class="xref py py-class docutils literal notranslate"><span class="pre">Substep</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspSubstep.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspSubstep.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspSubstep.from_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspSubstep.from_job">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">substep_job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_dos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspSubstep.from_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspSubstep.from_job" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspSubstep.is_converged">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_converged</span></span><a class="headerlink" href="#catplat.database.data.vasp.VaspSubstep.is_converged" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspSubstep.label">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#catplat.database.data.vasp.VaspSubstep.label" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspSubstep.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspSubstep.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspSubstep.to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.VaspSubstep.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#VaspSubstep.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.VaspSubstep.write" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.dict_to_obj">
+<span class="sig-prename descclassname"><span class="pre">catplat.database.data.vasp.</span></span><span class="sig-name descname"><span class="pre">dict_to_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clss</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#dict_to_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.dict_to_obj" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="catplat.database.data.vasp.obj_to_dict">
+<span class="sig-prename descclassname"><span class="pre">catplat.database.data.vasp.</span></span><span class="sig-name descname"><span class="pre">obj_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/catplat/database/data/vasp.html#obj_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catplat.database.data.vasp.obj_to_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-catplat.database.data">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-catplat.database.data" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.database.ase &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.database.ase</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.database.ase</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module consists of classes involved with the retrieval of information from the Database.</span>
+<span class="sd">Database contains many DatabaseEntry. Each DatabaseEntry has it&#39;s own set of DatabaseAttributes</span>
+<span class="sd">QuerySet (main interface for users) -&gt; one or multiple Query based on specified -&gt; retrieve from database from att</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">dataclasses</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">ase.db</span> <span class="kn">import</span> <span class="n">connect</span>
+<span class="kn">from</span> <span class="nn">pyatoms.io.ase.atoms</span> <span class="kn">import</span> <span class="n">AtomsWrapper</span>
+<span class="kn">from</span> <span class="nn">pyatoms.io.ase.database</span> <span class="kn">import</span> <span class="n">DatabaseWriter</span>
+<span class="kn">from</span> <span class="nn">pyatoms.jobs.job</span> <span class="kn">import</span> <span class="n">Job</span>
+<span class="kn">from</span> <span class="nn">pyatoms.utils.utils</span> <span class="kn">import</span> <span class="n">timed</span>
+
+<span class="kn">from</span> <span class="nn">catplat</span> <span class="kn">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">catplat_version</span>
+<span class="kn">from</span> <span class="nn">catplat.core.chemsys</span> <span class="kn">import</span> <span class="n">Chemsys</span>
+<span class="kn">from</span> <span class="nn">catplat.create.structure</span> <span class="kn">import</span> <span class="n">CatplatStructureBuilder</span>
+<span class="kn">from</span> <span class="nn">catplat.database.data</span> <span class="kn">import</span> <span class="n">VaspData</span><span class="p">,</span> <span class="n">AseData</span>
+<span class="kn">from</span> <span class="nn">catplat.io.gratoms</span> <span class="kn">import</span> <span class="n">GratomsWrapper</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.config</span> <span class="kn">import</span> <span class="n">get_session_id</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.constants</span> <span class="kn">import</span> <span class="n">EQUAL_TOL</span><span class="p">,</span> <span class="n">MACHINE_EPSILON</span>
+<span class="kn">from</span> <span class="nn">catplat.specifications.adsorbate</span> <span class="kn">import</span> <span class="n">AdsorbateSpecificationsSet</span>
+<span class="kn">from</span> <span class="nn">catplat.specifications.bulk</span> <span class="kn">import</span> <span class="n">BulkSpecificationsSet</span>
+<span class="kn">from</span> <span class="nn">catplat.specifications.other</span> <span class="kn">import</span> <span class="n">OtherSpecificationsSet</span>
+<span class="kn">from</span> <span class="nn">catplat.specifications.slab</span> <span class="kn">import</span> <span class="n">SlabSpecificationsSet</span>
+<span class="kn">from</span> <span class="nn">catplat.structure.adsorbate</span> <span class="kn">import</span> <span class="n">AverageCoordinationNumber</span><span class="p">,</span> <span class="n">Bonds</span>
+<span class="kn">from</span> <span class="nn">catplat.utils</span> <span class="kn">import</span> <span class="n">Comparator</span><span class="p">,</span> <span class="n">enforce_types</span>
+<span class="kn">from</span> <span class="nn">catplat.database.filters</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ChemsysFilter</span><span class="p">,</span>
+    <span class="n">ComparatorFilter</span><span class="p">,</span>
+    <span class="n">AverageCoordinationNumberFilter</span><span class="p">,</span>
+    <span class="n">FilterCollection</span><span class="p">,</span>
+    <span class="n">EqualityFilter</span><span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Query">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Query">[docs]</a>
+<span class="nd">@enforce_types</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Class containing attributes iterated from the QuerySet attributes.</span>
+
+<span class="sd">    TODO: To be in same format as QuerySet() e.g. query.slab, query.ads etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Overall properties</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">workflow_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">relaxed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">unrelaxed_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">parent_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">errored</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ignored</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">version</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">session_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ml_preoptimization</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ml_preoptimization_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Bulk properties</span>
+    <span class="n">bulk_atoms</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Atoms</span><span class="p">,</span> <span class="n">AtomsWrapper</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">e_above_hull</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bulk_formula</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">chemsys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">spacegroup</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">mpid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bulk_provenance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Surface properties</span>
+    <span class="n">slab_atoms</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Atoms</span><span class="p">,</span> <span class="n">AtomsWrapper</span><span class="p">,</span> <span class="n">GratomsWrapper</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">termination</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">overlayer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">miller_index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">unitcell_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">num_layers</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">num_fixed_layers</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_fixed_thickness</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">vacuum</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">conventional</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_provenance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">x_length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">y_length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_thickness</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_chemsys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_formula</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_acn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Adsorbate properties</span>
+    <span class="n">adsorbate_atoms</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">adsorbate_formula</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bonds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">connectivity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># TODO: enforce_typing doesn&#39;t work for List(float)</span>
+    <span class="n">avg_coord_num</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">rotation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Query.copy">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Query.copy">[docs]</a>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; To make the repr easier to read we show only properties that are not None. &quot;&quot;&quot;</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">repr_elements</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">repr_string</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repr_elements</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">repr_string</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot set new attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;avg_coord_num must be a list, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">cn</span><span class="p">)</span> <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_atoms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Bonds</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_atoms</span><span class="p">,</span> <span class="n">denticity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">))</span>
+
+        <span class="c1"># basic attr checking when self.bulk is specified</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk_atoms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;e_above_hull&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1"> cannot be specified when QuerySet.bulk_atoms is specified [current: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">)</span>
+
+        <span class="c1"># basic attr checking when self.slab is specified</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab_atoms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bulk_atoms&#39;</span><span class="p">,</span> <span class="s1">&#39;e_above_hull&#39;</span><span class="p">,</span> <span class="s1">&#39;bulk_formula&#39;</span><span class="p">,</span> <span class="s1">&#39;chemsys&#39;</span><span class="p">,</span> <span class="s1">&#39;mpid&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;spacegroup&#39;</span><span class="p">,</span> <span class="s1">&#39;overlayer&#39;</span><span class="p">,</span> <span class="s1">&#39;miller_index&#39;</span><span class="p">,</span> <span class="s1">&#39;unitcell_size&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">labels</span><span class="si">}</span><span class="s1"> cannot be specified when QuerySet.slab is specified [current: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">)</span>
+
+        <span class="c1"># check if slab_fixed_thickness and slab_thickness are specified together</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab_fixed_thickness</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab_thickness</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">slab_fixed_thickness</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab_fixed_thickness</span><span class="p">)</span>
+            <span class="n">slab_thickness</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab_thickness</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">slab_fixed_thickness</span><span class="o">.</span><span class="n">min_val</span> <span class="o">&gt;</span> <span class="n">slab_thickness</span><span class="o">.</span><span class="n">min_val</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Minimum fixed thickness cannot be larger than minimum thickness&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Query.create_comparator">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Query.create_comparator">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_comparator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">attribute</span><span class="p">])</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Query.to_essential_selection_kwargs">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Query.to_essential_selection_kwargs">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_essential_selection_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_is_simple_query</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="n">forbidden_chars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">c</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">forbidden_chars</span><span class="p">)</span>
+        
+        <span class="k">def</span> <span class="nf">_get_selection_kwargs</span><span class="p">(</span><span class="n">candidate_keys</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">selection_strings</span>
+                    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_is_simple_query</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">candidate_keys</span><span class="p">)]</span>
+
+        <span class="n">selection_strings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_strings</span><span class="p">()</span>
+        <span class="n">selection_strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">selection_strings</span> <span class="k">if</span> <span class="s1">&#39;date&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="p">]</span>
+
+        <span class="c1"># Use as the primary keys for searching. This should be very fast as </span>
+        <span class="c1"># there is 1:1 mapping of unrelaxed_id/id to entries</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">keys</span> <span class="o">+=</span> <span class="p">[[</span><span class="s1">&#39;unrelaxed_id=&#39;</span><span class="p">,</span> <span class="s1">&#39;id=&#39;</span><span class="p">]]</span>
+
+        <span class="c1"># If primary keys not present, use these keys. Should also be fast</span>
+        <span class="c1"># as there should be quite small pool of entries with given chemsys/parent_id/adsorbate_atoms</span>
+        <span class="n">keys</span> <span class="o">+=</span> <span class="p">[[</span><span class="s1">&#39;chemsys=&#39;</span><span class="p">,</span> <span class="s1">&#39;parent_id=&#39;</span><span class="p">,</span> <span class="s1">&#39;adsorbate_atoms=&#39;</span><span class="p">]]</span>
+
+        <span class="c1"># Some bulk queries only have spacegroup. This group of keys helps speed up these </span>
+        <span class="c1"># calculations</span>
+        <span class="c1"># See: https://github.com/benjaminchen22/catplat/issues/256#issue-2033879342</span>
+        <span class="n">keys</span> <span class="o">+=</span> <span class="p">[[</span><span class="s1">&#39;spacegroup=&#39;</span><span class="p">,</span><span class="s1">&#39;relaxed=&#39;</span><span class="p">,</span><span class="s1">&#39;workflow_type=&#39;</span><span class="p">]]</span>
+
+        <span class="n">essential_selection_kwargs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">essential_selection_kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">candidate_keys</span> <span class="o">=</span> <span class="n">keys</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">essential_selection_kwargs</span> <span class="o">=</span> <span class="n">_get_selection_kwargs</span><span class="p">(</span><span class="n">candidate_keys</span><span class="p">)</span>
+
+        <span class="c1"># If no keys are found, arbitarily use the first selection string</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">essential_selection_kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">selection_strings</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">essential_selection_kwargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">selection_strings</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Essential selection strings: </span><span class="si">{</span><span class="n">essential_selection_kwargs</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;selection&#39;</span><span class="p">:</span> <span class="n">essential_selection_kwargs</span><span class="p">,</span> <span class="s1">&#39;filter&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_filters</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="Query.to_full_selection_kwargs">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Query.to_full_selection_kwargs">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_full_selection_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transforms the Query into the kwargs for db.select() in such a way as to get the</span>
+<span class="sd">        appropriate database entries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">selection_strings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_strings</span><span class="p">()</span>
+        <span class="n">selection_strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">selection_strings</span> <span class="k">if</span> <span class="s1">&#39;date&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="p">]</span>
+        <span class="c1"># set filter toggles</span>
+        <span class="n">toggle_acn_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_param_comparator</span><span class="p">(</span><span class="s1">&#39;avg_coord_num&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s1">&#39;chemsys&#39;</span><span class="p">]:</span>
+            <span class="n">toggle_chemsys_filter</span> <span class="o">=</span> <span class="n">Chemsys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s1">&#39;chemsys&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">contain_wildcards</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">toggle_chemsys_filter</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># remove from selection string and define filter functions</span>
+        <span class="k">if</span> <span class="n">toggle_acn_filter</span><span class="p">:</span>
+            <span class="c1"># &#39;avg_coord_num&#39; is stored in db as a list of floats e.g. [8.0, 8.5] for a bidentate species</span>
+            <span class="c1"># We allow user to enter e.g. query.avg_coord_num = &#39;&lt;=8.5&#39;, this translates to</span>
+            <span class="c1"># &#39;avg_coord_num&lt;=8.5&#39;, which is not a valid selection string as it cannot act on the list of floats.</span>
+            <span class="c1"># We use a filtering function in this case</span>
+            <span class="n">selection_strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">selection_strings</span> <span class="k">if</span> <span class="s1">&#39;avg_coord_num&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="p">]</span>
+
+            <span class="k">def</span> <span class="nf">avg_coord_num_filter</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_passes_avg_coord_num_filter</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">toggle_chemsys_filter</span><span class="p">:</span>
+            <span class="c1"># Used to filter chemsys wildcards</span>
+            <span class="n">selection_strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">selection_strings</span> <span class="k">if</span> <span class="s1">&#39;chemsys&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="p">]</span>
+
+            <span class="k">def</span> <span class="nf">chemsys_filter</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                <span class="nb">filter</span> <span class="o">=</span> <span class="n">ChemsysFilter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chemsys</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="c1"># define consolidated attributes filter</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">toggle_acn_filter</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">toggle_chemsys_filter</span><span class="p">:</span>
+            <span class="n">attributes_filter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">attributes_filter</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                <span class="n">avg_coord_num_result</span> <span class="o">=</span> <span class="n">avg_coord_num_filter</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">if</span> <span class="n">toggle_acn_filter</span> <span class="k">else</span> <span class="kc">True</span>
+                <span class="n">chemsys_result</span> <span class="o">=</span> <span class="n">chemsys_filter</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">if</span> <span class="n">toggle_chemsys_filter</span> <span class="k">else</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="n">avg_coord_num_result</span> <span class="ow">and</span> <span class="n">chemsys_result</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;selection&#39;</span><span class="p">:</span> <span class="n">selection_strings</span><span class="p">,</span> <span class="s1">&#39;filter&#39;</span><span class="p">:</span> <span class="n">attributes_filter</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Query.to_filters">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Query.to_filters">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return list of item&#39;s key-value pair. &quot;&quot;&quot;</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># TODO: Move date to data?</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">Atoms</span><span class="p">,</span> <span class="n">AtomsWrapper</span><span class="p">,</span> <span class="n">GratomsWrapper</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;bulk_atoms&#39;</span><span class="p">:</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk_atoms</span><span class="p">)</span><span class="o">.</span><span class="n">md5hash</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;slab_atoms&#39;</span><span class="p">:</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab_atoms</span><span class="p">)</span><span class="o">.</span><span class="n">md5hash</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;avg_coord_num&#39;</span><span class="p">:</span>
+                <span class="nb">filter</span> <span class="o">=</span> <span class="n">AverageCoordinationNumberFilter</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;chemsys&#39;</span><span class="p">:</span>
+                <span class="nb">filter</span> <span class="o">=</span> <span class="n">ChemsysFilter</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_param_comparator</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+                <span class="nb">filter</span> <span class="o">=</span> <span class="n">ComparatorFilter</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">filter</span> <span class="o">=</span> <span class="n">EqualityFilter</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+
+            <span class="n">filters</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">filter</span><span class="p">]</span>
+
+        <span class="n">overall_filter</span> <span class="o">=</span> <span class="n">FilterCollection</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">overall_filter</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_passes_avg_coord_num_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns True if value passes avg_coord_num comparator. Returns False otherwise.&quot;&quot;&quot;</span>
+        <span class="n">kvps</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">key_value_pairs</span>
+
+        <span class="k">if</span> <span class="s1">&#39;avg_coord_num&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kvps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">acn</span> <span class="o">=</span> <span class="n">AverageCoordinationNumber</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span><span class="p">)</span>
+        <span class="n">stored_acn</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">kvps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;avg_coord_num&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">stored_acn</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">acn</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">stored_acn</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_passes_chemsys_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns True if value passes. Returns False otherwise.&quot;&quot;&quot;</span>
+        <span class="n">kvps</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">key_value_pairs</span>
+
+        <span class="k">if</span> <span class="s1">&#39;chemsys&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kvps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">stored_chemsys</span> <span class="o">=</span> <span class="n">kvps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;chemsys&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Chemsys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chemsys</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">stored_chemsys</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Query.to_strings">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Query.to_strings">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return list of item&#39;s key-value pair. &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">_comparator_to_query</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+            <span class="c1"># Special case for comparators</span>
+            <span class="n">equal_tol</span> <span class="o">=</span> <span class="n">EQUAL_TOL</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">EQUAL_TOL</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">MACHINE_EPSILON</span>
+            <span class="n">comp</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">equal_tol</span><span class="o">=</span><span class="n">equal_tol</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">comp</span><span class="o">.</span><span class="n">to_sql_query</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_non_comparator_to_query</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="n">strings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Use filter for ACN instead of selection strings</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;avg_coord_num&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_param_comparator</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">_comparator_to_query</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;chemsys&#39;</span><span class="p">:</span>
+                    <span class="n">chemsys</span> <span class="o">=</span> <span class="n">Chemsys</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">chemsys</span><span class="o">.</span><span class="n">contain_wildcards</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="c1"># Alphabetically sort chemsys</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="n">Chemsys</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
+
+                <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;bulk_atoms&#39;</span> <span class="ow">or</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;slab_atoms&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">Atoms</span><span class="p">,</span> <span class="n">AtomsWrapper</span><span class="p">,</span> <span class="n">GratomsWrapper</span><span class="p">)):</span>
+                        <span class="n">v</span> <span class="o">=</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">md5hash</span><span class="p">()</span>
+
+                <span class="n">query</span> <span class="o">=</span> <span class="n">_non_comparator_to_query</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+            <span class="n">strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">strings</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_is_param_comparator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns True if parameter is a comparator. Returns False otherwise. &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">([</span><span class="n">Comparator</span><span class="o">.</span><span class="n">is_comparator</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Query.contains_comparators">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Query.contains_comparators">[docs]</a>
+    <span class="k">def</span> <span class="nf">contains_comparators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns True if self._params contains comparators. Returns False otherwise. &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_param_comparator</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Query.from_specifications">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Query.from_specifications">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_specifications</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bulk_specs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slab_specs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ads_specs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">other_specs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">catplat.specifications</span> <span class="kn">import</span> <span class="p">(</span><span class="n">AdsorbateSpecifications</span><span class="p">,</span>
+                                            <span class="n">CatplatSlabSpecifications</span><span class="p">,</span>
+                                            <span class="n">MPBulkSpecifications</span><span class="p">,</span>
+                                            <span class="n">OtherSpecifications</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bulk_specs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bulk_specs</span> <span class="o">=</span> <span class="n">MPBulkSpecifications</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ads_specs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ads_specs</span> <span class="o">=</span> <span class="n">AdsorbateSpecifications</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">slab_specs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">slab_specs</span> <span class="o">=</span> <span class="n">CatplatSlabSpecifications</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">other_specs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">other_specs</span> <span class="o">=</span> <span class="n">OtherSpecifications</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">bulk_specs</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="o">**</span><span class="n">slab_specs</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="o">**</span><span class="n">ads_specs</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="o">**</span><span class="n">other_specs</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="QuerySet">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.QuerySet">[docs]</a>
+<span class="nd">@enforce_types</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">QuerySet</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;  Main class that interacts and stores user specifications.</span>
+
+<span class="sd">    The QuerySet contains 4 main SpecificationsSet classes, namely BulkSpecificationsSet,</span>
+<span class="sd">    SlabSpecificationsSet, AdsorbateSpecificationsSet and OtherSpecificationsSet.</span>
+<span class="sd">    The attributes of the SpecificationsSet classes are iterables such as lists/tuples.</span>
+<span class="sd">    These 4 SpecificationsSet classes stores all the user input attributes to run the</span>
+<span class="sd">    catplat workflow.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        bulk (BulkSpecificationsSet): Class containing the bulk attributes provided by the user.</span>
+<span class="sd">            More details in catplat.specifications.bulk.py</span>
+<span class="sd">        slab (SlabSpecificationsSet): Class containing the slab attributes provided by the user.</span>
+<span class="sd">            More details in catplat.specifications.slab.py</span>
+<span class="sd">        adsorbate (AdsorbateSpecificationsSet): Class containing the adsorbate attributes provided by the user.</span>
+<span class="sd">            More details in catplat.specifications.adsorbate.py</span>
+<span class="sd">        others (OtherSpecificationsSet): Class containing the other attributes provided by the user.</span>
+<span class="sd">            More details in catplat.specifications.other.py</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Attributes of QuerySet can be set after instantiation:</span>
+<span class="sd">        i.e.,   qs = QuerySet()</span>
+<span class="sd">                qs.bulk.chemsys = [&#39;Cu&#39;]</span>
+
+<span class="sd">        or through a dictionary and factory classmethod:</span>
+<span class="sd">        i.e.,   bulk_attributes = {&#39;chemsys&#39;: [Cu]}</span>
+<span class="sd">                qs = QuerySet.from_attr(bulk=bulk_attributes)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bulk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slab</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">bulk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bulk</span> <span class="o">=</span> <span class="n">BulkSpecificationsSet</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">bulk</span> <span class="o">=</span> <span class="n">BulkSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">bulk</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">slab</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">slab</span> <span class="o">=</span> <span class="n">SlabSpecificationsSet</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">slab</span> <span class="o">=</span> <span class="n">SlabSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">slab</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">adsorbate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">adsorbate</span> <span class="o">=</span> <span class="n">AdsorbateSpecificationsSet</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">adsorbate</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">adsorbate</span> <span class="o">=</span> <span class="n">AdsorbateSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">adsorbate</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">OtherSpecificationsSet</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">OtherSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">other</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bulk</span> <span class="o">=</span> <span class="n">bulk</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slab</span> <span class="o">=</span> <span class="n">slab</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span> <span class="o">=</span> <span class="n">adsorbate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">other</span> <span class="o">=</span> <span class="n">other</span>
+
+<div class="viewcode-block" id="QuerySet.copy">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.QuerySet.copy">[docs]</a>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QuerySet.to_queries">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.QuerySet.to_queries">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_queries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Query</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Iterate through the QuerySet to return a List of Query. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_attr</span><span class="p">()</span>
+        <span class="n">bulk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">to_specifications</span><span class="p">()</span>
+        <span class="n">slab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">to_specifications</span><span class="p">()</span>
+        <span class="n">ads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">to_specifications</span><span class="p">()</span>
+        <span class="n">other</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">other</span><span class="o">.</span><span class="n">to_specifications</span><span class="p">()</span>
+
+        <span class="n">queries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">vproduct</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">bulk</span><span class="p">,</span> <span class="n">slab</span><span class="p">,</span> <span class="n">ads</span><span class="p">,</span> <span class="n">other</span><span class="p">]):</span>
+            <span class="n">queries</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Query</span><span class="o">.</span><span class="n">from_specifications</span><span class="p">(</span><span class="o">*</span><span class="n">vproduct</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">queries</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_user_slab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">is_user_slab</span>
+
+<div class="viewcode-block" id="QuerySet.check_attr">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.QuerySet.check_attr">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Function to check for QuerySet attributes&quot;&quot;&quot;</span>
+
+        <span class="c1"># basic attr checking when bulk_atoms is specified</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">is_user_bulk</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">is_user_slab</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;User bulk atoms (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">bulk_atoms</span><span class="si">}</span><span class="s2">) and user slab atoms (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">slab_atoms</span><span class="si">}</span><span class="s2">) cannot be defined together!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">is_user_bulk</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">mutually_excl_bulk_attrs_check</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">is_valid_user_bulk_check</span><span class="p">()</span>
+
+            <span class="c1"># read bulk str</span>
+            <span class="n">bulks</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">bulk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">bulk_atoms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bulk</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">bulks</span> <span class="o">+=</span> <span class="p">[</span><span class="n">CatplatStructureBuilder</span><span class="o">.</span><span class="n">build_bulk</span><span class="p">(</span><span class="n">bulk</span><span class="p">)]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">bulks</span> <span class="o">+=</span> <span class="p">[</span><span class="n">bulk</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">bulk_atoms</span> <span class="o">=</span> <span class="n">bulks</span>
+
+        <span class="c1"># basic attr checking when slab_atoms is specified</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">is_user_slab</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk</span> <span class="o">!=</span> <span class="n">BulkSpecificationsSet</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bulk attributes cannot be specified when user slab_atoms is specified.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">mutually_excl_slab_attrs_check</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">is_valid_user_slab_check</span><span class="p">()</span>
+
+            <span class="c1"># read slab str</span>
+            <span class="n">slabs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">slab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">slab_atoms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slab</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">slabs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">CatplatStructureBuilder</span><span class="o">.</span><span class="n">build_slab</span><span class="p">(</span><span class="n">slab</span><span class="p">)]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">slabs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">slab</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">slab_atoms</span> <span class="o">=</span> <span class="n">slabs</span>
+
+        <span class="c1"># basic attr checking when adsorbate_atoms is specified</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">is_adsorbate_specified</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">is_valid_adsorbate</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">check_adsorbate_inputs</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="QuerySet.to_dict">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.QuerySet.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">other</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="QuerySet.from_attr">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.QuerySet.from_attr">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_attr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bulk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slab</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Convenience factory method to instantiate QuerySet&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">bulk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bulk</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">slab</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">slab</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">adsorbate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">adsorbate</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">bulk</span><span class="o">=</span><span class="n">BulkSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">bulk</span><span class="p">),</span>
+                   <span class="n">slab</span><span class="o">=</span><span class="n">SlabSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">slab</span><span class="p">),</span>
+                   <span class="n">adsorbate</span><span class="o">=</span><span class="n">AdsorbateSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">adsorbate</span><span class="p">),</span>
+                   <span class="n">other</span><span class="o">=</span><span class="n">OtherSpecificationsSet</span><span class="p">(</span><span class="o">**</span><span class="n">other</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Database">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Database">[docs]</a>
+<span class="k">class</span> <span class="nc">Database</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to access and store database values.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        db_path (str): Absolute path of database.</span>
+<span class="sd">        calc_path (str): Calculation path of project.</span>
+<span class="sd">        db_written (bool): True if path exists, otherwise false.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_path</span> <span class="o">=</span> <span class="n">db_path</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="k">with</span> <span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">db</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_db_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_attributes_from_atoms_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms_row</span><span class="p">):</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms_row</span><span class="o">.</span><span class="n">toatoms</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">Atoms</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="o">**</span><span class="n">atoms_row</span><span class="o">.</span><span class="n">key_value_pairs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Database.get_id">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Database.get_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Retrieve single entry with matching db_id. &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">db_id</span><span class="p">}</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">entries</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No id </span><span class="si">{</span><span class="n">db_id</span><span class="si">}</span><span class="s1"> in database&#39;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">entries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Database.update">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Database.update">[docs]</a>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">with</span> <span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">db</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">db_id</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id=</span><span class="si">{</span><span class="n">db_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> updated to </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Database.delete_keys">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Database.delete_keys">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">db</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">db_id</span><span class="p">,</span> <span class="n">delete_keys</span><span class="o">=</span><span class="n">keys</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id=</span><span class="si">{</span><span class="n">db_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">keys</span><span class="si">}</span><span class="s2"> deleted.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Database.delete">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Database.delete">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">db</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">db_ids</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id=</span><span class="si">{</span><span class="n">db_ids</span><span class="si">}</span><span class="s2">: row deleted.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Database.retrieve_all">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Database.retrieve_all">[docs]</a>
+    <span class="k">def</span> <span class="nf">retrieve_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Retrieve all entries. &quot;&quot;&quot;</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">Query</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">q</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Database.retrieved_relaxed">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Database.retrieved_relaxed">[docs]</a>
+    <span class="k">def</span> <span class="nf">retrieved_relaxed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unrelaxed_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Retrieve relaxed entries. &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">unrelaxed_id</span><span class="o">=</span><span class="n">unrelaxed_id</span><span class="p">,</span> <span class="n">relaxed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Database.retrieve">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Database.retrieve">[docs]</a>
+    <span class="nd">@timed</span><span class="p">(</span><span class="n">log_threshold</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">filter_ignored</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_data</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Retrieve entries that attributes fit the Query/QuerySet</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query (Query|QuerySet): Query/QuerySet object to filter entries</span>
+<span class="sd">            filter_ignored (bool): If True, filter out entries with ignored == True</span>
+<span class="sd">            include_data (bool): If True, include data in returned DatabaseEntry objects. The</span>
+<span class="sd">                default is False as this can be very large in some cases.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">**</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">QuerySet</span><span class="p">):</span>
+            <span class="n">queries</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">to_queries</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">queries</span><span class="p">)</span><span class="si">}</span><span class="s1"> queries&#39;</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">queries</span><span class="p">]</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">results</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Query: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s1">, selection kwargs: </span><span class="si">{</span><span class="n">query</span><span class="o">.</span><span class="n">to_essential_selection_kwargs</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_from_database</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">include_data</span><span class="o">=</span><span class="n">include_data</span><span class="p">)</span>
+
+        <span class="c1"># filter out entries if ignored == True not specified in query</span>
+        <span class="c1"># or if filter_ignored is off.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">query</span><span class="o">.</span><span class="n">ignored</span> <span class="ow">and</span> <span class="n">filter_ignored</span><span class="p">:</span>
+            <span class="n">entries</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_ignored</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">entries</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_retrieve_from_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">include_data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="o">**</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">db</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">atoms_row</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">**</span><span class="n">query</span><span class="o">.</span><span class="n">to_essential_selection_kwargs</span><span class="p">(),</span> <span class="n">include_data</span><span class="o">=</span><span class="n">include_data</span><span class="p">):</span>
+                <span class="n">kvps</span> <span class="o">=</span> <span class="n">atoms_row</span><span class="o">.</span><span class="n">key_value_pairs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+                <span class="c1"># Databases in versions &lt;=22.12.8 will not have &#39;errored&#39; key. Assign them to be False</span>
+                <span class="c1"># since only unerrored jobs should have been added to the database before this key</span>
+                <span class="c1"># was implemented</span>
+                <span class="k">if</span> <span class="s1">&#39;errored&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kvps</span><span class="p">:</span>
+                    <span class="n">kvps</span><span class="p">[</span><span class="s1">&#39;errored&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="c1"># Similarly, database versions &lt;=23.4.10 will not have &#39;ignore&#39; key.</span>
+                <span class="k">if</span> <span class="s1">&#39;ignored&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kvps</span><span class="p">:</span>
+                    <span class="n">kvps</span><span class="p">[</span><span class="s1">&#39;ignored&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="n">attributes</span> <span class="o">=</span> <span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="o">**</span><span class="n">kvps</span><span class="p">)</span>
+
+                <span class="c1"># add_additional_information will add &#39;key_value_pairs&#39;, &#39;data&#39;, and &#39;unique_id&#39; to atoms.info</span>
+                <span class="c1"># this is not needed and can be very large in some cases</span>
+                <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms_row</span><span class="o">.</span><span class="n">toatoms</span><span class="p">(</span><span class="n">add_additional_information</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">entry</span> <span class="o">=</span> <span class="n">DatabaseEntry</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">atoms_row</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">atoms_row</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">entries</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_lockfile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_path</span> <span class="o">+</span> <span class="s1">&#39;_lock_file&#39;</span>
+
+<div class="viewcode-block" id="Database.store">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Database.store">[docs]</a>
+    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Stores the structure and attributes in a new database id. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">atoms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot store attributes without atoms&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_date</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="n">stored_kvps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_kvps</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_to_database</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="n">key_value_pairs</span><span class="o">=</span><span class="n">stored_kvps</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DatabaseEntry</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_add_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+        <span class="n">attributes</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">attributes</span>
+
+    <span class="k">def</span> <span class="nf">_process_kvps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kvps</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;chemsys&#39;</span> <span class="ow">in</span> <span class="n">kvps</span><span class="p">:</span>
+            <span class="n">kvps</span><span class="p">[</span><span class="s1">&#39;chemsys&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Chemsys</span><span class="p">(</span><span class="n">kvps</span><span class="p">[</span><span class="s1">&#39;chemsys&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">kvps</span>
+
+    <span class="k">def</span> <span class="nf">_get_kvps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+        <span class="n">kvps</span> <span class="o">=</span> <span class="n">attributes</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">convert_to_strings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">stored_kvps</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kvps</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">stored_kvps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Relaxed must be either True or False to store attributes&#39;</span><span class="p">)</span>
+        <span class="n">stored_kvps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_kvps</span><span class="p">(</span><span class="n">stored_kvps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stored_kvps</span>
+
+    <span class="k">def</span> <span class="nf">_write_to_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">key_value_pairs</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">key_value_pairs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;session_id&#39;</span><span class="p">:</span> <span class="n">get_session_id</span><span class="p">()})</span>
+        <span class="n">key_value_pairs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="n">catplat_version</span><span class="p">})</span>
+
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">DatabaseWriter</span><span class="p">(</span><span class="n">images</span><span class="o">=</span><span class="p">[</span><span class="n">atoms</span><span class="p">],</span> <span class="n">key_value_pairs</span><span class="o">=</span><span class="p">[</span><span class="n">key_value_pairs</span><span class="p">],</span> <span class="n">datas</span><span class="o">=</span><span class="p">[</span><span class="n">data</span><span class="p">])</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Database.from_file">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Database.from_file">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Database.update_from_relaxed_folder">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.Database.update_from_relaxed_folder">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_from_relaxed_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unrelaxed_id</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts the information from a specified relaxed calculation folder, and updates the relaxed </span>
+<span class="sd">        entry(ies) if one or more already exist. If not, creates a new relaxed entry. Assumes the</span>
+<span class="sd">        unrelaxed entry with the specified unrelaxed_id corresponding to the calculation folder already exists</span>
+<span class="sd">        in the db, and inherits the attributes from there.</span>
+<span class="sd">        Returns a list of tuples where each tuple summarizes the results pertaining to each relaxed entries found.</span>
+<span class="sd">        Each tuple contains a short status message, the calculation path, the unrelaxed ID, and the relaxed ID.</span>
+<span class="sd">        The possible status messages are: &#39;stored&#39;, &#39;updated&#39;, &#39;overwritten&#39;, &#39;skipped&#39;,  </span>
+<span class="sd">        &#39;multiple_dir&#39;, &#39;no_unrelaxed&#39;, &#39;unconverged&#39;, &#39;atoms_unmatched&#39;.</span>
+<span class="sd">        The expected return format is: [tuple_1, tuple_2, ....], where tuple_n:</span>
+<span class="sd">        (msg: str, path: str, unrelaxed_id: int, relaxed_id: int|None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">calc_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">calc_path</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">suppress_errors</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[(</span><span class="s1">&#39;multiple_dir&#39;</span><span class="p">,</span> <span class="n">calc_path</span><span class="p">,</span> <span class="n">unrelaxed_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;multiple directories found in </span><span class="si">{</span><span class="n">calc_path</span><span class="si">}</span><span class="s1">, delete everything except the calculation subfolder to continue&#39;</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calc_path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">calc_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+
+        <span class="n">job</span> <span class="o">=</span> <span class="n">Job</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">VaspData</span><span class="o">.</span><span class="n">from_job</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">entry_unrelaxed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">unrelaxed_id</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">suppress_errors</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[(</span><span class="s1">&#39;no_unrelaxed&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">unrelaxed_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+        <span class="n">entries_relaxed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieved_relaxed</span><span class="p">(</span><span class="n">unrelaxed_id</span><span class="p">,</span> <span class="n">include_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">is_converged</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="s1">&#39;unconverged&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">unrelaxed_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries_relaxed</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_store_data_no_relaxed_entries</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">unrelaxed_id</span><span class="p">,</span>
+                                                        <span class="n">attributes</span><span class="o">=</span><span class="n">entry_unrelaxed</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+                                                        <span class="n">vaspdata</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_store_data_existing_relaxed_entry</span><span class="p">(</span><span class="n">entry_unrelaxed</span><span class="p">,</span>
+                                                        <span class="n">entry_relaxed</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span>
+                                                        <span class="n">path</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span>
+                                                        <span class="n">suppress_errors</span><span class="p">)</span> <span class="k">for</span> <span class="n">entry_relaxed</span> <span class="ow">in</span> <span class="n">entries_relaxed</span><span class="p">]</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_store_data_no_relaxed_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">vaspdata</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;unrelaxed_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">uid</span>
+        <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;relaxed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;errored&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">entry_stored</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">vaspdata</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                  <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">vaspdata</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;stored&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">entry_stored</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_store_data_existing_relaxed_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry_unrelaxed</span><span class="p">,</span> <span class="n">entry_relaxed</span><span class="p">,</span> <span class="n">vaspdata</span><span class="p">,</span>
+                                           <span class="n">path</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">suppress_errors</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">entry_unrelaxed</span><span class="o">.</span><span class="n">atoms</span> <span class="o">!=</span> <span class="n">vaspdata</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">suppress_errors</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;atoms_unmatched&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">entry_unrelaxed</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">entry_relaxed</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;the atoms objects from the unrelaxed entry do not match with folder </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;; relaxed ID </span><span class="si">{</span><span class="n">entry_relaxed</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">; unrelaxed ID </span><span class="si">{</span><span class="n">entry_unrelaxed</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">entry_relaxed</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="p">{}:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">entry_relaxed</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">vaspdata</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">key</span><span class="o">=</span><span class="s1">&#39;relaxed&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">vaspdata</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+            <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;updated&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">entry_unrelaxed</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">entry_relaxed</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">entry_relaxed</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="p">{}</span> <span class="ow">and</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">entry_relaxed</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">vaspdata</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="n">key</span><span class="o">=</span><span class="s1">&#39;relaxed&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">vaspdata</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+            <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;overwritten&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">entry_unrelaxed</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">entry_relaxed</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;skipped&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">entry_unrelaxed</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">entry_relaxed</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DatabaseEntry">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.DatabaseEntry">[docs]</a>
+<span class="k">class</span> <span class="nc">DatabaseEntry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class containing the attributes, structure and id of a database entry. </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atoms (AtomsWrapper): Structure to be stored.</span>
+<span class="sd">        attributes (DatabaseAttributes): Database attributes </span>
+<span class="sd">        id (int): id of database entry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="n">attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="c1"># Need to prevent recursion when deepcopying</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s1">&#39;__setstate__&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_relaxed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">relaxed</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_errored</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">errored</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_ignored</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">ignored</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_potential_energy</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s1">(attributes=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="si">}</span><span class="s1">, id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">, atoms=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+<div class="viewcode-block" id="DatabaseEntry.summarize">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.DatabaseEntry.summarize">[docs]</a>
+    <span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Summarize the database entry. &quot;&quot;&quot;</span>
+        <span class="n">summarizer</span> <span class="o">=</span> <span class="n">DatabaseEntrySummarizer</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">summarizer</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DatabaseEntrySummarizer">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.DatabaseEntrySummarizer">[docs]</a>
+<span class="k">class</span> <span class="nc">DatabaseEntrySummarizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to summarize database entries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">HEADER_STRINGS_AND_LENGTHS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;DbID&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                                  <span class="s1">&#39;Date&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>
+                                  <span class="s1">&#39;UID&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                                  <span class="s1">&#39;PID&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                                  <span class="s1">&#39;POID&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                                  <span class="s1">&#39;Workflow&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+                                  <span class="s1">&#39;ChemSys&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+                                  <span class="s1">&#39;BulkSpg&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+                                  <span class="s1">&#39;Miller&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+                                  <span class="s1">&#39;Ads&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+                                  <span class="s1">&#39;Conn&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+                                  <span class="s1">&#39;Energy&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+                                  <span class="s1">&#39;Pre&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                                  <span class="s1">&#39;Rlx&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                                  <span class="s1">&#39;Err&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+    <span class="k">def</span> <span class="nf">_create_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;      &#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">HEADER_STRINGS_AND_LENGTHS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">parts</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">:</span><span class="s1">&gt;</span><span class="si">{</span><span class="n">v</span><span class="si">}}</span><span class="s1">&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_miller_index</span><span class="p">(</span><span class="n">attributes</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">attributes</span><span class="o">.</span><span class="n">miller_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;-&#39;</span>
+
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">attributes</span><span class="o">.</span><span class="n">miller_index</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_date</span><span class="p">(</span><span class="n">attributes</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">attributes</span><span class="o">.</span><span class="n">date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;-&#39;</span>
+
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">attributes</span><span class="o">.</span><span class="n">date</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DatabaseEntrySummarizer.summarize">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.DatabaseEntrySummarizer.summarize">[docs]</a>
+    <span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="n">strings</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+            <span class="n">strings</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_create_header</span><span class="p">()]</span>
+
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">attributes</span>
+
+        <span class="n">miller_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_miller_index</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_date</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+
+        <span class="n">strings</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idx</span><span class="si">:</span><span class="s1">4</span><span class="si">}</span><span class="s1">|  &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">id</span><span class="si">:</span><span class="s1">&gt;5</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">date</span><span class="si">:</span><span class="s1">&gt;17</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attributes</span><span class="o">.</span><span class="n">unrelaxed_id</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="si">:</span><span class="s1">&gt;6</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attributes</span><span class="o">.</span><span class="n">parent_id</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="si">:</span><span class="s1">&gt;6</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attributes</span><span class="o">.</span><span class="n">ml_preoptimization_id</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="si">:</span><span class="s1">&gt;6</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attributes</span><span class="o">.</span><span class="n">workflow_type</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="si">:</span><span class="s1">&gt;11</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">attributes</span><span class="o">.</span><span class="n">chemsys</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;9</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">attributes</span><span class="o">.</span><span class="n">spacegroup</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;8</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">miller_index</span><span class="si">:</span><span class="s1">&gt;7</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">attributes</span><span class="o">.</span><span class="n">adsorbate_formula</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;7</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">attributes</span><span class="o">.</span><span class="n">connectivity</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="si">:</span><span class="s1">&gt;7</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">energy</span><span class="si">:</span><span class="s1">&gt;11.3f</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">attributes</span><span class="o">.</span><span class="n">ml_preoptimization</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">&gt;3</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">attributes</span><span class="o">.</span><span class="n">relaxed</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">&gt;3</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">attributes</span><span class="o">.</span><span class="n">errored</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">&gt;3</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="n">summary</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summarize_extra</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">summary</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_summarize_extra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">VaspData</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">AseData</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="DatabaseAttributes">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.DatabaseAttributes">[docs]</a>
+<span class="nd">@enforce_types</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DatabaseAttributes</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class containing all the attribute information of the database entry. Attributes of this class are the same as those</span>
+<span class="sd">    described in Query.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Overall properties</span>
+    <span class="n">unrelaxed_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">parent_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">workflow_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">relaxed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">errored</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ignored</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">version</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">session_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ml_preoptimization</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ml_preoptimization_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Bulk properties</span>
+    <span class="n">bulk_atoms</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">spacegroup</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">e_above_hull</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bulk_formula</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">chemsys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">mpid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bulk_provenance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Surface properties</span>
+    <span class="n">slab_atoms</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">termination</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">miller_index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">unitcell_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">overlayer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">num_layers</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">num_fixed_layers</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_fixed_thickness</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">vacuum</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">conventional</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_provenance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">x_length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">y_length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_thickness</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_chemsys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_formula</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">slab_acn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Adsorbate properties</span>
+    <span class="n">adsorbate_atoms</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">adsorbate_formula</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bonds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">connectivity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># TODO: enforce_typing doesn&#39;t work here for List(float)!</span>
+    <span class="n">avg_coord_num</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">rotation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot set new attribute &quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&quot; in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">miller_index</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">miller_index</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">miller_index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connectivity</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connectivity</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connectivity</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unitcell_size</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unitcell_size</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unitcell_size</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DatabaseAttributes.to_dict">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.DatabaseAttributes.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">convert_to_strings</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">query_criteria</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns an attributes dictionary from a DatabaseAttributes class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query_criteria (bool): If True, returns only the attributes related to querying</span>
+<span class="sd">                workflows (i.e. no meta attributes such as version/session_id). Defaults to False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">convert_to_strings</span><span class="p">:</span>
+            <span class="n">converted_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">converted_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">converted_dict</span> <span class="o">=</span> <span class="n">d</span>
+
+        <span class="k">if</span> <span class="n">query_criteria</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">converted_dict</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">converted_dict</span><span class="p">[</span><span class="s1">&#39;session_id&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">converted_dict</span></div>
+
+
+<div class="viewcode-block" id="DatabaseAttributes.from_dict">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.ase.DatabaseAttributes.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Instantiates a DatabaseAttributes class from attributes dictionary. &quot;&quot;&quot;</span>
+        <span class="n">attributes_dict</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="k">return</span> <span class="n">DatabaseAttributes</span><span class="p">(</span><span class="o">**</span><span class="n">attributes_dict</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

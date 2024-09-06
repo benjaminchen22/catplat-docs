@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.workflows.manager &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.workflows.manager</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.workflows.manager</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module consists of classes that handles the main workflow.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span><span class="p">,</span> <span class="n">suppress</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="kn">import</span> <span class="n">TclError</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">ase.gui.gui</span> <span class="kn">import</span> <span class="n">GUI</span>
+<span class="kn">from</span> <span class="nn">ase.gui.images</span> <span class="kn">import</span> <span class="n">Images</span>
+<span class="kn">from</span> <span class="nn">pyatoms.database.mysql</span> <span class="kn">import</span> <span class="n">MySQLDatabase</span>
+<span class="kn">from</span> <span class="nn">pyatoms.jobs.job</span> <span class="kn">import</span> <span class="n">Job</span>
+<span class="kn">from</span> <span class="nn">pyatoms.settings.projects.vasp</span> <span class="kn">import</span> <span class="n">YamlVaspProjectSettings</span>
+<span class="kn">from</span> <span class="nn">pyatoms.utils.multiprocess</span> <span class="kn">import</span> <span class="n">multiprocessing_manager</span>
+<span class="kn">from</span> <span class="nn">pyatoms.utils.processors</span> <span class="kn">import</span> <span class="p">(</span><span class="n">JobProcessorManager</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyatoms.utils.random</span> <span class="kn">import</span> <span class="n">random_string</span>
+<span class="kn">from</span> <span class="nn">pyatoms.database.mysql</span> <span class="kn">import</span> <span class="n">MySQLDatabase</span>
+
+<span class="kn">from</span> <span class="nn">catplat</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span> <span class="nn">catplat.database.ase</span> <span class="kn">import</span> <span class="n">Database</span><span class="p">,</span> <span class="n">DatabaseEntrySummarizer</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.config</span> <span class="kn">import</span> <span class="n">get_session_id</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.project</span> <span class="kn">import</span> <span class="n">ProjectSettings</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.user</span> <span class="kn">import</span> <span class="n">CatplatUserSettings</span>
+<span class="kn">from</span> <span class="nn">catplat.workflows.bulk</span> <span class="kn">import</span> <span class="n">BulkStructureWorkflow</span>
+<span class="kn">from</span> <span class="nn">catplat.workflows.data_structure</span> <span class="kn">import</span> <span class="n">WorkflowBlueprint</span>
+<span class="kn">from</span> <span class="nn">catplat.workflows.slab</span> <span class="kn">import</span> <span class="n">SlabWorkflow</span>
+
+<span class="n">shutil</span><span class="o">.</span><span class="n">_USE_CP_SENDFILE</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># avoid BlockingIOError</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Results">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Results">[docs]</a>
+<span class="k">class</span> <span class="nc">Results</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; This is a class instatiated by the Project class using Project.retreive(QuerySet).</span>
+<span class="sd">    This class contains the entries and helps to easily access the database to get the DatabaseAttibutes. &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entries</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entries</span> <span class="o">=</span> <span class="n">entries</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Results.filter">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Results.filter">[docs]</a>
+    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">_filter_single</span><span class="p">(</span><span class="n">keyword</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_filter_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span> <span class="n">keyword</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Results</span><span class="p">(</span><span class="n">entries</span><span class="o">=</span><span class="n">entries</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">structures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">atoms</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">attributes</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">connectivity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">attr</span><span class="o">.</span><span class="n">connectivity</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">avg_coord_num</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">attr</span><span class="o">.</span><span class="n">avg_coord_num</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">energies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_potential_energy</span><span class="p">()</span> <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">structures</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data_for_df</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s1">&#39;structure&#39;</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">to_structure</span><span class="p">(),</span>
+                        <span class="s1">&#39;energy&#39;</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">energy</span><span class="p">}</span> <span class="o">|</span> <span class="n">entry</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data_for_df</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;structure&#39;</span><span class="p">,</span> <span class="s1">&#39;energy&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Results.view">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Results.view">[docs]</a>
+    <span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">structures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">structures</span>
+        <span class="k">if</span> <span class="n">structures</span><span class="p">:</span>
+            <span class="c1"># Instead of ase.visualize.view, use this method to allow writing of id to the GUI title</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="n">Images</span><span class="p">()</span>
+            <span class="n">images</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">structures</span><span class="p">,</span> <span class="n">filenames</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;id</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">])</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">gui</span> <span class="o">=</span> <span class="n">GUI</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">TclError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Allow CatPlat to exit while the GUI remains running in the background</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">EverLastingProcess</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">gui</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Results.write_csv">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Results.write_csv">[docs]</a>
+    <span class="k">def</span> <span class="nf">write_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;data.csv&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Note: Does not check if file exists, as that may easily lead to race conditions.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Results.write">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Results.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_file</span><span class="p">):</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">db_file</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">attributes</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structures</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">):</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EverLastingProcess">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.EverLastingProcess">[docs]</a>
+<span class="k">class</span> <span class="nc">EverLastingProcess</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">):</span>
+<div class="viewcode-block" id="EverLastingProcess.join">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.EverLastingProcess.join">[docs]</a>
+    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="Project">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Project">[docs]</a>
+<span class="k">class</span> <span class="nc">Project</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a boundary class in which the users interact with. This class contains user settings as</span>
+<span class="sd">    mentioned in the attributes below.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): Name of the pyatoms settings folder in .pyatoms/vasp.</span>
+<span class="sd">        calculation_path (str): Directory of project folder.</span>
+<span class="sd">        jobrunner (OverallJobRunner, FakeVaspOverallJobRunner): Jobrunner class that contains</span>
+<span class="sd">            server information and how to run VASP.</span>
+<span class="sd">        num_job_run_slots (int): Number of jobs to run in parallel.</span>
+<span class="sd">        auto_create_folders (bool): Flag to automatically create calculation and database folders.</span>
+<span class="sd">        ml_preoptimization (bool): Flag to use machine learning preoptimization. Default is False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">jobrunner</span><span class="p">,</span> <span class="n">calculation_path</span><span class="p">,</span> <span class="n">database_path</span><span class="p">,</span> <span class="n">output_writer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">num_job_run_slots</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">auto_create_folders</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ml_preoptimization</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">ml_potential_hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip_materials_project</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="c1"># Ceate calculation folder</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">calculation_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">auto_create_folders</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">calculation_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">calculation_path</span><span class="si">}</span><span class="s1"> does not exist&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Create database folder</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_mysql_database</span><span class="p">(</span><span class="n">database_path</span><span class="p">):</span>
+            <span class="n">database_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">database_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">database_folder</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">auto_create_folders</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">database_folder</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">database_folder</span><span class="si">}</span><span class="s1"> does not exist&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_create_folders</span> <span class="o">=</span> <span class="n">auto_create_folders</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_job_run_slots</span> <span class="o">=</span> <span class="n">num_job_run_slots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_writer</span> <span class="o">=</span> <span class="n">output_writer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculation_path</span> <span class="o">=</span> <span class="n">calculation_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_path</span> <span class="o">=</span> <span class="n">database_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobrunner</span> <span class="o">=</span> <span class="n">jobrunner</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ml_preoptimization</span> <span class="o">=</span> <span class="n">ml_preoptimization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ml_potential_hash</span> <span class="o">=</span> <span class="n">ml_potential_hash</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skip_materials_project</span> <span class="o">=</span> <span class="n">skip_materials_project</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="n">test</span>
+
+<div class="viewcode-block" id="Project.save">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Project.save">[docs]</a>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_dir</span><span class="p">):</span>
+        <span class="n">settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">()</span>
+        <span class="n">settings</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">config_dir</span><span class="o">=</span><span class="n">config_dir</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Project.settings">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Project.settings">[docs]</a>
+    <span class="k">def</span> <span class="nf">settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ProjectSettings</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">calculation_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">calculation_path</span><span class="p">,</span> <span class="n">database_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">database_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Project.is_mysql_database">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Project.is_mysql_database">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">is_mysql_database</span><span class="p">(</span><span class="n">database_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;mysql&#39;</span> <span class="ow">in</span> <span class="n">database_path</span></div>
+
+
+<div class="viewcode-block" id="Project.database">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Project.database">[docs]</a>
+    <span class="k">def</span> <span class="nf">database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_path</span>
+        <span class="k">return</span> <span class="n">Database</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_create_tmp_calculation_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_create_tmp_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_mysql_database</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_path</span><span class="p">):</span>
+            <span class="n">mysql_database</span> <span class="o">=</span> <span class="n">MySQLDatabase</span><span class="o">.</span><span class="n">from_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_path</span><span class="p">)</span>
+            <span class="n">tmp_db</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.db&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">mysql_database</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">tmp_db</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tmp_db</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">random_string</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="si">}</span><span class="s1">.db&#39;</span>
+            <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">):</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">database_path</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">tmp_db</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tmp_db</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobrunner</span><span class="o">.</span><span class="n">num_nodes</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_project_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">YamlVaspProjectSettings</span><span class="o">.</span><span class="n">from_project_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Project.test_mode">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Project.test_mode">[docs]</a>
+    <span class="nd">@contextmanager</span>
+    <span class="k">def</span> <span class="nf">test_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cleanup</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">old_database_path</span><span class="p">,</span> <span class="n">old_calculation_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculation_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculation_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_tmp_database</span><span class="p">(),</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_tmp_calculation_folder</span><span class="p">(),</span> \
+            <span class="kc">True</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cleanup</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">):</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">database_path</span><span class="p">)</span>
+
+                <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">):</span>
+                    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculation_path</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">database_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculation_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test</span> <span class="o">=</span> <span class="n">old_database_path</span><span class="p">,</span> \
+                <span class="n">old_calculation_path</span><span class="p">,</span> \
+                <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Project.retrieve">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Project.retrieve">[docs]</a>
+    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_set</span><span class="p">,</span> <span class="n">calculate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Results</span><span class="p">:</span>
+        <span class="n">database_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_path</span>
+        <span class="n">calculation_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculation_path</span>
+        <span class="n">queries</span> <span class="o">=</span> <span class="n">query_set</span><span class="o">.</span><span class="n">to_queries</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">calculate</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Start calculations.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate</span><span class="p">(</span><span class="n">query_set</span><span class="o">=</span><span class="n">query_set</span><span class="p">,</span> <span class="n">database_path</span><span class="o">=</span><span class="n">database_path</span><span class="p">,</span> <span class="n">calculation_path</span><span class="o">=</span><span class="n">calculation_path</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Finished calculating.&#39;</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_from_database</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="n">database_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_retrieve_from_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queries</span><span class="p">,</span> <span class="n">database_path</span><span class="p">):</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">database_path</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">queries</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">query</span><span class="o">.</span><span class="n">relaxed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">query</span><span class="o">.</span><span class="n">relaxed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">entries</span> <span class="o">+=</span> <span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">filter_ignored</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">Results</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">entries</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">_blueprint_from_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_set</span><span class="p">,</span> <span class="n">database_path</span><span class="p">,</span> <span class="n">calculation_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">WorkflowBlueprint</span><span class="p">(</span><span class="n">query_set</span><span class="o">=</span><span class="n">query_set</span><span class="p">,</span> <span class="n">calculation_folder</span><span class="o">=</span><span class="n">calculation_path</span><span class="p">,</span>
+                                 <span class="n">database_path</span><span class="o">=</span><span class="n">database_path</span><span class="p">,</span> <span class="n">ml_preoptimization</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ml_preoptimization</span><span class="p">,</span>
+                                 <span class="n">ml_potential_hash</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ml_potential_hash</span><span class="p">,</span>
+                                 <span class="n">skip_materials_project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_materials_project</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_hts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_set</span><span class="p">,</span> <span class="n">query_only</span><span class="p">,</span> <span class="n">database_path</span><span class="p">,</span> <span class="n">calculation_path</span><span class="p">):</span>
+        <span class="n">blueprint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blueprint_from_query</span><span class="p">(</span><span class="n">query_set</span><span class="p">,</span> <span class="n">database_path</span><span class="p">,</span> <span class="n">calculation_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">HighThroughputScreening</span><span class="p">(</span><span class="n">blueprint</span><span class="o">=</span><span class="n">blueprint</span><span class="p">,</span>
+                                       <span class="n">num_job_run_slots</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_job_run_slots</span><span class="p">,</span>
+                                       <span class="n">jobrunner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">jobrunner</span><span class="p">,</span>
+                                       <span class="n">query_only</span><span class="o">=</span><span class="n">query_only</span><span class="p">,</span>
+                                       <span class="n">project_settings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_project_settings</span><span class="p">,</span>
+                                       <span class="n">output_writer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_writer</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_set</span><span class="p">,</span> <span class="n">database_path</span><span class="p">,</span> <span class="n">calculation_path</span><span class="p">):</span>
+        <span class="n">hts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_hts</span><span class="p">(</span><span class="n">query_set</span><span class="p">,</span> <span class="n">query_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">database_path</span><span class="o">=</span><span class="n">database_path</span><span class="p">,</span>
+                               <span class="n">calculation_path</span><span class="o">=</span><span class="n">calculation_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hts</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Project.from_folder">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Project.from_folder">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_folder</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">calculation_folder</span><span class="o">=</span><span class="s1">&#39;calculations&#39;</span><span class="p">,</span> <span class="n">database_folder</span><span class="o">=</span><span class="s1">&#39;database&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Default calculation path: &lt;folder&gt;/calculations</span>
+<span class="sd">        Default database path: &lt;folder&gt;/database/project.db</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">calculation_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">calculation_folder</span><span class="p">)</span>
+        <span class="n">database_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">database_folder</span><span class="p">,</span> <span class="s1">&#39;project.db&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">calculation_path</span><span class="o">=</span><span class="n">calculation_path</span><span class="p">,</span> <span class="n">database_path</span><span class="o">=</span><span class="n">database_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Project.for_testing">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.Project.for_testing">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">for_testing</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">catplat.settings.user</span> <span class="kn">import</span> <span class="n">DEFAULT_USER_TEMP_DIR</span>
+        <span class="kn">from</span> <span class="nn">catplat.settings.constants</span> <span class="kn">import</span> <span class="n">TEST_PROJECT_NAME</span>
+        <span class="kn">from</span> <span class="nn">pyatoms.jobs.vasp.runner</span> <span class="kn">import</span> <span class="n">FakeVaspOverallJobRunner</span>
+
+        <span class="n">calculation_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DEFAULT_USER_TEMP_DIR</span><span class="p">)</span>
+        <span class="n">database_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DEFAULT_USER_TEMP_DIR</span><span class="p">,</span> <span class="s1">&#39;project.db&#39;</span><span class="p">)</span>
+
+        <span class="n">jobrunner</span> <span class="o">=</span> <span class="n">FakeVaspOverallJobRunner</span><span class="p">(</span><span class="n">complete</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">TEST_PROJECT_NAME</span><span class="p">,</span> <span class="n">jobrunner</span><span class="o">=</span><span class="n">jobrunner</span><span class="p">,</span> <span class="n">calculation_path</span><span class="o">=</span><span class="n">calculation_path</span><span class="p">,</span>
+                   <span class="n">database_path</span><span class="o">=</span><span class="n">database_path</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="HighThroughputScreening">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.HighThroughputScreening">[docs]</a>
+<span class="k">class</span> <span class="nc">HighThroughputScreening</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; This class is the main entry point to the high throughput screening&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blueprint</span><span class="p">,</span> <span class="n">num_job_run_slots</span><span class="p">,</span> <span class="n">jobrunner</span><span class="p">,</span> <span class="n">project_settings</span><span class="p">,</span> <span class="n">output_writer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">query_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span> <span class="o">=</span> <span class="n">blueprint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_job_run_slots</span> <span class="o">=</span> <span class="n">num_job_run_slots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobrunner</span> <span class="o">=</span> <span class="n">jobrunner</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_only</span> <span class="o">=</span> <span class="n">query_only</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_settings</span> <span class="o">=</span> <span class="n">project_settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_writer</span> <span class="o">=</span> <span class="n">output_writer</span>
+
+    <span class="k">def</span> <span class="nf">_material_job</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">MaterialJob</span><span class="o">.</span><span class="n">from_blueprint</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="o">.</span><span class="n">calculation_folder</span><span class="p">,</span>
+                                          <span class="n">blueprint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="p">,</span>
+                                          <span class="n">query_only</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">query_only</span><span class="p">,</span>
+                                          <span class="n">project_settings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_settings</span><span class="p">,</span>
+                                          <span class="n">output_writer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_writer</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HighThroughputScreening.start">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.HighThroughputScreening.start">[docs]</a>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">job_processes</span><span class="p">,</span> <span class="n">job_queue_manager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_queue_managers</span><span class="p">()</span>
+
+        <span class="n">material_job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_job</span><span class="p">()</span>
+        <span class="n">material_job</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">jobrunner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">jobrunner</span><span class="p">,</span> <span class="n">queue_manager</span><span class="o">=</span><span class="n">job_queue_manager</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_close_queue_managers</span><span class="p">(</span><span class="n">job_processes</span><span class="p">,</span> <span class="n">job_queue_manager</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">material_job</span><span class="o">.</span><span class="n">starting_workflows</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_close_queue_managers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_processes</span><span class="p">,</span> <span class="n">job_queue_manager</span><span class="p">):</span>
+        <span class="n">job_queue_manager</span><span class="o">.</span><span class="n">close_queue</span><span class="p">()</span>
+        <span class="n">job_queue_manager</span><span class="o">.</span><span class="n">join_processes</span><span class="p">(</span><span class="n">job_processes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_start_queue_managers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">job_queue_manager</span> <span class="o">=</span> <span class="n">JobProcessorManager</span><span class="p">(</span><span class="n">num_processes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_job_run_slots</span><span class="p">,</span>
+                                                <span class="n">process_name</span><span class="o">=</span><span class="s1">&#39;jobprocess&#39;</span><span class="p">,</span>
+                                                <span class="n">polling_interval</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+        <span class="n">job_processes</span> <span class="o">=</span> <span class="n">job_queue_manager</span><span class="o">.</span><span class="n">start_processes</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">job_processes</span><span class="p">,</span> <span class="n">job_queue_manager</span></div>
+
+
+
+<div class="viewcode-block" id="MaterialJob">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.MaterialJob">[docs]</a>
+<span class="k">class</span> <span class="nc">MaterialJob</span><span class="p">(</span><span class="n">Job</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">blueprint</span><span class="p">,</span> <span class="n">query_only</span><span class="p">,</span> <span class="n">project_settings</span><span class="p">,</span> <span class="n">output_writer</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span> <span class="n">run_on_queue</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span> <span class="o">=</span> <span class="n">blueprint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_only</span> <span class="o">=</span> <span class="n">query_only</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_settings</span> <span class="o">=</span> <span class="n">project_settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_writer</span> <span class="o">=</span> <span class="n">output_writer</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s1">&lt;blueprint=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">starting_workflows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="o">.</span><span class="n">is_user_slab</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SlabWorkflow</span><span class="o">.</span><span class="n">from_blueprint</span><span class="p">(</span><span class="n">bulk_atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                               <span class="n">blueprint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="p">,</span>
+                                               <span class="n">query_only</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">query_only</span><span class="p">,</span>
+                                               <span class="n">project_settings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_settings</span><span class="p">,</span>
+                                               <span class="n">output_writer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_writer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">BulkStructureWorkflow</span><span class="o">.</span><span class="n">from_blueprint</span><span class="p">(</span><span class="n">blueprint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blueprint</span><span class="p">,</span>
+                                                        <span class="n">query_only</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">query_only</span><span class="p">,</span>
+                                                        <span class="n">project_settings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_settings</span><span class="p">,</span>
+                                                        <span class="n">output_writer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_writer</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MaterialJob.is_complete">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.MaterialJob.is_complete">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">workflow</span><span class="o">.</span><span class="n">is_complete</span><span class="p">()</span> <span class="k">for</span> <span class="n">workflow</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">starting_workflows</span><span class="p">])</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jobrunner</span><span class="p">,</span> <span class="n">queue_manager</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># change from bulk_workflows to starting_workflows</span>
+        <span class="n">workflows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">starting_workflows</span>
+        <span class="k">for</span> <span class="n">workflow</span> <span class="ow">in</span> <span class="n">workflows</span><span class="p">:</span>
+            <span class="n">workflow</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">jobrunner</span><span class="o">=</span><span class="n">jobrunner</span><span class="p">,</span> <span class="n">queue_manager</span><span class="o">=</span><span class="n">queue_manager</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_compute_resources_required</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_units</span><span class="p">(</span><span class="n">num_units</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MaterialJob.from_blueprint">
+<a class="viewcode-back" href="../../../catplat.workflows.html#catplat.workflows.manager.MaterialJob.from_blueprint">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_blueprint</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">blueprint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span> <span class="n">blueprint</span><span class="o">=</span><span class="n">blueprint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

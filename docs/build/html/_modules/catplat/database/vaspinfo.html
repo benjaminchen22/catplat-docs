@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.database.vaspinfo &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.database.vaspinfo</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.database.vaspinfo</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module implements functions that processes vasp inputs and outputs to be written to or read from database.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">pymatgen.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Incar</span>
+
+<span class="kn">from</span> <span class="nn">catplat.utils</span> <span class="kn">import</span> <span class="n">enforce_types</span>
+
+
+<div class="viewcode-block" id="check_and_set_attr">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.vaspinfo.check_and_set_attr">[docs]</a>
+<span class="k">def</span> <span class="nf">check_and_set_attr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attrname</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">attrname</span> <span class="o">==</span> <span class="s1">&#39;final_energy&#39;</span><span class="p">:</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">final_energy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">final_energy</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attrname</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attrname</span><span class="p">))</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="VaspInfo">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.vaspinfo.VaspInfo">[docs]</a>
+<span class="nd">@enforce_types</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">VaspInfo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">vasp_version</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">is_converged_electronic</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">is_converged_ionic</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">is_converged</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Incar</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">actual_kpoints</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">actual_kpoints_weights</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">is_hubbard</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">is_spin</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">run_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">hubbards</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">final_energy</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">efermi</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ionic_steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">eigenvalue_band_properties</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">magnetization</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">charge</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">run_stats</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">drift</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">final_energy_wo_entrp</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">final_fr_energy</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">nelect</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">total_mag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_process_ionic_steps</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ionic_steps</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ionic_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;structure&#39;</span> <span class="ow">in</span> <span class="n">ionic_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">ionic_step</span> <span class="ow">in</span> <span class="n">ionic_steps</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">ionic_step</span><span class="p">[</span><span class="s1">&#39;structure&#39;</span><span class="p">]</span>  <span class="c1"># remove buried pymatgen structure object</span>
+        <span class="k">return</span> <span class="n">ionic_steps</span>
+
+<div class="viewcode-block" id="VaspInfo.from_vaspout">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.vaspinfo.VaspInfo.from_vaspout">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_vaspout</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">vasprun</span><span class="p">,</span> <span class="n">outcar</span><span class="p">,</span> <span class="n">is_converged</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">vasp_version</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;vasp_version&#39;</span><span class="p">),</span>
+            <span class="n">is_converged_electronic</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;converged_electronic&#39;</span><span class="p">),</span>
+            <span class="n">is_converged_ionic</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;converged_ionic&#39;</span><span class="p">),</span>
+            <span class="n">is_converged</span><span class="o">=</span><span class="n">is_converged</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;parameters&#39;</span><span class="p">),</span>
+            <span class="n">actual_kpoints</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;actual_kpoints&#39;</span><span class="p">),</span>
+            <span class="n">actual_kpoints_weights</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;actual_kpoints_weights&#39;</span><span class="p">),</span>
+            <span class="n">is_hubbard</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;is_hubbard&#39;</span><span class="p">),</span>
+            <span class="n">is_spin</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;is_spin&#39;</span><span class="p">),</span>
+            <span class="n">run_type</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;run_type&#39;</span><span class="p">),</span>
+            <span class="n">hubbards</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;hubbards&#39;</span><span class="p">),</span>
+            <span class="n">final_energy</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;final_energy&#39;</span><span class="p">),</span>
+            <span class="n">efermi</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;efermi&#39;</span><span class="p">),</span>
+            <span class="n">ionic_steps</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_process_ionic_steps</span><span class="p">(</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;ionic_steps&#39;</span><span class="p">)),</span>
+            <span class="n">eigenvalue_band_properties</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">vasprun</span><span class="p">,</span> <span class="s1">&#39;eigenvalue_band_properties&#39;</span><span class="p">),</span>
+            <span class="n">magnetization</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">outcar</span><span class="p">,</span> <span class="s1">&#39;magnetization&#39;</span><span class="p">),</span>
+            <span class="n">charge</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">outcar</span><span class="p">,</span> <span class="s1">&#39;charge&#39;</span><span class="p">),</span>
+            <span class="n">run_stats</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">outcar</span><span class="p">,</span> <span class="s1">&#39;run_stats&#39;</span><span class="p">),</span>
+            <span class="n">drift</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">outcar</span><span class="p">,</span> <span class="s1">&#39;drifts&#39;</span><span class="p">),</span>
+            <span class="n">final_energy_wo_entrp</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">outcar</span><span class="p">,</span> <span class="s1">&#39;final_energy_wo_entrp&#39;</span><span class="p">),</span>
+            <span class="n">final_fr_energy</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">outcar</span><span class="p">,</span> <span class="s1">&#39;final_fr_energy&#39;</span><span class="p">),</span>
+            <span class="n">nelect</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">outcar</span><span class="p">,</span> <span class="s1">&#39;nelect&#39;</span><span class="p">),</span>
+            <span class="n">total_mag</span><span class="o">=</span><span class="n">check_and_set_attr</span><span class="p">(</span><span class="n">outcar</span><span class="p">,</span> <span class="s1">&#39;total_mag&#39;</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VaspInfo.to_dict">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.vaspinfo.VaspInfo.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;as_dict&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="VaspInfo.from_dict">
+<a class="viewcode-back" href="../../../catplat.database.html#catplat.database.vaspinfo.VaspInfo.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="k">else</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;magnetization&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;magnetization&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;magnetization&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;charge&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;charge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;charge&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">d</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

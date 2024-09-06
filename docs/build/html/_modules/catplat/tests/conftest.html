@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.tests.conftest &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.tests.conftest</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.tests.conftest</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">ase.io</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">pyatoms.database.mysql</span> <span class="kn">import</span> <span class="n">MySQLServer</span>
+<span class="kn">from</span> <span class="nn">pyatoms.io.ase.atoms</span> <span class="kn">import</span> <span class="n">AtomsWrapper</span>
+<span class="kn">from</span> <span class="nn">pyatoms.jobs.job</span> <span class="kn">import</span> <span class="n">Job</span>
+<span class="kn">from</span> <span class="nn">pyatoms.jobs.vasp.runner</span> <span class="kn">import</span> <span class="n">FakeVaspOverallJobRunner</span><span class="p">,</span> <span class="n">VaspGeomOptJobRunner</span>
+<span class="kn">from</span> <span class="nn">pyatoms.settings.server.server</span> <span class="kn">import</span> <span class="n">current_server</span>
+<span class="kn">from</span> <span class="nn">pyatoms.utils.processors</span> <span class="kn">import</span> <span class="n">JobProcessorManager</span>
+
+<span class="kn">from</span> <span class="nn">catplat.create.structure</span> <span class="kn">import</span> <span class="n">CatplatStructureBuilder</span>
+<span class="kn">from</span> <span class="nn">catplat.database.ase</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DatabaseAttributes</span><span class="p">,</span> <span class="n">QuerySet</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catplat.database.data</span> <span class="kn">import</span> <span class="n">VaspData</span>
+<span class="kn">from</span> <span class="nn">catplat.io.gratoms</span> <span class="kn">import</span> <span class="n">GratomsWrapper</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.user</span> <span class="kn">import</span> <span class="n">CatplatUserSettings</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.vasp</span> <span class="kn">import</span> <span class="n">CatplatTestProjectSettings</span>
+<span class="kn">from</span> <span class="nn">catplat.workflows.data_structure</span> <span class="kn">import</span> <span class="n">WorkflowBlueprint</span>
+<span class="kn">from</span> <span class="nn">catplat.workflows.manager</span> <span class="kn">import</span> <span class="n">Project</span>
+
+<span class="c1"># for logging when using pytest-xdist (see https://stackoverflow.com/questions/27006883/why-does-pytest-xdist-not-capture-output/37210976#37210976)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="bulk_pt">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.bulk_pt">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulk_pt</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pt_bulk&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bulk_rh">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.bulk_rh">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulk_rh</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Rh_bulk&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bulk_ptrh">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.bulk_ptrh">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulk_ptrh</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_PtRh_bulk&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bulk_ni">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.bulk_ni">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulk_ni</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;bulks&#39;</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Ni_bulk&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="pt111_slab">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.pt111_slab">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">pt111_slab</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pt_111&#39;</span><span class="p">)</span>
+    <span class="n">gratoms</span> <span class="o">=</span> <span class="n">GratomsWrapper</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="n">gratoms</span><span class="o">.</span><span class="n">set_surface_atoms</span><span class="p">([</span><span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">gratoms</span></div>
+
+
+
+<div class="viewcode-block" id="ni111">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.ni111">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">ni111</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Ni_111_3x3&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="pt111">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.pt111">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">pt111</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pt_111&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="pt111_3x3">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.pt111_3x3">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">pt111_3x3</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pt_111_3x3&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="pt111_2x3">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.pt111_2x3">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">pt111_2x3</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pt_111_2x3&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="pt111_1x1">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.pt111_1x1">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">pt111_1x1</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pt_111_1x1&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="ptrh110">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.ptrh110">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">ptrh110</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_PtRh_110&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="pd211">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.pd211">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">pd211</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pd211&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="pd211_small">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.pd211_small">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">pd211_small</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pd211_small&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="pt211_small">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.pt211_small">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">pt211_small</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pt211_small&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="pt211_from_catplat">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.pt211_from_catplat">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">pt211_from_catplat</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pt211_from_autopy&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="rh112_3x1">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.rh112_3x1">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">rh112_3x1</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Rh_112_3x1&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="pt211_2x3_conv">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.pt211_2x3_conv">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">pt211_2x3_conv</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pt211_2x3_conv&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="rh112_3x2">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.rh112_3x2">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">rh112_3x2</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Rh_112_3x2&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="rh111_4x4">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.rh111_4x4">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">rh111_4x4</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Rh_111_4x4&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="rh100_4x4">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.rh100_4x4">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">rh100_4x4</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Rh_100_4x4&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="cu100_4x4">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.cu100_4x4">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">cu100_4x4</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Cu_100_4x4&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="ago_4x4">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.ago_4x4">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">ago_4x4</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_AgO_p4x4&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="rh211_relaxed">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.rh211_relaxed">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">rh211_relaxed</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_211_relaxed&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="pt211_doped">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.pt211_doped">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">pt211_doped</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;POSCAR_Pt211_doped&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="fev_4x4">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.fev_4x4">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">fev_4x4</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;slabs&#39;</span><span class="p">,</span> <span class="s1">&#39;POSCAR_FeV_slab&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="co_adsorbate">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.co_adsorbate">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">co_adsorbate</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">CatplatStructureBuilder</span><span class="o">.</span><span class="n">build_adsorbate</span><span class="p">(</span><span class="s1">&#39;CO&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="rh112_coord_num_vs_sites">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.rh112_coord_num_vs_sites">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">rh112_coord_num_vs_sites</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span><span class="mf">7.0</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">7.7</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">8.3</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">9.3</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">9.7</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="mysql_server">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.mysql_server">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">mysql_server</span><span class="p">():</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">CatplatUserSettings</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">MySQLServer</span><span class="o">.</span><span class="n">from_user_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="fake_vasp_jobrunner">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.fake_vasp_jobrunner">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fake_vasp_jobrunner</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">FakeVaspOverallJobRunner</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="vasp_jobrunner">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.vasp_jobrunner">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">vasp_jobrunner</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">VaspGeomOptJobRunner</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">current_server</span><span class="p">(),</span> <span class="n">num_nodes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cleanup_time</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">check_convergence_interval</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                                <span class="n">use_lock_file</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="queue_manager">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.queue_manager">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">queue_manager</span><span class="p">():</span>
+    <span class="n">queue_manager</span> <span class="o">=</span> <span class="n">JobProcessorManager</span><span class="p">(</span><span class="n">num_processes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">process_name</span><span class="o">=</span><span class="s1">&#39;jobprocess&#39;</span><span class="p">,</span> <span class="n">polling_interval</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">processes</span> <span class="o">=</span> <span class="n">queue_manager</span><span class="o">.</span><span class="n">start_processes</span><span class="p">()</span>
+    <span class="k">yield</span> <span class="n">queue_manager</span>
+    <span class="n">queue_manager</span><span class="o">.</span><span class="n">close_queue</span><span class="p">()</span>
+    <span class="n">queue_manager</span><span class="o">.</span><span class="n">join_processes</span><span class="p">(</span><span class="n">processes</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="blueprint_ni">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.blueprint_ni">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">blueprint_ni</span><span class="p">(</span><span class="n">tmp_path_factory</span><span class="p">):</span>
+    <span class="n">qs</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="p">()</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">e_above_hull</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;0.001&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">chemsys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Ni&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">miller_index</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">unitcell_size</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">num_fixed_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">adsorbate_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CO&#39;</span><span class="p">]</span>
+
+    <span class="n">tmpdir</span> <span class="o">=</span> <span class="n">tmp_path_factory</span><span class="o">.</span><span class="n">mktemp</span><span class="p">(</span><span class="n">basename</span><span class="o">=</span><span class="s1">&#39;ni&#39;</span><span class="p">)</span>
+    <span class="n">blueprint</span> <span class="o">=</span> <span class="n">WorkflowBlueprint</span><span class="p">(</span><span class="n">query_set</span><span class="o">=</span><span class="n">qs</span><span class="p">,</span>
+                                  <span class="n">database_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;database.db&#39;</span><span class="p">),</span>
+                                  <span class="n">calculation_folder</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;calculations&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">blueprint</span></div>
+
+
+
+<div class="viewcode-block" id="blueprint_pt">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.blueprint_pt">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">blueprint_pt</span><span class="p">(</span><span class="n">tmp_path_factory</span><span class="p">):</span>
+    <span class="n">qs</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="p">()</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">e_above_hull</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;0.001&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">chemsys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Pt&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">miller_index</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">unitcell_size</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">num_fixed_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">adsorbate_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CO&#39;</span><span class="p">]</span>
+
+    <span class="n">tmpdir</span> <span class="o">=</span> <span class="n">tmp_path_factory</span><span class="o">.</span><span class="n">mktemp</span><span class="p">(</span><span class="n">basename</span><span class="o">=</span><span class="s1">&#39;pt&#39;</span><span class="p">)</span>
+    <span class="n">blueprint</span> <span class="o">=</span> <span class="n">WorkflowBlueprint</span><span class="p">(</span><span class="n">query_set</span><span class="o">=</span><span class="n">qs</span><span class="p">,</span>
+                                  <span class="n">database_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;database.db&#39;</span><span class="p">),</span>
+                                  <span class="n">calculation_folder</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;calculations&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">blueprint</span></div>
+
+
+
+<div class="viewcode-block" id="blueprint_pd">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.blueprint_pd">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">blueprint_pd</span><span class="p">(</span><span class="n">tmp_path_factory</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">):</span>
+    <span class="n">qs</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="p">()</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">e_above_hull</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;0.001&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">chemsys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Pt&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">miller_index</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">unitcell_size</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">num_fixed_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">adsorbate_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CO&#39;</span><span class="p">]</span>
+
+    <span class="n">tmpdir</span> <span class="o">=</span> <span class="n">tmp_path_factory</span><span class="o">.</span><span class="n">mktemp</span><span class="p">(</span><span class="n">basename</span><span class="o">=</span><span class="s1">&#39;pt&#39;</span><span class="p">)</span>
+    <span class="n">blueprint</span> <span class="o">=</span> <span class="n">WorkflowBlueprint</span><span class="p">(</span><span class="n">query_set</span><span class="o">=</span><span class="n">qs</span><span class="p">,</span>
+                                  <span class="n">database_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;database.db&#39;</span><span class="p">),</span>
+                                  <span class="n">calculation_folder</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;calculations&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">blueprint</span></div>
+
+
+
+<div class="viewcode-block" id="blueprint_pt_rh">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.blueprint_pt_rh">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">blueprint_pt_rh</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">):</span>
+    <span class="n">qs</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="p">()</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">e_above_hull</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;0.001&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">chemsys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Pt-Rh&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">bulk_formula</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PtRh3&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">miller_index</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">unitcell_size</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">adsorbate_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">WorkflowBlueprint</span><span class="p">(</span><span class="n">query_set</span><span class="o">=</span><span class="n">qs</span><span class="p">,</span>
+                             <span class="n">database_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;database.db&#39;</span><span class="p">),</span>
+                             <span class="n">calculation_folder</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;calculations&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="blueprint_rh112">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.blueprint_rh112">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;function&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">blueprint_rh112</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">):</span>
+    <span class="n">qs</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="p">()</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">e_above_hull</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;0.001&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">chemsys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Rh&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">miller_index</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">unitcell_size</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">12</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">num_fixed_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">adsorbate_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CO&#39;</span><span class="p">]</span>
+
+    <span class="n">blueprint</span> <span class="o">=</span> <span class="n">WorkflowBlueprint</span><span class="p">(</span><span class="n">query_set</span><span class="o">=</span><span class="n">qs</span><span class="p">,</span>
+                                  <span class="n">database_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;database.db&#39;</span><span class="p">),</span>
+                                  <span class="n">calculation_folder</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;calculations&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">blueprint</span></div>
+
+
+
+<div class="viewcode-block" id="catplat_test_project_settings">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.catplat_test_project_settings">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">catplat_test_project_settings</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">CatplatTestProjectSettings</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="data_dir">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.data_dir">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">data_dir</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s1">&#39;data&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="slabs_dir">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.slabs_dir">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">slabs_dir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;slabs&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bulks_dir">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.bulks_dir">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulks_dir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;bulks&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="io_traj_dir">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.io_traj_dir">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">io_traj_dir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s1">&#39;io_and_traj&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="query_set">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.query_set">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">query_set</span><span class="p">():</span>
+    <span class="n">query_set</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="p">()</span>
+    <span class="n">query_set</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">chemsys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">]</span>
+    <span class="n">query_set</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">miller_index</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">query_set</span></div>
+
+
+
+<div class="viewcode-block" id="workflow_blueprint">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.workflow_blueprint">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">workflow_blueprint</span><span class="p">(</span><span class="n">query_set</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">WorkflowBlueprint</span><span class="p">(</span><span class="n">query_set</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bulk_job_unstarted">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.bulk_job_unstarted">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulk_job_unstarted</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">,</span> <span class="s1">&#39;id4&#39;</span><span class="p">,</span> <span class="s1">&#39;Pt_bulk_unstarted&#39;</span><span class="p">,</span> <span class="s1">&#39;step_01&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Job</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bulk_path_unstarted_twostep">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.bulk_path_unstarted_twostep">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulk_path_unstarted_twostep</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">,</span> <span class="s1">&#39;id4&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bulk_job_unstarted_twostep">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.bulk_job_unstarted_twostep">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulk_job_unstarted_twostep</span><span class="p">(</span><span class="n">bulk_path_unstarted_twostep</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bulk_path_unstarted_twostep</span><span class="p">,</span> <span class="s1">&#39;Pt_bulk_unstarted&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Job</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bulk_job">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.bulk_job">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulk_job</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">,</span> <span class="s1">&#39;id1&#39;</span><span class="p">,</span> <span class="s1">&#39;Pt_bulk&#39;</span><span class="p">,</span> <span class="s1">&#39;step_01&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Job</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bulk_path_twostep">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.bulk_path_twostep">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulk_path_twostep</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">,</span> <span class="s1">&#39;id1&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bulk_job_twostep">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.bulk_job_twostep">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bulk_job_twostep</span><span class="p">(</span><span class="n">bulk_path_twostep</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bulk_path_twostep</span><span class="p">,</span> <span class="s1">&#39;Pt_bulk&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Job</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="surface_job">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.surface_job">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">surface_job</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">,</span> <span class="s1">&#39;id2&#39;</span><span class="p">,</span> <span class="s1">&#39;Pt_101&#39;</span><span class="p">,</span> <span class="s1">&#39;step_01&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Job</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="surface_path_twostep">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.surface_path_twostep">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">surface_path_twostep</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">,</span> <span class="s1">&#39;id2&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="surface_job_twostep">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.surface_job_twostep">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">surface_job_twostep</span><span class="p">(</span><span class="n">surface_path_twostep</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">surface_path_twostep</span><span class="p">,</span> <span class="s1">&#39;Pt_101&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Job</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="adsorbed_job">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.adsorbed_job">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">adsorbed_job</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">,</span> <span class="s1">&#39;id3&#39;</span><span class="p">,</span> <span class="s1">&#39;Pt_100+O&#39;</span><span class="p">,</span> <span class="s1">&#39;step_01&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Job</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="adsorbed_path_twostep">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.adsorbed_path_twostep">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">adsorbed_path_twostep</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">io_traj_dir</span><span class="p">,</span> <span class="s1">&#39;id3&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="adsorbed_job_twostep">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.adsorbed_job_twostep">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">adsorbed_job_twostep</span><span class="p">(</span><span class="n">adsorbed_path_twostep</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">adsorbed_path_twostep</span><span class="p">,</span> <span class="s1">&#39;Pt_100+O&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Job</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_project_path">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.test_project_path">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_project_path</span><span class="p">(</span><span class="n">tmp_path_factory</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tmp_path_factory</span><span class="o">.</span><span class="n">mktemp</span><span class="p">(</span><span class="s1">&#39;test_project_2&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_project">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.test_project">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_project</span><span class="p">(</span><span class="n">test_project_path</span><span class="p">,</span> <span class="n">fake_vasp_jobrunner</span><span class="p">,</span>
+                 <span class="n">bulk_job_twostep</span><span class="p">,</span> <span class="n">surface_job_twostep</span><span class="p">,</span> <span class="n">adsorbed_job_twostep</span><span class="p">,</span> <span class="n">bulk_job_unstarted_twostep</span><span class="p">):</span>
+    <span class="c1"># Create test project</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Project</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">test_project_path</span><span class="p">,</span> <span class="n">jobrunner</span><span class="o">=</span><span class="n">fake_vasp_jobrunner</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;catplat-test&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Save project settings</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">settings</span><span class="p">()</span>
+    <span class="n">settings</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">config_dir</span><span class="o">=</span><span class="n">test_project_path</span><span class="p">)</span>
+
+    <span class="c1"># Populate the test database</span>
+    <span class="n">data_bulk</span> <span class="o">=</span> <span class="n">VaspData</span><span class="o">.</span><span class="n">from_job</span><span class="p">(</span><span class="n">bulk_job_twostep</span><span class="p">)</span>
+    <span class="n">data_surface</span> <span class="o">=</span> <span class="n">VaspData</span><span class="o">.</span><span class="n">from_job</span><span class="p">(</span><span class="n">surface_job_twostep</span><span class="p">)</span>
+    <span class="n">data_adsorbed</span> <span class="o">=</span> <span class="n">VaspData</span><span class="o">.</span><span class="n">from_job</span><span class="p">(</span><span class="n">adsorbed_job_twostep</span><span class="p">)</span>
+    <span class="n">attributes_unrelaxed</span> <span class="o">=</span> <span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">relaxed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">errored</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">database</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">data_bulk</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes_unrelaxed</span><span class="p">)</span>  <span class="c1"># id1</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">data_surface</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes_unrelaxed</span><span class="p">)</span>  <span class="c1"># id2</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">data_adsorbed</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes_unrelaxed</span><span class="p">)</span>  <span class="c1"># id3</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">bulk_job_unstarted_twostep</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes_unrelaxed</span><span class="p">)</span>  <span class="c1"># id4</span>
+
+    <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">data_bulk</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">attributes</span><span class="o">=</span><span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">relaxed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errored</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unrelaxed_id</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+             <span class="n">data</span><span class="o">=</span><span class="n">data_bulk</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>  <span class="c1"># id5</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">data_surface</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">attributes</span><span class="o">=</span><span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">relaxed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errored</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unrelaxed_id</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>  <span class="c1"># id6</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">data_adsorbed</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">attributes</span><span class="o">=</span><span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">relaxed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">errored</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unrelaxed_id</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># id7</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">data_adsorbed</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">attributes</span><span class="o">=</span><span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">relaxed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errored</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unrelaxed_id</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># id8</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">data_adsorbed</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+             <span class="n">attributes</span><span class="o">=</span><span class="n">DatabaseAttributes</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">relaxed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errored</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unrelaxed_id</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># id9</span>
+
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="test_ml_preopt_project">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.conftest.test_ml_preopt_project">[docs]</a>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;module&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_ml_preopt_project</span><span class="p">(</span><span class="n">tmp_path_factory</span><span class="p">,</span>
+                           <span class="n">fake_vasp_jobrunner</span><span class="p">,</span>
+                           <span class="n">bulk_job_twostep</span><span class="p">,</span>
+                           <span class="n">surface_job_twostep</span><span class="p">,</span>
+                           <span class="n">adsorbed_job_twostep</span><span class="p">,</span>
+                           <span class="n">bulk_job_unstarted_twostep</span><span class="p">):</span>
+
+
+    <span class="c1"># Create test project</span>
+    <span class="n">tmpdir</span> <span class="o">=</span> <span class="n">tmp_path_factory</span><span class="o">.</span><span class="n">mktemp</span><span class="p">(</span><span class="s1">&#39;test_ml_preopt_project&#39;</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Project</span><span class="o">.</span><span class="n">from_folder</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">tmpdir</span><span class="p">,</span> <span class="n">jobrunner</span><span class="o">=</span><span class="n">fake_vasp_jobrunner</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;catplat-test&#39;</span><span class="p">,</span>
+                            <span class="n">ml_preoptimization</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">qs</span> <span class="o">=</span> <span class="n">QuerySet</span><span class="p">()</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">e_above_hull</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;0.001&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">bulk</span><span class="o">.</span><span class="n">chemsys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Cu&#39;</span><span class="p">]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">miller_index</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">qs</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">unitcell_size</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="n">qs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

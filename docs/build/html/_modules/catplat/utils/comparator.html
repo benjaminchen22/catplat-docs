@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.utils.comparator &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.utils.comparator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.utils.comparator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module consists of the Comparator Class.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pyatoms.utils.utils</span> <span class="kn">import</span> <span class="n">isiterable</span>
+<span class="kn">from</span> <span class="nn">catplat.settings.constants</span> <span class="kn">import</span> <span class="n">MACHINE_EPSILON</span>
+
+
+<div class="viewcode-block" id="Comparator">
+<a class="viewcode-back" href="../../../catplat.utils.html#catplat.utils.comparator.Comparator">[docs]</a>
+<span class="k">class</span> <span class="nc">Comparator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts min_val and max_val to a Comparator class where operations can be performed.</span>
+<span class="sd">    Initialization by string/int/float can be done using the Comparator.new() method.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        min_val (int, float, None): Lower limit of comparator.</span>
+<span class="sd">        max_val (int, float, None): Upper limit of the comparator.</span>
+<span class="sd">        min_inclusive (bool): &quot;&gt;=&quot; if True, &quot;&gt;&quot; otherwise.</span>
+<span class="sd">        max_inclusive (bool): &quot;&gt;=&quot; if True, &quot;&gt;&quot; otherwise.</span>
+<span class="sd">        equal_tolerance (float): Rounding tolerance used for &#39;==&#39;, &#39;&lt;=&#39; and &#39;&gt;=&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># default lower and upper limit if min_val and max_val is None</span>
+    <span class="n">_UPPER_LIMIT</span> <span class="o">=</span> <span class="mf">1e100</span>
+    <span class="n">_LOWER_LIMIT</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e100</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">min_val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">max_val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">min_inclusive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">max_inclusive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">equal_tol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">MACHINE_EPSILON</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">min_val</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Comparator must be instantiated with either/both min_val or max_val.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">min_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">min_val</span> <span class="o">==</span> <span class="n">max_val</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="n">min_inclusive</span><span class="p">,</span> <span class="n">max_inclusive</span><span class="p">)):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Both min_inclusive and max_inclusive must be True when min_val == max_val&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">min_val</span> <span class="o">&gt;</span> <span class="n">max_val</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;min_val cannot be greater than max_val&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_val</span> <span class="o">=</span> <span class="n">min_val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_val</span> <span class="o">=</span> <span class="n">max_val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_inclusive</span> <span class="o">=</span> <span class="n">min_inclusive</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_inclusive</span> <span class="o">=</span> <span class="n">max_inclusive</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">equal_tol</span> <span class="o">=</span> <span class="n">equal_tol</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_lower_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Values &gt;= to this value will return True. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_LOWER_LIMIT</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_inclusive</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_val</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">equal_tol</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_val</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">equal_tol</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_upper_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Values &lt;= to this value will return True. &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_UPPER_LIMIT</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_inclusive</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_val</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">equal_tol</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_val</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">equal_tol</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_is_strictly_equals</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; True if operator is ==. Determined if the difference between the upper</span>
+<span class="sd">        limit and the lower limit is very small (&lt;= 2*MACHINE_EPSILON). &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_upper_limit</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lower_limit</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">MACHINE_EPSILON</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_is_range</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; True if min_val and max_val is specified. (and not equals). &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_strictly_equals</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_contain_equals</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="n">arg</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lower_limit</span> <span class="ow">and</span> <span class="n">arg</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upper_limit</span><span class="p">)</span>  <span class="c1"># need to cast to bool, else returns np.bool_</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">vars</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;min_val:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_val</span><span class="si">}</span><span class="s1">, min_inclusive:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_inclusive</span><span class="si">}</span><span class="s1">, max_val:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_val</span><span class="si">}</span><span class="s1">, max_inclusive:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_inclusive</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns comparator string. i.e. &lt;0 | &gt;=0 | ==0 | &lt;0,&gt;=0 &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_strictly_equals</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;==&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_val</span><span class="p">)</span>
+
+        <span class="n">operator_min</span> <span class="o">=</span> <span class="s1">&#39;&gt;=&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_inclusive</span> <span class="k">else</span> <span class="s1">&#39;&gt;&#39;</span>
+        <span class="n">operator_max</span> <span class="o">=</span> <span class="s1">&#39;&lt;=&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_inclusive</span> <span class="k">else</span> <span class="s1">&#39;&lt;&#39;</span>
+        <span class="n">min_inequality</span> <span class="o">=</span> <span class="n">operator_min</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_val</span><span class="p">)</span>
+        <span class="n">max_inequality</span> <span class="o">=</span> <span class="n">operator_max</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_range</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">min_inequality</span><span class="p">,</span> <span class="n">max_inequality</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">max_inequality</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">min_inequality</span>
+
+        <span class="k">assert</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Comparator</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">equal_tol</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">equal_tol</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot add comparators with the different tolerance.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_UPPER_LIMIT</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">_UPPER_LIMIT</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot add comparators with the different upper_limit.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_LOWER_LIMIT</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">_LOWER_LIMIT</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot add comparators with the different lower_limit.&#39;</span><span class="p">)</span>
+
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;equal_tol&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">equal_tol</span><span class="p">}</span>
+
+        <span class="n">self_min</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;min_val&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_val</span><span class="p">,</span> <span class="s1">&#39;min_inclusive&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_inclusive</span><span class="p">}</span>
+        <span class="n">other_min</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;min_val&#39;</span><span class="p">:</span> <span class="n">other</span><span class="o">.</span><span class="n">min_val</span><span class="p">,</span> <span class="s1">&#39;min_inclusive&#39;</span><span class="p">:</span> <span class="n">other</span><span class="o">.</span><span class="n">min_inclusive</span><span class="p">}</span>
+        <span class="n">min_val</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lower_limit</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_lower_limit</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">min_val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">self_min</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">other_min</span><span class="p">}</span>
+
+        <span class="n">self_max</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;max_val&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_val</span><span class="p">,</span> <span class="s1">&#39;max_inclusive&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_inclusive</span><span class="p">}</span>
+        <span class="n">other_max</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;max_val&#39;</span><span class="p">:</span> <span class="n">other</span><span class="o">.</span><span class="n">max_val</span><span class="p">,</span> <span class="s1">&#39;max_inclusive&#39;</span><span class="p">:</span> <span class="n">other</span><span class="o">.</span><span class="n">max_inclusive</span><span class="p">}</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_upper_limit</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_upper_limit</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">max_val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">self_max</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">other_max</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="o">**</span><span class="n">attributes</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Comparator.compare">
+<a class="viewcode-back" href="../../../catplat.utils.html#catplat.utils.comparator.Comparator.compare">[docs]</a>
+    <span class="k">def</span> <span class="nf">compare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns True/False for each item in array if item passes/fails the comparator. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Comparator.filtered_indices">
+<a class="viewcode-back" href="../../../catplat.utils.html#catplat.utils.comparator.Comparator.filtered_indices">[docs]</a>
+    <span class="k">def</span> <span class="nf">filtered_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns index in a list that matches the comparator. &quot;&quot;&quot;</span>
+        <span class="n">tfs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tf</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tfs</span><span class="p">)</span> <span class="k">if</span> <span class="n">tf</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Comparator.filtered_values">
+<a class="viewcode-back" href="../../../catplat.utils.html#catplat.utils.comparator.Comparator.filtered_values">[docs]</a>
+    <span class="k">def</span> <span class="nf">filtered_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns the values in a list that matches the comparator. &quot;&quot;&quot;</span>
+        <span class="n">tfs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">arr</span> <span class="k">for</span> <span class="n">tf</span><span class="p">,</span> <span class="n">arr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tfs</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span> <span class="k">if</span> <span class="n">tf</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Comparator.get_tuple">
+<a class="viewcode-back" href="../../../catplat.utils.html#catplat.utils.comparator.Comparator.get_tuple">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_lower</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns a tuple with the lower and upper boundaries of the comparator.&quot;&quot;&quot;</span>
+        <span class="n">upper_limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upper_limit</span>
+        <span class="k">if</span> <span class="n">max_upper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">upper_limit</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">upper_limit</span><span class="p">,</span> <span class="n">max_upper</span><span class="p">)</span>
+
+        <span class="n">lower_limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lower_limit</span>
+        <span class="k">if</span> <span class="n">min_lower</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">lower_limit</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lower_limit</span><span class="p">,</span> <span class="n">min_lower</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">lower_limit</span><span class="p">,</span> <span class="n">upper_limit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Comparator.to_str">
+<a class="viewcode-back" href="../../../catplat.utils.html#catplat.utils.comparator.Comparator.to_str">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Comparator.to_sql_query">
+<a class="viewcode-back" href="../../../catplat.utils.html#catplat.utils.comparator.Comparator.to_sql_query">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_sql_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns sql string i.e. _lower_limit&lt;=attribute&lt;=_upper_limit.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_strictly_equals</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_val</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_range</span><span class="p">:</span>
+            <span class="n">min_str</span><span class="p">,</span> <span class="n">max_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lower_limit</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_upper_limit</span><span class="p">)</span>
+            <span class="n">operator1</span><span class="p">,</span> <span class="n">operator2</span> <span class="o">=</span> <span class="s1">&#39;&lt;=&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=&#39;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_inclusive</span><span class="p">:</span>
+                <span class="n">min_str</span><span class="p">,</span> <span class="n">operator1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_val</span><span class="p">),</span> <span class="s1">&#39;&lt;&#39;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_inclusive</span><span class="p">:</span>
+                <span class="n">max_str</span><span class="p">,</span> <span class="n">operator2</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_val</span><span class="p">),</span> <span class="s1">&#39;&lt;&#39;</span>
+
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">min_str</span><span class="si">}{</span><span class="n">operator1</span><span class="si">}{</span><span class="n">attribute</span><span class="si">}{</span><span class="n">operator2</span><span class="si">}{</span><span class="n">max_str</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lower_limit</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_LOWER_LIMIT</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_inclusive</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attribute</span><span class="si">}{</span><span class="bp">self</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s1">&lt;=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_upper_limit</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upper_limit</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_UPPER_LIMIT</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_inclusive</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attribute</span><span class="si">}{</span><span class="bp">self</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s1">&gt;=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_lower_limit</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">assert</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Comparator.is_comparator">
+<a class="viewcode-back" href="../../../catplat.utils.html#catplat.utils.comparator.Comparator.is_comparator">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">is_comparator</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Simple check if comparator can be created from str.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Comparator</span><span class="o">.</span><span class="n">_from_str</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="Comparator.new">
+<a class="viewcode-back" href="../../../catplat.utils.html#catplat.utils.comparator.Comparator.new">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Convenience method to create Comparator from Comparator, int, float and str.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">exclude_strings</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Too many inputs!&quot;</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Comparator</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_str</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_numeric</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Value must be Comparator, str, int or float. Current: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_from_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Value must be of type str. Current: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="n">new_comp</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_inequality_str</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> \
+            <span class="ow">or</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_min_max_str</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> \
+            <span class="ow">or</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_two_inequality_str</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">new_comp</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;String </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1"> does not match any comparator regex.&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_comp</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_from_numeric</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Value must be of type int or float. Current: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_inequality_str</span><span class="p">(</span><span class="s1">&#39;==&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_from_min_max_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;([(\[])(-?\d+(?:\.\d+)?)(,)(-?\d+(?:\.\d+)?)([)\]])&#39;</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;min_val&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span>
+                      <span class="s1">&#39;min_inclusive&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                      <span class="s1">&#39;max_val&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)),</span>
+                      <span class="s1">&#39;max_inclusive&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;[&#39;</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;min_inclusive&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;]&#39;</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;max_inclusive&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_from_two_inequality_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;([&lt;=&gt;]{1,2})(-?\d+(?:\.\d+)?)(,)([&lt;=&gt;]{1,2})(-?\d+(?:\.\d+)?)&#39;</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">inequality_str_1</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">inequality_str_2</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">inequality_1</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_inequality_str</span><span class="p">(</span><span class="n">inequality_str_1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">inequality_2</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_inequality_str</span><span class="p">(</span><span class="n">inequality_str_2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">inequality_1</span> <span class="o">+</span> <span class="n">inequality_2</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_from_inequality_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;([&lt;=&gt;]{1,2})(-?\d+(?:\.\d+)?)&#39;</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">operator</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Value must be int or float. Current:</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;&gt;&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_val&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;min_inclusive&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;max_val&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;max_inclusive&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+                      <span class="s1">&#39;&gt;=&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_val&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;min_inclusive&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;max_val&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;max_inclusive&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+                      <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_val&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;min_inclusive&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;max_val&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;max_inclusive&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+                      <span class="s1">&#39;&lt;=&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_val&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;min_inclusive&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;max_val&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;max_inclusive&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+                      <span class="s1">&#39;==&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_val&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;min_inclusive&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;max_val&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;max_inclusive&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+
+        <span class="k">if</span> <span class="n">operator</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">attributes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unidentified operator used to instantiate Comparator. Current:</span><span class="si">{</span><span class="n">operator</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">attributes</span> <span class="o">=</span> <span class="n">attributes</span><span class="p">[</span><span class="n">operator</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

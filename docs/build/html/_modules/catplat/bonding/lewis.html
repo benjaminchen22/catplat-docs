@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.bonding.lewis &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.bonding.lewis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.bonding.lewis</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module consist of code to solve the Lewis Structure of a chemical species.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">ortools.linear_solver</span> <span class="kn">import</span> <span class="n">pywraplp</span>
+<span class="kn">from</span> <span class="nn">pyatoms.io.ase.atoms</span> <span class="kn">import</span> <span class="n">AtomsWrapper</span>
+
+<span class="kn">from</span> <span class="nn">catplat.io.gratoms</span> <span class="kn">import</span> <span class="n">GratomsWrapper</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="is_odd">
+<a class="viewcode-back" href="../../../catplat.bonding.html#catplat.bonding.lewis.is_odd">[docs]</a>
+<span class="k">def</span> <span class="nf">is_odd</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns True/False for value if they are odd/even.&quot;&quot;&quot;</span>
+    <span class="c1"># return [i % 2 != 0 for i in iterable]</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="LewisStructure">
+<a class="viewcode-back" href="../../../catplat.bonding.html#catplat.bonding.lewis.LewisStructure">[docs]</a>
+<span class="k">class</span> <span class="nc">LewisStructure</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Lewis structure of a chemical species.</span>
+
+<span class="sd">    A list of bonding attributes can be obtained:</span>
+
+<span class="sd">    For Example:</span>
+<span class="sd">        &gt;&gt;&gt; ls = LewisStructure.from_adsorbate(&#39;CO&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ls.num_lone_pairs()</span>
+<span class="sd">        [0, 1]</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        atoms (Atoms): Structure of chemical species</span>
+<span class="sd">        multiple_bonds (bool): Toggle on whether multiple bonds (e.g. C=C should be considered)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">VALENCES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;Cl&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">atoms</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Atoms</span><span class="p">,</span> <span class="n">AtomsWrapper</span><span class="p">,</span> <span class="n">GratomsWrapper</span><span class="p">],</span>
+                 <span class="n">multiple_bonds</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiple_bonds</span> <span class="o">=</span> <span class="n">multiple_bonds</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_symbols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; List of chemical symbols. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_single_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Graph object of structure. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">connected_graph</span><span class="p">()</span>
+
+<div class="viewcode-block" id="LewisStructure.get_bonds">
+<a class="viewcode-back" href="../../../catplat.bonding.html#catplat.bonding.lewis.LewisStructure.get_bonds">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_bonds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">denticity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Bonds of an adsorbate. Uses the bond priority list (self.bonds_index) to return the predicted adsorbate bonds.</span>
+<span class="sd">        By default, this function returns the bonds which has the same length as denticity.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            denticity (int, str, None): Denticity of adsorbate. Defaults to &#39;monodentate&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">catplat.structure.adsorbate</span> <span class="kn">import</span> <span class="n">Bonds</span>
+        <span class="k">if</span> <span class="n">denticity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">catplat.settings.constants</span> <span class="kn">import</span> <span class="n">BONDS</span>
+            <span class="n">denticity</span> <span class="o">=</span> <span class="n">BONDS</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">denticity</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">denticity</span> <span class="o">==</span> <span class="s1">&#39;monodentate&#39;</span><span class="p">:</span>
+                <span class="n">denticity</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">denticity</span> <span class="o">==</span> <span class="s1">&#39;bidentate&#39;</span><span class="p">:</span>
+                <span class="n">denticity</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid string </span><span class="si">{</span><span class="n">denticity</span><span class="si">}</span><span class="s2">. Should be either &#39;monodentate&#39; or &#39;bidentate&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">denticity</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Denticity must be an int. Current: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">denticity</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">denticity</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Number of bonds cannot be greater than number of atoms.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_single_atom</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Bonds</span><span class="o">.</span><span class="n">from_value</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
+
+        <span class="n">bonds_index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bonds_priority</span><span class="p">()</span>
+
+        <span class="c1"># Default</span>
+        <span class="k">return</span> <span class="n">Bonds</span><span class="p">(</span><span class="n">bonds_index</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">denticity</span><span class="p">])</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_bonds_priority</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines bond priority based on radicals, number of lone pairs, and potential radicals formed</span>
+<span class="sd">        due to pi bond breaking (e.g. C2H2)</span>
+
+<span class="sd">        1) Radicals: assigned higher weightage (1 for every radical)</span>
+<span class="sd">        2) Lone pairs:  assigned lower weightage (0.2 for every lone pair)</span>
+<span class="sd">        3) Pi-bonds: assigned intermediate weightage (0.1 for every radical after breaking pi bond)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">weight_radicals</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_unsaturated_bonds</span><span class="p">()]</span>
+        <span class="n">weight_lone_pairs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mf">0.2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_lone_pairs</span><span class="p">()]</span>
+        <span class="n">weight_pi_bonds</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mf">0.1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_unsaturated_bonds</span><span class="p">()]</span>
+
+        <span class="n">bonds_priority</span> <span class="o">=</span> <span class="p">[</span><span class="n">weight_radicals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">weight_lone_pairs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">weight_pi_bonds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                          <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">weight_radicals</span><span class="p">))]</span>
+
+        <span class="n">bonds_index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bonds_priority</span><span class="p">))</span>
+        <span class="n">bonds_priority</span><span class="p">,</span> <span class="n">bonds_index</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">bonds_priority</span><span class="p">,</span> <span class="n">bonds_index</span><span class="p">),</span>
+                                                  <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pair</span><span class="p">:</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">bonds_priority</span><span class="p">,</span> <span class="n">bonds_index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">bonds_priority</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">bonds_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bonds_index</span><span class="p">,</span> <span class="n">bonds_priority</span>
+
+<div class="viewcode-block" id="LewisStructure.num_lone_pairs">
+<a class="viewcode-back" href="../../../catplat.bonding.html#catplat.bonding.lewis.LewisStructure.num_lone_pairs">[docs]</a>
+    <span class="k">def</span> <span class="nf">num_lone_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Number of lone pairs on each atom. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">f</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_free_electrons</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="LewisStructure.num_free_electrons">
+<a class="viewcode-back" href="../../../catplat.bonding.html#catplat.bonding.lewis.LewisStructure.num_free_electrons">[docs]</a>
+    <span class="k">def</span> <span class="nf">num_free_electrons</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Number of free electrons on each atom. &quot;&quot;&quot;</span>
+
+        <span class="c1"># NOTE: need to return solver, else accessing its variables gives error</span>
+        <span class="n">solver</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">nfree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">solution_value</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">nfree</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="LewisStructure.num_bonds">
+<a class="viewcode-back" href="../../../catplat.bonding.html#catplat.bonding.lewis.LewisStructure.num_bonds">[docs]</a>
+    <span class="k">def</span> <span class="nf">num_bonds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Number of covalent and dative bonds on each atom. &quot;&quot;&quot;</span>
+
+        <span class="c1"># NOTE: need to return solver, else accessing its variables gives error</span>
+        <span class="n">solver</span><span class="p">,</span> <span class="n">covalents</span><span class="p">,</span> <span class="n">dative_donate</span><span class="p">,</span> <span class="n">dative_receive</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">b</span><span class="o">.</span><span class="n">solution_value</span><span class="p">()</span> <span class="o">+</span> <span class="n">dd</span><span class="o">.</span><span class="n">solution_value</span><span class="p">()</span> <span class="o">+</span> <span class="n">dr</span><span class="o">.</span><span class="n">solution_value</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">dd</span><span class="p">,</span> <span class="n">dr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">covalents</span><span class="p">,</span> <span class="n">dative_donate</span><span class="p">,</span> <span class="n">dative_receive</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="LewisStructure.num_unsaturated_bonds">
+<a class="viewcode-back" href="../../../catplat.bonding.html#catplat.bonding.lewis.LewisStructure.num_unsaturated_bonds">[docs]</a>
+    <span class="k">def</span> <span class="nf">num_unsaturated_bonds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Number of unsaturated bonds on each atom. &quot;&quot;&quot;</span>
+        <span class="n">max_bonds</span> <span class="o">=</span> <span class="p">{</span><span class="n">symbol</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="mi">8</span> <span class="o">-</span> <span class="n">v</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">VALENCES</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">num_bonds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bonds</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">max_bonds</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">-</span> <span class="n">nb</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">nb</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_symbols</span><span class="p">,</span> <span class="n">num_bonds</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="LewisStructure.unsaturated_atoms">
+<a class="viewcode-back" href="../../../catplat.bonding.html#catplat.bonding.lewis.LewisStructure.unsaturated_atoms">[docs]</a>
+    <span class="k">def</span> <span class="nf">unsaturated_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Indices of unsaturated atoms with one or more unsaturated bonds. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_unsaturated_bonds</span><span class="p">())</span> <span class="k">if</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="LewisStructure.radical_atoms">
+<a class="viewcode-back" href="../../../catplat.bonding.html#catplat.bonding.lewis.LewisStructure.radical_atoms">[docs]</a>
+    <span class="k">def</span> <span class="nf">radical_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Indices of radical atoms with odd numbers of free electrons.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_free_electrons</span><span class="p">())</span> <span class="k">if</span> <span class="n">is_odd</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span></div>
+
+
+    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_solve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Solves for the Lewis structure of a chemical species assuming the octet rule.&quot;&quot;&quot;</span>
+
+        <span class="c1"># Linear solver using the CBC backend</span>
+        <span class="n">solver</span> <span class="o">=</span> <span class="n">pywraplp</span><span class="o">.</span><span class="n">Solver</span><span class="p">(</span><span class="s1">&#39;Lewis&#39;</span><span class="p">,</span> <span class="n">pywraplp</span><span class="o">.</span><span class="n">Solver</span><span class="o">.</span><span class="n">CBC_MIXED_INTEGER_PROGRAMMING</span><span class="p">)</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">symbol</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_symbols</span><span class="p">)]</span>
+        <span class="n">covalents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_covalents</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+        <span class="n">datives</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dative</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+
+        <span class="c1"># Variables representing number of covalents bonds/dative bonds/free electrons for each atom</span>
+        <span class="n">covalent_total</span><span class="p">,</span> <span class="n">dative_donate_total</span><span class="p">,</span> <span class="n">dative_receive_total</span><span class="p">,</span> <span class="n">free_total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_variables</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_minimum_bond_constraints</span><span class="p">(</span><span class="n">covalents</span><span class="p">,</span> <span class="n">datives</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_covalent_intraatom_constraints</span><span class="p">(</span><span class="n">covalents</span><span class="p">,</span> <span class="n">covalent_total</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_covalent_interatom_constraints</span><span class="p">(</span><span class="n">covalents</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_dative_intraatom_constraints</span><span class="p">(</span><span class="n">datives</span><span class="p">,</span> <span class="n">dative_donate_total</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_dative_interatom_constraints</span><span class="p">(</span><span class="n">datives</span><span class="p">,</span> <span class="n">dative_receive_total</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_valence_constraints</span><span class="p">(</span><span class="n">covalent_total</span><span class="p">,</span> <span class="n">dative_donate_total</span><span class="p">,</span> <span class="n">free_total</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_octet_rule_constraints</span><span class="p">(</span><span class="n">covalent_total</span><span class="p">,</span> <span class="n">dative_donate_total</span><span class="p">,</span> <span class="n">free_total</span><span class="p">,</span> <span class="n">datives</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_multiple_bonds_constraint</span><span class="p">(</span><span class="n">covalent_total</span><span class="p">,</span> <span class="n">dative_donate_total</span><span class="p">,</span> <span class="n">dative_receive_total</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+
+        <span class="c1"># Solve problem by maximizing number of bonds between atoms while maintaining constraints</span>
+        <span class="c1"># solver.Maximize(sum(nbonds) + sum(ndative) / 2 - sum(nfree))</span>
+        <span class="n">solver</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">covalent_total</span><span class="p">)</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dative_donate_total</span><span class="p">)</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">free_total</span><span class="p">))</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">Solve</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">pywraplp</span><span class="o">.</span><span class="n">Solver</span><span class="o">.</span><span class="n">OPTIMAL</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;The solver could not find an optimal solution.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># If an optimal solution has been found, print results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_print_results</span><span class="p">(</span><span class="n">covalent_total</span><span class="p">,</span> <span class="n">dative_donate_total</span><span class="p">,</span> <span class="n">dative_receive_total</span><span class="p">,</span> <span class="n">free_total</span><span class="p">,</span>
+                            <span class="n">covalents</span><span class="p">,</span> <span class="n">datives</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">solver</span><span class="p">,</span> <span class="n">covalent_total</span><span class="p">,</span> <span class="n">dative_donate_total</span><span class="p">,</span> <span class="n">dative_receive_total</span><span class="p">,</span> <span class="n">free_total</span>
+
+    <span class="k">def</span> <span class="nf">_set_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+        <span class="n">covalents_total</span> <span class="o">=</span> <span class="p">[</span><span class="n">solver</span><span class="o">.</span><span class="n">IntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">VALENCES</span><span class="p">[</span><span class="n">symbol</span><span class="p">],</span> <span class="sa">f</span><span class="s1">&#39;Σ(</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">-cov)&#39;</span><span class="p">)</span>
+                           <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symbols</span><span class="p">)]</span>
+
+        <span class="n">free_total</span> <span class="o">=</span> <span class="p">[</span><span class="n">solver</span><span class="o">.</span><span class="n">IntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">VALENCES</span><span class="p">[</span><span class="n">symbol</span><span class="p">],</span> <span class="sa">f</span><span class="s1">&#39;Σ(</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">-free)&#39;</span><span class="p">)</span>
+                      <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symbols</span><span class="p">)]</span>
+
+        <span class="n">dative_donate_total</span> <span class="o">=</span> <span class="p">[</span><span class="n">solver</span><span class="o">.</span><span class="n">IntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">VALENCES</span><span class="p">[</span><span class="n">symbol</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;Σ(</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">-dat-donate)&#39;</span><span class="p">)</span>
+                               <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symbols</span><span class="p">)]</span>
+
+        <span class="n">dative_receive_total</span> <span class="o">=</span> <span class="p">[</span><span class="n">solver</span><span class="o">.</span><span class="n">IntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Σ(</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">-dat-receive)&#39;</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symbols</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">covalents_total</span><span class="p">,</span> <span class="n">dative_donate_total</span><span class="p">,</span> <span class="n">dative_receive_total</span><span class="p">,</span> <span class="n">free_total</span>
+
+    <span class="k">def</span> <span class="nf">_print_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_covalents</span><span class="p">,</span> <span class="n">num_dative</span><span class="p">,</span> <span class="n">num_free</span><span class="p">,</span> <span class="n">num_dative_receive</span><span class="p">,</span> <span class="n">covalents</span><span class="p">,</span> <span class="n">datives</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;================= Solution =================&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Solved in </span><span class="si">{</span><span class="n">solver</span><span class="o">.</span><span class="n">wall_time</span><span class="p">()</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> milliseconds in </span><span class="si">{</span><span class="n">solver</span><span class="o">.</span><span class="n">iterations</span><span class="p">()</span><span class="si">}</span><span class="s1"> iterations&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Optimal value = </span><span class="si">{</span><span class="n">solver</span><span class="o">.</span><span class="n">Objective</span><span class="p">()</span><span class="o">.</span><span class="n">Value</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">num_covalents</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39; - </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">()</span><span class="si">}</span><span class="s1">= </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">solution_value</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">num_dative</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39; - </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">()</span><span class="si">}</span><span class="s1">= </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">solution_value</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">num_free</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39; - </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span><span class="si">}</span><span class="s1">= </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">solution_value</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dr</span> <span class="ow">in</span> <span class="n">num_dative_receive</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39; - </span><span class="si">{</span><span class="n">dr</span><span class="o">.</span><span class="n">name</span><span class="p">()</span><span class="si">}</span><span class="s1">= </span><span class="si">{</span><span class="n">dr</span><span class="o">.</span><span class="n">solution_value</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">covalent_each_atom</span> <span class="ow">in</span> <span class="n">covalents</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">covalent_each_atom</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39; - </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">()</span><span class="si">}</span><span class="s1">= </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">solution_value</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">datives_each_atom</span> <span class="ow">in</span> <span class="n">datives</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datives_each_atom</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39; - </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="p">()</span><span class="si">}</span><span class="s1">= </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">solution_value</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_octet_rule_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">covalent_total</span><span class="p">,</span> <span class="n">dative_total</span><span class="p">,</span> <span class="n">free_total</span><span class="p">,</span> <span class="n">datives</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Octet rule. &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">neighs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="o">.</span><span class="n">neighbour_list</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">covalent_total</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">free_total</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">dative_total</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">name</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">other_dative</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">datives</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">neighs</span><span class="p">)</span>
+
+            <span class="n">symbol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">symbol</span> <span class="o">==</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span>
+                <span class="n">max_electrons</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">max_electrons</span> <span class="o">=</span> <span class="mi">8</span>
+
+            <span class="n">solver</span><span class="o">.</span><span class="n">Add</span><span class="p">((</span><span class="n">c</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">f</span> <span class="o">+</span> <span class="n">other_dative</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">max_electrons</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_valence_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">covalent_total</span><span class="p">,</span> <span class="n">dative_total</span><span class="p">,</span> <span class="n">free_total</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Balance valence electrons for each atom. &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_symbols</span><span class="p">):</span>
+            <span class="n">solver</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">covalent_total</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">free_total</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">dative_total</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">VALENCES</span><span class="p">[</span><span class="n">symbol</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_set_dative_intraatom_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datives</span><span class="p">,</span> <span class="n">dative_total</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Total num dative bonds on A equals sum of number of dative bonds between A-B, A-C,... &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">datives_single_atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">datives</span><span class="p">):</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">datives_single_atom</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="n">nd</span> <span class="o">=</span> <span class="n">dative_total</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">solver</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">nd</span> <span class="o">==</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_set_dative_interatom_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datives</span><span class="p">,</span> <span class="n">dative_receive_total</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Total num dative bonds received by A from B, C... &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">datives_single_atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">datives</span><span class="p">):</span>
+            <span class="n">neighs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="o">.</span><span class="n">neighbour_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">dative_recieve</span> <span class="o">=</span> <span class="p">[</span><span class="n">datives</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">neighs</span><span class="p">]</span>
+            <span class="n">nd</span> <span class="o">=</span> <span class="n">dative_receive_total</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">solver</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">nd</span> <span class="o">==</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dative_recieve</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_set_covalent_interatom_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">covalents</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Bonds between A-B must equal bonds between B-A. &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">covalents_each_atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">covalents</span><span class="p">):</span>
+            <span class="n">own_name</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">neigh_name</span><span class="p">,</span> <span class="n">covalent</span> <span class="ow">in</span> <span class="n">covalents_each_atom</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">neighbour_index</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">neigh_name</span><span class="p">)</span>
+                <span class="n">solver</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">covalent</span> <span class="o">==</span> <span class="n">covalents</span><span class="p">[</span><span class="n">neighbour_index</span><span class="p">][</span><span class="n">own_name</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_set_covalent_intraatom_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">covalents</span><span class="p">,</span> <span class="n">covalents_total</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Total num bonds on A equals sum of number of bonds between A-B, A-C,... &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">covalents_single_atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">covalents</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">covalents_single_atom</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="n">nc</span> <span class="o">=</span> <span class="n">covalents_total</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">solver</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">nc</span> <span class="o">==</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_set_multiple_bonds_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">covalents_total</span><span class="p">,</span> <span class="n">datives_donate_total</span><span class="p">,</span> <span class="n">datives_recieve_total</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiple_bonds</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Allow maximum one bond for every neighbour</span>
+        <span class="n">neighbour_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="o">.</span><span class="n">neighbour_list</span>
+        <span class="k">for</span> <span class="n">neighs</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">dd</span><span class="p">,</span> <span class="n">dr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">neighbour_list</span><span class="p">,</span> <span class="n">covalents_total</span><span class="p">,</span> <span class="n">datives_donate_total</span><span class="p">,</span> <span class="n">datives_recieve_total</span><span class="p">):</span>
+            <span class="n">solver</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="n">dd</span> <span class="o">+</span> <span class="n">dr</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighs</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_set_minimum_bond_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">covalents</span><span class="p">,</span> <span class="n">datives</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Neighbours should have minimum of 1 bond&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">covalents_single_atom</span><span class="p">,</span> <span class="n">datives_single_atom</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">covalents</span><span class="p">,</span> <span class="n">datives</span><span class="p">)):</span>
+            <span class="n">neighbours</span> <span class="o">=</span> <span class="n">covalents_single_atom</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">neighbours</span><span class="p">:</span>
+                <span class="n">neighbour_index</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">neighbour_index</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">:</span>
+                    <span class="n">solver</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">covalents_single_atom</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">datives_single_atom</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_covalents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Dictionary of covalent bonds between an atom and its neighbours for each atom. &quot;&quot;&quot;</span>
+        <span class="n">neighbours</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="o">.</span><span class="n">neighbour_list</span>
+        <span class="n">covalents</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_symbols</span><span class="p">):</span>
+            <span class="n">neighs</span> <span class="o">=</span> <span class="n">neighbours</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">neigh</span> <span class="ow">in</span> <span class="n">neighs</span><span class="p">:</span>
+                <span class="n">neigh_name</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">neigh</span><span class="p">]</span>
+                <span class="n">own_name</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">bond_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">own_name</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">neigh_name</span><span class="si">}</span><span class="s1">|cov&#39;</span>
+                <span class="n">cs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">neigh_name</span><span class="p">:</span> <span class="n">solver</span><span class="o">.</span><span class="n">IntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">VALENCES</span><span class="p">[</span><span class="n">symbol</span><span class="p">],</span> <span class="n">bond_name</span><span class="p">)})</span>
+            <span class="n">covalents</span> <span class="o">+=</span> <span class="p">[</span><span class="n">cs</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">covalents</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">covalents</span>
+
+    <span class="k">def</span> <span class="nf">_create_dative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Dictionary of dative bonds between an atom and its neighbours for each atom. &quot;&quot;&quot;</span>
+        <span class="n">neighbours</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="o">.</span><span class="n">neighbour_list</span>
+        <span class="n">datives</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_symbols</span><span class="p">):</span>
+            <span class="n">neighs</span> <span class="o">=</span> <span class="n">neighbours</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">ds</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">neigh</span> <span class="ow">in</span> <span class="n">neighs</span><span class="p">:</span>
+                <span class="n">neigh_name</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">neigh</span><span class="p">]</span>
+                <span class="n">own_name</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">bond_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">own_name</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">neigh_name</span><span class="si">}</span><span class="s1">|dat&#39;</span>
+                <span class="n">ds</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">neigh_name</span><span class="p">:</span> <span class="n">solver</span><span class="o">.</span><span class="n">IntVar</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">VALENCES</span><span class="p">[</span><span class="n">symbol</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">bond_name</span><span class="p">)})</span>
+            <span class="n">datives</span> <span class="o">+=</span> <span class="p">[</span><span class="n">ds</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">datives</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">datives</span>
+
+<div class="viewcode-block" id="LewisStructure.from_adsorbate_name">
+<a class="viewcode-back" href="../../../catplat.bonding.html#catplat.bonding.lewis.LewisStructure.from_adsorbate_name">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_adsorbate_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convenient way to initiate LewisStructure from adsorbate name.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            name(str): Name of adsorbate to analyze</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">catplat.create.structure</span> <span class="kn">import</span> <span class="n">CatplatStructureBuilder</span>
+
+        <span class="n">adsorbate</span> <span class="o">=</span> <span class="n">CatplatStructureBuilder</span><span class="o">.</span><span class="n">build_adsorbate</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">adsorbate</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

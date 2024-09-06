@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.structure.lasp &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.structure.lasp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.structure.lasp</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module consist of classes which looks into transition state structures</span>
+<span class="sd">This includes functions like obtaining TS structure and final structure from the initial structure.</span>
+
+<span class="sd">WIP:</span>
+<span class="sd">Current LaspBuilder is work in progress due to the changes in ComplexBuilder and deprecation of symmetry filter.</span>
+
+<span class="sd">1. Order indices, move adsorbate to the back of the class</span>
+<span class="sd">2. Use ComplexBuilders to Build image</span>
+<span class="sd">3. AtomsWraper.image_distance(other) to choose complex that has the closest distance to initial</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">catplat.adsorption.build</span> <span class="kn">import</span> <span class="n">ComplexMonodentateBuilder</span>
+
+<span class="kn">from</span> <span class="nn">catplat.adsorption.sites</span> <span class="kn">import</span> <span class="n">SitesLattice</span>
+<span class="kn">from</span> <span class="nn">pyatoms.io.ase.atoms</span> <span class="kn">import</span> <span class="n">AtomsWrapper</span>
+<span class="kn">from</span> <span class="nn">pyatoms.io.ase.neb</span> <span class="kn">import</span> <span class="n">NEBCreator</span>
+<span class="kn">from</span> <span class="nn">catplat.adsorption.build</span> <span class="kn">import</span> <span class="n">ComplexBidentateBuilder</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">catplat.structure.adsorbate</span> <span class="kn">import</span> <span class="n">AverageCoordinationNumber</span><span class="p">,</span> <span class="n">Bonds</span><span class="p">,</span> <span class="n">Connectivity</span><span class="p">,</span> <span class="n">Adsorbate</span>
+<span class="kn">from</span> <span class="nn">pyatoms.create.structure</span> <span class="kn">import</span> <span class="n">StructureBuilder</span>
+
+
+<div class="viewcode-block" id="LaspBuilder">
+<a class="viewcode-back" href="../../../catplat.structure.html#catplat.structure.lasp.LaspBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">LaspBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; A class that handles the logic for creating transition and final state guesses from initial structure. </span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        1. ads1 and ads2 corresponds to the adsorbate derived from the atom at diss_idx[0] and diss_idx[1] respectively.</span>
+<span class="sd">        2. By default, ads1_dist_filter and ads1_dir_filter is True while ads2_dist_filiter and ads2_dir filter is False. </span>
+<span class="sd">            (i.e., ads1 is programmed to be moved away from the adsorbate to the specified site while ads2 is programmed to find the nearest site.)</span>
+<span class="sd">        3. If ads1 binding site == ads2 binding site, ads1 would be given priority for the site. </span>
+<span class="sd">        4. If ads1/ads2 is bidentate, the exisiting bond on the slab would be prioritized.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        initial_file (str): File path to initial structure.</span>
+<span class="sd">        diss_idx (list): List of len 2 that specifies the index of atoms to be dissociated (i.e. [ads1_idx, ads2_idx])</span>
+<span class="sd">        slab_elements (list): List indicating the element composition of the slab (i.e., [&#39;Rh&#39;,&#39;Pd&#39;]). If &#39;None&#39; specified LaspBuilder will assume transition metals as the slab elements. Defaults to None.</span>
+
+<span class="sd">        ads1_acn (list, int, float): Specifies avg_coord_num of site for ads1. Defaults to None.</span>
+<span class="sd">        ads1_connectivity (list, int): Specifies connectivity of site for ads1. Defaults to None.</span>
+<span class="sd">        ads1_bind (bool): Toggle to bind ads1 to site. The position of ads1 will remain unchanged if False. Defaults to True.</span>
+<span class="sd">        ads1_dist_tol (float): XY distance tolerance (in angstroms) for ads1 adsorption site selection. Defaults to 1.5.</span>
+<span class="sd">        ads1_dir_tol (float): XY vector direction tolerance for ads1 adsorption site selection. Where -1 &lt;= directon_tol &lt;= 1. Defaults to 0.5.</span>
+<span class="sd">        ads1_dist_filter (bool): Toggle to filter off sites that are too close to ads1 initial position. Defaults to True.</span>
+<span class="sd">        ads1_dir_filter (bool): Toggle to filter off sites that are not facing the same direction as the dissociation vector. Defaults to True.</span>
+
+<span class="sd">        ads2_acn (list, int, float): Specifies avg_coord_num of site for ads2. Defaults to None.</span>
+<span class="sd">        ads2_connectivity (list, int): Specifies connectivity of site for ads2. Defaults to None.</span>
+<span class="sd">        ads2_bind (bool): Toggle to bind ads2 to site. The position of ads2 will remain unchanged if False. Defaults to True.</span>
+<span class="sd">        ads2_dist_tol (float): XY distance tolerance (in angstroms) for ads2 adsorption site selection. Defaults to 1.5.</span>
+<span class="sd">        ads2_dir_tol (float): XY vector direction tolerance for ads2 adsorption site selection. Where -1 &lt;= directon_tol &lt;= 1. Defaults to 0.5.</span>
+<span class="sd">        ads2_dist_filter (bool): Toggle to filter off sites that are too close to ads2 initial position. Defaults to False.</span>
+<span class="sd">        ads2_dir_filter (bool): Toggle to filter off sites that are not facing the same direction as the dissociation vector. Defaults to False.</span>
+
+
+<span class="sd">        zoom (bool): Toggle to return initial and final states that are closer to the transition state. Defaults to True.</span>
+<span class="sd">        zoom_tol (float): bond distance between initial, transition and final state. (i.e., if bond distance(TS)=1.5 and zoom_tol=0.3, bond distance(IS)=1.2 and bond_distance(FS)=1.8). Defaults to 0.3.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">diss_idx</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+                 <span class="n">initial</span><span class="p">:</span> <span class="n">AtomsWrapper</span><span class="p">,</span>
+                 <span class="n">slab_elements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">ads1_denticity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">ads2_denticity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">ads1_avg_coord_num</span><span class="p">:</span> <span class="n">AverageCoordinationNumber</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">ads2_avg_coord_num</span><span class="p">:</span> <span class="n">AverageCoordinationNumber</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">ads1_connectivity</span><span class="p">:</span> <span class="n">Connectivity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">ads2_connectivity</span><span class="p">:</span> <span class="n">Connectivity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">ads1_bind</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">ads2_bind</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">ads1_distance_filter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">ads2_distance_filter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">ads1_direction_filter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">ads2_direction_filter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">distance_tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span>
+                 <span class="n">direction_tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">ts_tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">zoom</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">zoom_tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span>
+                 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="c1"># convert to AverageCoordinationNumber and Connectivity objects</span>
+        <span class="k">if</span> <span class="n">ads1_avg_coord_num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ads1_avg_coord_num</span> <span class="o">=</span> <span class="n">AverageCoordinationNumber</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">ads1_avg_coord_num</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ads2_avg_coord_num</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ads2_avg_coord_num</span> <span class="o">=</span> <span class="n">AverageCoordinationNumber</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">ads2_avg_coord_num</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ads1_connectivity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ads1_connectivity</span> <span class="o">=</span> <span class="n">Connectivity</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">ads1_connectivity</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ads2_connectivity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ads2_connectivity</span> <span class="o">=</span> <span class="n">Connectivity</span><span class="o">.</span><span class="n">from_value</span><span class="p">(</span><span class="n">ads2_connectivity</span><span class="p">)</span>
+
+        <span class="c1"># basic type checking and casting</span>
+        <span class="c1"># if isinstance(ads1_acn, (int, float)):</span>
+        <span class="c1">#     ads1_acn = [ads1_acn]</span>
+
+        <span class="c1"># if isinstance(ads2_acn, (int, float)):</span>
+        <span class="c1">#     ads2_acn = [ads2_acn]</span>
+
+        <span class="c1"># if isinstance(ads1_connectivity, int):</span>
+        <span class="c1">#     ads1_connectivity = [ads1_connectivity]</span>
+
+        <span class="c1"># if isinstance(ads2_connectivity, int):</span>
+        <span class="c1">#     ads2_connectivity = [ads2_connectivity]</span>
+
+        <span class="c1"># basic type checking for attributes</span>
+        <span class="c1"># if not isinstance(diss_idx, (list, tuple)):</span>
+        <span class="c1">#     raise ValueError(&#39;diss_idx must be a list of len 2&#39;)</span>
+        <span class="c1"># if len(diss_idx) != 2:</span>
+        <span class="c1">#     raise ValueError(&#39;diss_idx must be a list of len 2&#39;)</span>
+        <span class="c1"># if diss_idx[0] == diss_idx[1]:</span>
+        <span class="c1">#     raise ValueError(&#39;diss_idx[0] cannot be equals to diss_idx[1]&#39;)</span>
+
+        <span class="c1"># if isinstance(ads1_dist_tol, (float, int)):</span>
+        <span class="c1">#     if ads1_dist_tol &lt; 0:</span>
+        <span class="c1">#         raise ValueError(&#39;dist_tol must be a positive float/int&#39;)</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     raise ValueError(&#39;dist_tol must be a positive float/int&#39;)</span>
+
+        <span class="c1"># if isinstance(ads1_dir_tol, (float, int)):</span>
+        <span class="c1">#     if (ads1_dir_tol &lt; -1) or (ads1_dir_tol &gt; 1):</span>
+        <span class="c1">#         raise ValueError(&#39;direction_tol must be between -1 and 1&#39;)</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     raise ValueError(&#39;direction_tol must be a positive float/int&#39;)</span>
+
+        <span class="c1"># if isinstance(ts_tol, (float, int)):</span>
+        <span class="c1">#     if ts_tol &lt; 0:</span>
+        <span class="c1">#         raise ValueError(&#39;ts_tol must be a positive float/int&#39;)</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     raise ValueError(&#39;ts_tol must be a positive float/int&#39;)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">StructureBuilder</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slab_elements</span> <span class="o">=</span> <span class="n">slab_elements</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span> <span class="o">=</span> <span class="n">diss_idx</span>  <span class="c1"># ads1 assigned to index 0 and ads2 assigned to index 1</span>
+
+        <span class="c1"># parameters for ads1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectivity</span> <span class="o">=</span> <span class="p">[</span><span class="n">ads1_connectivity</span><span class="p">,</span> <span class="n">ads2_connectivity</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span> <span class="o">=</span> <span class="p">[</span><span class="n">ads1_avg_coord_num</span><span class="p">,</span> <span class="n">ads2_avg_coord_num</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bind_adsorbate</span> <span class="o">=</span> <span class="p">[</span><span class="n">ads1_bind</span><span class="p">,</span> <span class="n">ads2_bind</span><span class="p">]</span>  <span class="c1"># whether to bind ads1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">direction_filter</span> <span class="o">=</span> <span class="p">[</span><span class="n">ads1_direction_filter</span><span class="p">,</span> <span class="n">ads2_direction_filter</span><span class="p">]</span>  <span class="c1"># flag to filter direction</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_filter</span> <span class="o">=</span> <span class="p">[</span><span class="n">ads1_distance_filter</span><span class="p">,</span> <span class="n">ads2_distance_filter</span><span class="p">]</span>  <span class="c1"># flag to filter distance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">denticities</span> <span class="o">=</span> <span class="p">[</span><span class="n">ads1_denticity</span><span class="p">,</span> <span class="n">ads2_denticity</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_tol</span> <span class="o">=</span> <span class="n">distance_tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">direction_tol</span> <span class="o">=</span> <span class="n">direction_tol</span>  <span class="c1"># XY distance between adsorbate and site that are considered to be too close</span>
+
+        <span class="c1"># self.ads1_dir_filter: bool = ads1_dir_filter  # flag to filter direction</span>
+        <span class="c1"># self.ads1_dist_filter: bool = ads1_dist_filter  # flag to filter distance</span>
+        <span class="c1"># # vector direction tolerance. -1 &lt;= direction_tol &lt;= 1. -ve: opposite direction, +ve: same direction.</span>
+        <span class="c1"># self.ads1_dir_tol: float = ads1_dir_tol</span>
+        <span class="c1"># self.ads1_dist_tol: float = ads1_dist_tol  # XY distance between adsorbate and site that are considered to be too close</span>
+
+        <span class="c1"># parameters for ads2</span>
+        <span class="c1"># self.ads2_bind: bool = ads2_bind  # whether to bind ads1</span>
+        <span class="c1"># self.ads2_acn = ads2_acn  # ads1 average coordination number</span>
+        <span class="c1"># self.ads2_connectivity = ads2_connectivity  # ads1 connectivity</span>
+        <span class="c1"># self.ads2_dir_filter: bool = ads2_dir_filter  # flag to filter direction</span>
+        <span class="c1"># self.ads2_dist_filter: bool = ads2_dist_filter  # flag to filter distance</span>
+        <span class="c1"># # vector direction tolerance. -1 &lt;= direction_tol &lt;= 1. -ve: opposite direction, +ve: same direction.</span>
+        <span class="c1"># self.ads2_dir_tol: float = ads2_dir_tol</span>
+        <span class="c1"># self.ads2_dist_tol: float = ads2_dist_tol  # XY distance between adsorbate and site that are considered to be too close</span>
+
+        <span class="c1"># selects closer IS and FS to the TS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span> <span class="o">=</span> <span class="n">zoom</span>
+
+        <span class="c1"># bond length difference between TS and IS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ts_tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">ts_tol</span>
+        <span class="c1"># bond length difference between IS-TS-FS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">zoom_tol</span>
+        <span class="c1"># self.acn_priority = acn_priority</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">slab_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; index of slab &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab_elements</span><span class="p">:</span>
+            <span class="n">slab_atomic_numbers</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab_elements</span><span class="p">)</span><span class="o">.</span><span class="n">get_atomic_numbers</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># selects transition metals as slab atoms by default</span>
+            <span class="n">slab_atomic_numbers</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span>
+                <span class="nb">range</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">31</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">39</span><span class="p">,</span> <span class="mi">49</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">72</span><span class="p">,</span> <span class="mi">81</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">104</span><span class="p">,</span> <span class="mi">109</span><span class="p">))</span>
+
+        <span class="n">slab_idx</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">find_atomic_number</span><span class="p">(</span><span class="n">atomic_number</span><span class="o">=</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">slab_atomic_numbers</span><span class="p">]</span>
+        <span class="n">slab_idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">slab_idx</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">slab_idx</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ads_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; List of atom indexes of the adsorbate.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If diss_idx[i] not in ads_idx.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">)))</span>
+        <span class="n">ads_idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab_idx</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ads_idx</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid diss_idx! diss_idx must be adsorbate atom index&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ads_idx</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">slab</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsWrapper</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Structure of slab.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">slab_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">adsorbate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsWrapper</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Structure of adsorbate.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ads_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">adsorbate_split</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">AtomsWrapper</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Structure of adsorbate split into ads1 and ads2. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_adsorbate</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bonds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Bonds</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Bonds</span><span class="o">.</span><span class="n">from_adsorbate</span><span class="p">(</span><span class="n">adsorbate</span><span class="o">=</span><span class="n">ads</span><span class="p">,</span> <span class="n">denticity</span><span class="o">=</span><span class="n">den</span><span class="p">)</span> <span class="k">for</span> <span class="n">ads</span><span class="p">,</span> <span class="n">den</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adsorbate_split</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">denticities</span><span class="p">)]</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">sites</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;SitesLattice of the slab surface.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">SitesLattice</span><span class="o">.</span><span class="n">from_slab</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">filtered_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># sites for ads1 and ads2</span>
+        <span class="n">filtered_sites</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites</span><span class="p">]</span>
+        <span class="n">filtered_sites</span> <span class="o">=</span> <span class="p">[</span><span class="n">sites</span><span class="o">.</span><span class="n">sort_sites_by_distances</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">sites</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">filtered_sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms_init_pos</span><span class="p">)]</span>
+
+        <span class="n">filtered_sites</span> <span class="o">=</span> <span class="p">[</span><span class="n">sites</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sites</span><span class="o">.</span><span class="n">filter_connectivities</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">sites</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">filtered_sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connectivity</span><span class="p">)]</span>
+        <span class="n">filtered_sites</span> <span class="o">=</span> <span class="p">[</span><span class="n">sites</span> <span class="k">if</span> <span class="n">acn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sites</span><span class="o">.</span><span class="n">filter_avg_coord_num</span><span class="p">(</span><span class="n">acn</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">sites</span><span class="p">,</span> <span class="n">acn</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">filtered_sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">avg_coord_num</span><span class="p">)]</span>
+        <span class="n">filtered_sites</span> <span class="o">=</span> <span class="p">[</span><span class="n">sites</span> <span class="k">if</span> <span class="nb">filter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sites</span><span class="o">.</span><span class="n">filter_direction</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">vec</span><span class="o">=</span><span class="n">vec</span><span class="p">,</span> <span class="n">dir_tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">direction_tol</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">sites</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">vec</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">filtered_sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">direction_filter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms_init_pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads_diss_vec</span><span class="p">)]</span>
+        <span class="n">filtered_sites</span> <span class="o">=</span> <span class="p">[</span><span class="n">sites</span> <span class="k">if</span> <span class="nb">filter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sites</span><span class="o">.</span><span class="n">filter_distances</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">distance_tol</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">sites</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">filtered_sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_filter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms_init_pos</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">filtered_sites</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">atoms_init_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Initial position of atoms before bond breaking. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">position</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ads_diss_vec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Direction vector of the dissociation of ads1 and ads2.&quot;&quot;&quot;</span>
+        <span class="n">ads_diss_vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">get_distance</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mic</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ads_diss_vec</span><span class="p">,</span> <span class="o">-</span><span class="n">ads_diss_vec</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">adsorption_schematic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsWrapper</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns decorated slab showing adsorption schematic of ads1 and ads2 based on initialization criteria.</span>
+<span class="sd">        Site(s) for ads1 ands ads2 represented by &#39;X&#39; and &#39;Ne&#39; respectively.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If adsorbate splitting failed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get ads1 and ads2 from ads using graph theory</span>
+        <span class="n">mapped_dis_idx</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ads_idx</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads_idx</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+
+        <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">graph</span><span class="p">(</span><span class="n">neighbour_distance</span><span class="o">=</span><span class="mf">1.6</span><span class="p">)</span>
+        <span class="n">broken_graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">delete_edges</span><span class="p">([</span><span class="nb">tuple</span><span class="p">(</span><span class="n">mapped_dis_idx</span><span class="p">)])</span>
+        <span class="n">graph_components</span> <span class="o">=</span> <span class="n">broken_graph</span><span class="o">.</span><span class="n">components</span><span class="p">()</span>
+
+        <span class="c1"># check if ads is split to 2 components</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph_components</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Adsorbate splitting failed&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">ads1_idx</span><span class="p">,</span> <span class="n">ads2_idx</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">ads1_new_bond</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">ads2_new_bond</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">ads1_idx</span><span class="p">,</span> <span class="n">ads2_idx</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">ads1_new_bond</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">ads2_new_bond</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Adsorbate splitting failed&quot;</span><span class="p">)</span>
+
+        <span class="n">ads1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="p">[</span><span class="n">ads1_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">ads2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="p">[</span><span class="n">ads2_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># get denticity of ads1 and ads2 using graph theory</span>
+        <span class="kn">from</span> <span class="nn">catplat.structure.adsorbate</span> <span class="kn">import</span> <span class="n">Adsorbate</span>
+        <span class="n">ads1_bond</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">ads1</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads1_connectivity</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads1_acn</span><span class="p">)</span><span class="o">.</span><span class="n">get_bonds</span><span class="p">()</span>
+        <span class="n">ads2_bond</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">ads2</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads2_connectivity</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads2_acn</span><span class="p">)</span><span class="o">.</span><span class="n">get_bonds</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads1_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ads1_bond</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">ads1</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads1_connectivity</span><span class="p">,</span>
+                                  <span class="n">avg_coord_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads1_acn</span><span class="p">)</span><span class="o">.</span><span class="n">get_bonds</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads2_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ads2_bond</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">ads2</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads2_connectivity</span><span class="p">,</span>
+                                  <span class="n">avg_coord_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads2_acn</span><span class="p">)</span><span class="o">.</span><span class="n">get_bonds</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># get site idx of ads1 and ads2</span>
+        <span class="n">ads1_site</span><span class="p">,</span> <span class="n">ads2_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ads_site</span><span class="p">(</span><span class="n">ads1</span><span class="o">=</span><span class="n">ads1</span><span class="p">,</span> <span class="n">ads1_bond</span><span class="o">=</span><span class="n">ads1_bond</span><span class="p">,</span> <span class="n">ads1_new_bond</span><span class="o">=</span><span class="n">ads1_new_bond</span><span class="p">,</span>
+                                                  <span class="n">ads2</span><span class="o">=</span><span class="n">ads2</span><span class="p">,</span> <span class="n">ads2_bond</span><span class="o">=</span><span class="n">ads2_bond</span><span class="p">,</span> <span class="n">ads2_new_bond</span><span class="o">=</span><span class="n">ads2_new_bond</span><span class="p">)</span>
+
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites</span><span class="o">.</span><span class="n">coordinates</span>
+        <span class="n">schematic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ads1_site</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c1"># list of len 2 for bidentate</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ads1_site</span><span class="p">:</span>
+                <span class="n">schematic</span> <span class="o">+=</span> <span class="n">Atom</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># integer for monodentate</span>
+            <span class="n">schematic</span> <span class="o">+=</span> <span class="n">Atom</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">ads1_site</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ads2_site</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ads2_site</span><span class="p">:</span>
+                <span class="n">schematic</span> <span class="o">+=</span> <span class="n">Atom</span><span class="p">(</span><span class="s1">&#39;Ne&#39;</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">schematic</span> <span class="o">+=</span> <span class="n">Atom</span><span class="p">(</span><span class="s1">&#39;Ne&#39;</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">[</span><span class="n">ads2_site</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">schematic</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">decorated_slab</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsWrapper</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Structure showing all adsorption sites of slab. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites</span><span class="o">.</span><span class="n">adsorbate_decorated_slab</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_split_adsorbate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">AtomsWrapper</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get ads1 and ads2 from ads using graph theory. &quot;&quot;&quot;</span>
+        <span class="n">mapped_dis_idx</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ads_idx</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads_idx</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+
+        <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">graph</span><span class="p">(</span><span class="n">neighbour_distance</span><span class="o">=</span><span class="mf">1.6</span><span class="p">)</span>
+        <span class="n">broken_graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">delete_edges</span><span class="p">([</span><span class="nb">tuple</span><span class="p">(</span><span class="n">mapped_dis_idx</span><span class="p">)])</span>
+        <span class="n">graph_components</span> <span class="o">=</span> <span class="n">broken_graph</span><span class="o">.</span><span class="n">components</span><span class="p">()</span>
+
+        <span class="c1"># check if ads is split to 2 components</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph_components</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Adsorbate splitting failed&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">ads1_idx</span><span class="p">,</span> <span class="n">ads2_idx</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">ads1_idx</span><span class="p">,</span> <span class="n">ads2_idx</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Adsorbate splitting failed&quot;</span><span class="p">)</span>
+
+        <span class="n">ads1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="p">[</span><span class="n">ads1_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">ads2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="p">[</span><span class="n">ads2_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ads1</span><span class="p">,</span> <span class="n">ads2</span><span class="p">]</span>
+
+<div class="viewcode-block" id="LaspBuilder.run">
+<a class="viewcode-back" href="../../../catplat.structure.html#catplat.structure.lasp.LaspBuilder.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsWrapper</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Main function to get initial, transition and final states. </span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            3 AtomsWrapper objects: initial, transition and final state structures</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">initial_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">final_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fs</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span><span class="p">:</span>
+            <span class="n">initial_state</span><span class="p">,</span> <span class="n">transition_state</span><span class="p">,</span> <span class="n">final_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ts</span><span class="p">(</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">final_state</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">transition_state</span><span class="p">,</span> <span class="n">final_state</span>
+
+        <span class="n">transition_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ts</span><span class="p">(</span>
+            <span class="n">initial_state</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">final_state</span><span class="o">=</span><span class="n">final_state</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">transition_state</span><span class="p">,</span> <span class="n">final_state</span></div>
+
+
+<div class="viewcode-block" id="LaspBuilder.write">
+<a class="viewcode-back" href="../../../catplat.structure.html#catplat.structure.lasp.LaspBuilder.write">[docs]</a>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">:</span> <span class="n">AtomsWrapper</span><span class="p">,</span> <span class="n">transition_state</span><span class="p">:</span> <span class="n">AtomsWrapper</span><span class="p">,</span> <span class="n">final_state</span><span class="p">:</span> <span class="n">AtomsWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Writes initial, transnition and final state as POSCAR files. &quot;&quot;&quot;</span>
+        <span class="n">initial_state</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;POSCAR_start&quot;</span><span class="p">)</span>
+        <span class="n">transition_state</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;POSCAR_ts&quot;</span><span class="p">)</span>
+        <span class="n">final_state</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;POSCAR_end&quot;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_filter_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">args_preset</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Filter adsorption sites and return site idx of n&#39;th closest site that matches filtered criteria</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            point (list): Coordinates of reference point.</span>
+<span class="sd">            args_preset (str): Preset for function args. Args can be &#39;ads1 monodentate&#39;, &#39;ads2 monodentate&#39;, &#39;ads1 bidentate&#39;, &#39;ads2 bidentate&#39;, &#39;closest site&#39;.</span>
+<span class="sd">            n (int): n&#39;th closest to return after filtering sites.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError if invalid args_preset is defined.</span>
+<span class="sd">            ValueError if no sites are found after filtering i.e., len(indices) = 0 </span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List index of selected site.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># preset args for ads1 monodentate</span>
+
+        <span class="n">direction_filter</span><span class="p">,</span> <span class="n">distance_filter</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+        <span class="n">direction_point</span><span class="p">,</span> <span class="n">direction_vec</span><span class="p">,</span> <span class="n">direction_tol</span><span class="p">,</span> <span class="n">distance_cutoff</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">args_preset</span> <span class="o">==</span> <span class="s1">&#39;ads1 monodentate&#39;</span><span class="p">:</span>
+            <span class="n">connectivity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads1_connectivity</span>
+            <span class="n">avg_coord_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads1_acn</span>
+            <span class="n">direction_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads1_dir_filter</span>
+            <span class="n">direction_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads2_init_pos</span>
+            <span class="n">direction_vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads1_diss_vec</span>
+            <span class="n">direction_tol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads1_dir_tol</span>
+            <span class="n">distance_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads1_dist_filter</span>
+            <span class="n">distance_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads1_dist_tol</span>
+
+        <span class="c1"># preset args for ads2 monodentate</span>
+        <span class="k">elif</span> <span class="n">args_preset</span> <span class="o">==</span> <span class="s1">&#39;ads2 monodentate&#39;</span><span class="p">:</span>
+            <span class="n">connectivity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads2_connectivity</span>
+            <span class="n">avg_coord_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads2_acn</span>
+
+            <span class="n">direction_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads2_dir_filter</span>
+            <span class="n">direction_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads1_init_pos</span>
+            <span class="n">direction_vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads2_diss_vec</span>
+            <span class="n">direction_tol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads2_dir_tol</span>
+
+            <span class="n">distance_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads2_dist_filter</span>
+            <span class="n">distance_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads2_dist_tol</span>
+
+        <span class="c1"># preset args for new bond for ads1 bidentate</span>
+        <span class="k">elif</span> <span class="n">args_preset</span> <span class="o">==</span> <span class="s1">&#39;ads1 bidentate&#39;</span><span class="p">:</span>
+            <span class="n">connectivity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads1_connectivity</span>
+            <span class="n">avg_coord_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads1_acn</span>
+
+        <span class="c1"># preset args for new bond for ads2 bidentate</span>
+        <span class="k">elif</span> <span class="n">args_preset</span> <span class="o">==</span> <span class="s1">&#39;ads2 bidentate&#39;</span><span class="p">:</span>
+            <span class="n">connectivity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads2_connectivity</span>
+            <span class="n">avg_coord_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads2_acn</span>
+
+        <span class="c1"># preset args for existing bond for ads1/ads2 bidentate</span>
+        <span class="k">elif</span> <span class="n">args_preset</span> <span class="o">==</span> <span class="s1">&#39;closest site&#39;</span><span class="p">:</span>
+            <span class="n">connectivity</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">avg_coord_num</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid preset for _filter_sites&#39;</span><span class="p">)</span>
+
+        <span class="n">sites</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites</span>
+        <span class="n">sites</span> <span class="o">=</span> <span class="n">sites</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">sort_point</span><span class="o">=</span><span class="n">point</span><span class="p">,</span>
+                             <span class="n">unique</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                             <span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">,</span>
+                             <span class="n">avg_coord_num</span><span class="o">=</span><span class="n">avg_coord_num</span><span class="p">,</span>
+                             <span class="n">distance_filter</span><span class="o">=</span><span class="n">distance_filter</span><span class="p">,</span>
+                             <span class="n">distance_point</span><span class="o">=</span><span class="n">point</span><span class="p">,</span>
+                             <span class="n">distance_cutoff</span><span class="o">=</span><span class="n">distance_cutoff</span><span class="p">,</span>
+                             <span class="n">direction_filter</span><span class="o">=</span><span class="n">direction_filter</span><span class="p">,</span>
+                             <span class="n">direction_point</span><span class="o">=</span><span class="n">direction_point</span><span class="p">,</span>
+                             <span class="n">direction_vec</span><span class="o">=</span><span class="n">direction_vec</span><span class="p">,</span>
+                             <span class="n">direction_tol</span><span class="o">=</span><span class="n">direction_tol</span>
+                             <span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">sites</span><span class="o">.</span><span class="n">index</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;No site suitable site found, consider broadening filtered criteria&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">indices</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>  <span class="c1"># n&#39;th closest site</span>
+
+    <span class="k">def</span> <span class="nf">_get_fs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsWrapper</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Derives the final state guess structure. </span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            AtomsWrapper: Final state guess structure</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError if adsorbate splitting failed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># get ads1 and ads2 from ads using graph theory</span>
+        <span class="n">mapped_dis_idx</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ads_idx</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads_idx</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="o">.</span><span class="n">graph</span><span class="p">(</span><span class="n">neighbour_distance</span><span class="o">=</span><span class="mf">1.6</span><span class="p">)</span>
+        <span class="n">broken_graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">delete_edges</span><span class="p">([</span><span class="nb">tuple</span><span class="p">(</span><span class="n">mapped_dis_idx</span><span class="p">)])</span>
+        <span class="n">graph_components</span> <span class="o">=</span> <span class="n">broken_graph</span><span class="o">.</span><span class="n">components</span><span class="p">()</span>
+
+        <span class="c1"># check if ads is split to 2 components</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph_components</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Adsorbate splitting failed&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">ads1_idx</span><span class="p">,</span> <span class="n">ads2_idx</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">ads1_new_bond</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">ads2_new_bond</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">ads1_idx</span><span class="p">,</span> <span class="n">ads2_idx</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">ads1_new_bond</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">ads2_new_bond</span> <span class="o">=</span> <span class="n">graph_components</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">mapped_dis_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Adsorbate splitting failed&quot;</span><span class="p">)</span>
+
+        <span class="n">ads1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="p">[</span><span class="n">ads1_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">ads2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbate</span><span class="p">[</span><span class="n">ads2_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># get denticity of ads1 and ads2 using graph theory</span>
+        <span class="kn">from</span> <span class="nn">catplat.structure.adsorbate</span> <span class="kn">import</span> <span class="n">Adsorbate</span>
+        <span class="n">ads1_bond</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">ads1</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads1_connectivity</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads1_acn</span><span class="p">)</span><span class="o">.</span><span class="n">get_bonds</span><span class="p">()</span>
+        <span class="n">ads2_bond</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">ads2</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads2_connectivity</span><span class="p">,</span> <span class="n">avg_coord_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads2_acn</span><span class="p">)</span><span class="o">.</span><span class="n">get_bonds</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads1_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ads1_bond</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">ads1</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads1_connectivity</span><span class="p">,</span>
+                                  <span class="n">avg_coord_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads1_acn</span><span class="p">)</span><span class="o">.</span><span class="n">get_bonds</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads2_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ads2_bond</span> <span class="o">=</span> <span class="n">Adsorbate</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">ads2</span><span class="p">,</span> <span class="n">connectivity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads2_connectivity</span><span class="p">,</span>
+                                  <span class="n">avg_coord_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ads2_acn</span><span class="p">)</span><span class="o">.</span><span class="n">get_bonds</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># adsorb ads1 monodentate</span>
+        <span class="c1"># get site idx of ads1 and ads2</span>
+        <span class="n">ads1_site</span><span class="p">,</span> <span class="n">ads2_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ads_site</span><span class="p">(</span><span class="n">ads1</span><span class="o">=</span><span class="n">ads1</span><span class="p">,</span> <span class="n">ads1_bond</span><span class="o">=</span><span class="n">ads1_bond</span><span class="p">,</span> <span class="n">ads1_new_bond</span><span class="o">=</span><span class="n">ads1_new_bond</span><span class="p">,</span>
+                                                  <span class="n">ads2</span><span class="o">=</span><span class="n">ads2</span><span class="p">,</span> <span class="n">ads2_bond</span><span class="o">=</span><span class="n">ads2_bond</span><span class="p">,</span> <span class="n">ads2_new_bond</span><span class="o">=</span><span class="n">ads2_new_bond</span><span class="p">)</span>
+
+        <span class="c1"># create unmapped final_state structure</span>
+        <span class="n">final_state_unmapped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># get structure of bonded ads1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads1_bind</span><span class="p">:</span>
+            <span class="n">ads1_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bind_ads</span><span class="p">(</span><span class="n">ads</span><span class="o">=</span><span class="n">ads1</span><span class="p">,</span> <span class="n">ads_bond</span><span class="o">=</span><span class="n">ads1_bond</span><span class="p">,</span> <span class="n">ads_site</span><span class="o">=</span><span class="n">ads1_site</span><span class="p">)</span>
+            <span class="n">final_state_unmapped</span> <span class="o">+=</span> <span class="n">ads1_bound</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">final_state_unmapped</span> <span class="o">+=</span> <span class="n">ads1</span>
+
+        <span class="c1"># get structure of bonded ads1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads2_bind</span><span class="p">:</span>
+            <span class="n">ads2_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bind_ads</span><span class="p">(</span><span class="n">ads</span><span class="o">=</span><span class="n">ads2</span><span class="p">,</span> <span class="n">ads_bond</span><span class="o">=</span><span class="n">ads2_bond</span><span class="p">,</span> <span class="n">ads_site</span><span class="o">=</span><span class="n">ads2_site</span><span class="p">)</span>
+            <span class="n">final_state_unmapped</span> <span class="o">+=</span> <span class="n">ads2_bound</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">final_state_unmapped</span> <span class="o">+=</span> <span class="n">ads2</span>
+
+        <span class="c1"># map ads_new back to ads</span>
+        <span class="n">ads_map</span> <span class="o">=</span> <span class="n">ads1_idx</span> <span class="o">+</span> <span class="n">ads2_idx</span>
+
+        <span class="n">ads_map_order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ads_map</span><span class="p">)))</span>
+        <span class="n">ads_map</span><span class="p">,</span> <span class="n">ads_map_order</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">ads_map</span><span class="p">,</span> <span class="n">ads_map_order</span><span class="p">)))</span>
+
+        <span class="n">ads_new</span> <span class="o">=</span> <span class="n">final_state_unmapped</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="p">):]</span>  <span class="c1"># remove slab from complex</span>
+        <span class="n">ads_new_remap</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ads_map_order</span><span class="p">:</span>
+            <span class="n">ads_new_remap</span> <span class="o">+=</span> <span class="n">ads_new</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># remap atom index to match self.ads</span>
+
+        <span class="c1"># map ads_new + slab back to initial input</span>
+        <span class="n">fs_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab</span> <span class="o">+</span> <span class="n">ads_new_remap</span>
+        <span class="n">fs_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slab_idx</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ads_idx</span>
+        <span class="n">fs_map_order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fs_map</span><span class="p">)))</span>
+        <span class="n">fs_map</span><span class="p">,</span> <span class="n">fs_map_order</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">fs_map</span><span class="p">,</span> <span class="n">fs_map_order</span><span class="p">)))</span>
+
+        <span class="n">final_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">del</span> <span class="n">final_state</span><span class="p">[:]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">fs_map_order</span><span class="p">:</span>
+            <span class="c1"># remap atom index to match self.initial_state</span>
+            <span class="n">final_state</span> <span class="o">+=</span> <span class="n">fs_temp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># set fixed atoms</span>
+        <span class="n">existing_fixed_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="o">.</span><span class="n">fixed_atoms_indices</span><span class="p">()</span>
+        <span class="n">final_state</span> <span class="o">=</span> <span class="n">final_state</span><span class="o">.</span><span class="n">fix_atoms</span><span class="p">(</span><span class="n">existing_fixed_atoms</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">final_state</span>
+
+    <span class="k">def</span> <span class="nf">_get_ads_site</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads1</span><span class="p">:</span> <span class="n">AtomsWrapper</span><span class="p">,</span> <span class="n">ads1_bond</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ads1_new_bond</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ads2</span><span class="p">:</span> <span class="n">AtomsWrapper</span><span class="p">,</span>
+                      <span class="n">ads2_bond</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ads2_new_bond</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get adsorption site idx for ads1 and ads2</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ads1_bond, ads2_bond (list): Bonds for ads1 and ads2 resepctively.</span>
+<span class="sd">            ads1, ads2 (AtomsWrapper): Structure of ads1 and ads2 respectively</span>
+<span class="sd">            ads1_new_bond, ads2_new_bond (int): Newly formed unsaturated atom index after ads1 dissociates from ads2</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Adsorption site for ads1 ands ads2. Int if monodentate and list of len 2 if bidentate.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError if len(ads1_bond) or len(ads2_bond) is not 1 or 2.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads1_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads2_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mono_mono</span><span class="p">(</span><span class="n">ads1</span><span class="o">=</span><span class="n">ads1</span><span class="p">,</span> <span class="n">ads1_bond</span><span class="o">=</span><span class="n">ads1_bond</span><span class="p">,</span> <span class="n">ads2</span><span class="o">=</span><span class="n">ads2</span><span class="p">,</span> <span class="n">ads2_bond</span><span class="o">=</span><span class="n">ads2_bond</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads1_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads2_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bi_bi</span><span class="p">(</span><span class="n">ads1</span><span class="o">=</span><span class="n">ads1</span><span class="p">,</span> <span class="n">ads1_bond</span><span class="o">=</span><span class="n">ads1_bond</span><span class="p">,</span> <span class="n">ads1_new_bond</span><span class="o">=</span><span class="n">ads1_new_bond</span><span class="p">,</span> <span class="n">ads2</span><span class="o">=</span><span class="n">ads2</span><span class="p">,</span>
+                               <span class="n">ads2_bond</span><span class="o">=</span><span class="n">ads2_bond</span><span class="p">,</span> <span class="n">ads2_new_bond</span><span class="o">=</span><span class="n">ads2_new_bond</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads2_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads1_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mono_bi</span><span class="p">(</span><span class="n">ads1</span><span class="o">=</span><span class="n">ads1</span><span class="p">,</span> <span class="n">ads1_bond</span><span class="o">=</span><span class="n">ads1_bond</span><span class="p">,</span> <span class="n">ads2</span><span class="o">=</span><span class="n">ads2</span><span class="p">,</span> <span class="n">ads2_bond</span><span class="o">=</span><span class="n">ads2_bond</span><span class="p">,</span>
+                                 <span class="n">ads2_new_bond</span><span class="o">=</span><span class="n">ads2_new_bond</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads1_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads2_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bi_mono</span><span class="p">(</span><span class="n">ads1</span><span class="o">=</span><span class="n">ads1</span><span class="p">,</span> <span class="n">ads1_bond</span><span class="o">=</span><span class="n">ads1_bond</span><span class="p">,</span> <span class="n">ads1_new_bond</span><span class="o">=</span><span class="n">ads1_new_bond</span><span class="p">,</span> <span class="n">ads2</span><span class="o">=</span><span class="n">ads2</span><span class="p">,</span>
+                                 <span class="n">ads2_bond</span><span class="o">=</span><span class="n">ads2_bond</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Error getting site idx for ads1/ads2&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_mono_mono</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads1</span><span class="p">,</span> <span class="n">ads1_bond</span><span class="p">,</span> <span class="n">ads2</span><span class="p">,</span> <span class="n">ads2_bond</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get sites where ads1 and ads2 are both monodentate &quot;&quot;&quot;</span>
+        <span class="n">ads1_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads1</span><span class="p">[</span><span class="n">ads1_bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;ads1 monodentate&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ads2_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads2</span><span class="p">[</span><span class="n">ads2_bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;ads2 monodentate&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># check if ads2_site is the same as ads1_site</span>
+        <span class="k">if</span> <span class="n">ads2_site</span> <span class="o">==</span> <span class="n">ads1_site</span><span class="p">:</span>
+            <span class="n">ads2_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads2</span><span class="p">[</span><span class="n">ads2_bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;ads2 monodentate&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ads1_site</span><span class="p">,</span> <span class="n">ads2_site</span>
+
+    <span class="k">def</span> <span class="nf">_bi_bi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads1</span><span class="p">,</span> <span class="n">ads1_bond</span><span class="p">,</span> <span class="n">ads1_new_bond</span><span class="p">,</span> <span class="n">ads2</span><span class="p">,</span> <span class="n">ads2_bond</span><span class="p">,</span> <span class="n">ads2_new_bond</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get sites where ads1 and ads2 are both bidentate. </span>
+<span class="sd">        NOTE: DOUBLE BIDENTATE HAVE NOT BEEN FULLY TESTED.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">         ValueError: If ads1 existing site is the same as ads2 existing site</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">ads1_existing_bond</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ads1_bond</span><span class="p">))</span> <span class="k">if</span> <span class="n">ads1_bond</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ads1_new_bond</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ads2_existing_bond</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ads2_bond</span><span class="p">))</span> <span class="k">if</span> <span class="n">ads2_bond</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ads2_new_bond</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">ads1_existing_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads1</span><span class="p">[</span><span class="n">ads1_existing_bond</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;closest site&#39;</span><span class="p">,</span>
+                                                <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ads2_existing_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads2</span><span class="p">[</span><span class="n">ads2_existing_bond</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;closest site&#39;</span><span class="p">,</span>
+                                                <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ads1_existing_site</span> <span class="o">==</span> <span class="n">ads2_existing_site</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Structure error!&#39;</span><span class="p">)</span>
+
+        <span class="c1"># check if ads1_new_site is the same as ads1_existing_site or ads2_existing_site</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="n">ads1_new_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads1</span><span class="p">[</span><span class="n">ads1_new_bond</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;ads1 bidentate&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">ads1_new_site</span> <span class="o">==</span> <span class="n">ads1_existing_site</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ads1_new_site</span> <span class="o">==</span> <span class="n">ads2_existing_site</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="c1"># check if ads2_new_site is the same as ads1_existing_site, ads2_existing_site or ads1_new_site</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="n">ads2_new_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads2</span><span class="p">[</span><span class="n">ads2_new_bond</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;ads2 bidentate&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">ads2_new_site</span> <span class="o">==</span> <span class="n">ads1_existing_site</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ads2_new_site</span> <span class="o">==</span> <span class="n">ads2_existing_site</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="n">ads2_new_site</span> <span class="o">==</span> <span class="n">ads1_new_site</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="n">ads1_site</span><span class="p">,</span> <span class="n">ads2_site</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">ads1_site</span><span class="p">[</span><span class="n">ads1_bond</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ads1_existing_bond</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ads1_existing_site</span>
+        <span class="n">ads1_site</span><span class="p">[</span><span class="n">ads1_bond</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ads1_new_bond</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ads1_new_site</span>
+
+        <span class="n">ads2_site</span><span class="p">[</span><span class="n">ads2_bond</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ads2_existing_bond</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ads2_existing_site</span>
+        <span class="n">ads2_site</span><span class="p">[</span><span class="n">ads2_bond</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ads2_new_bond</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ads2_new_site</span>
+
+        <span class="k">return</span> <span class="n">ads1_site</span><span class="p">,</span> <span class="n">ads2_site</span>
+
+    <span class="k">def</span> <span class="nf">_mono_bi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads1</span><span class="p">,</span> <span class="n">ads1_bond</span><span class="p">,</span> <span class="n">ads2</span><span class="p">,</span> <span class="n">ads2_bond</span><span class="p">,</span> <span class="n">ads2_new_bond</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get sites where ads1 is monodentate while ads2 is bidentate &quot;&quot;&quot;</span>
+        <span class="n">ads2_existing_bond</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ads2_bond</span><span class="p">))</span> <span class="k">if</span> <span class="n">ads2_bond</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ads2_new_bond</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ads2_existing_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads2</span><span class="p">[</span><span class="n">ads2_existing_bond</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;closest site&#39;</span><span class="p">,</span>
+                                                <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># check if ads2_new_site is the same as ads2_existing_site</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="n">ads2_new_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads2</span><span class="p">[</span><span class="n">ads2_new_bond</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;ads2 bidentate&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">ads2_new_site</span> <span class="o">==</span> <span class="n">ads2_existing_site</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="n">ads2_site</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">ads2_site</span><span class="p">[</span><span class="n">ads2_bond</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ads2_existing_bond</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ads2_existing_site</span>
+        <span class="n">ads2_site</span><span class="p">[</span><span class="n">ads2_bond</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ads2_new_bond</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ads2_new_site</span>
+
+        <span class="c1"># check if ads1_site is the same as ads2_existing_site or ads2_new_site</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="n">ads1_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads1</span><span class="p">[</span><span class="n">ads1_bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;ads1 monodentate&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">ads1_site</span> <span class="o">==</span> <span class="n">ads2_existing_site</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ads1_site</span> <span class="o">==</span> <span class="n">ads2_new_site</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">ads1_site</span><span class="p">,</span> <span class="n">ads2_site</span>
+
+    <span class="k">def</span> <span class="nf">_bi_mono</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads1</span><span class="p">,</span> <span class="n">ads1_bond</span><span class="p">,</span> <span class="n">ads1_new_bond</span><span class="p">,</span> <span class="n">ads2</span><span class="p">,</span> <span class="n">ads2_bond</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get sites where ads1 is bidentate while ads2 is monodentate &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads1_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads2_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">ads1_existing_bond</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ads1_bond</span><span class="p">))</span> <span class="k">if</span> <span class="n">ads1_bond</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ads1_new_bond</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">ads1_existing_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads1</span><span class="p">[</span><span class="n">ads1_existing_bond</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;closest site&#39;</span><span class="p">,</span>
+                                                    <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># check if ads1_new_site is the same as ads1_existing_site</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                <span class="n">ads1_new_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads1</span><span class="p">[</span><span class="n">ads1_new_bond</span><span class="p">]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;ads1 bidentate&#39;</span><span class="p">,</span>
+                                                   <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">ads1_new_site</span> <span class="o">==</span> <span class="n">ads1_existing_site</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+            <span class="n">ads1_site</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">ads1_site</span><span class="p">[</span><span class="n">ads1_bond</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ads1_existing_bond</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ads1_existing_site</span>
+            <span class="n">ads1_site</span><span class="p">[</span><span class="n">ads1_bond</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ads1_new_bond</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ads1_new_site</span>
+
+            <span class="c1"># check if ads2_site is the same as ads1_existing_site or ads1_new_site</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                <span class="n">ads2_site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_sites</span><span class="p">(</span><span class="n">point</span><span class="o">=</span><span class="n">ads2</span><span class="p">[</span><span class="n">ads2_bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">args_preset</span><span class="o">=</span><span class="s1">&#39;ads2 monodentate&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">ads2_site</span> <span class="o">==</span> <span class="n">ads1_existing_site</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ads2_site</span> <span class="o">==</span> <span class="n">ads1_new_site</span><span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">return</span> <span class="n">ads1_site</span><span class="p">,</span> <span class="n">ads2_site</span>
+
+    <span class="k">def</span> <span class="nf">_bind_ads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads</span><span class="p">:</span> <span class="n">AtomsWrapper</span><span class="p">,</span> <span class="n">ads_bond</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ads_site</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsWrapper</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Binds adsorbate to slab. </span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            ads (AtomsWrapper): Structure of adsorbate</span>
+<span class="sd">            ads_bond (list): Bond of adsorbate</span>
+<span class="sd">            ads_site (list): Site for adsorbate</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Atomswrapper: Structure of adsorbate after binding to slab</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If len(ads_bond) != 1 or 2</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># monodentate adsorption</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># no rotation required for adsorbates of len 1 and len 2</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bind_monodentate</span><span class="p">(</span><span class="n">ads</span><span class="o">=</span><span class="n">ads</span><span class="p">,</span> <span class="n">ads_bond</span><span class="o">=</span><span class="n">ads_bond</span><span class="p">,</span> <span class="n">ads_site</span><span class="o">=</span><span class="n">ads_site</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ads_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_bind_monodentate</span><span class="p">(</span><span class="n">ads</span><span class="o">=</span><span class="n">ads</span><span class="p">,</span> <span class="n">ads_bond</span><span class="o">=</span><span class="n">ads_bond</span><span class="p">,</span> <span class="n">ads_site</span><span class="o">=</span><span class="n">ads_site</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
+                            <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">)]</span>
+                <span class="n">image_dist</span> <span class="o">=</span> <span class="p">[</span><span class="n">ads</span><span class="o">.</span><span class="n">image_distance</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ads_list</span><span class="p">]</span>
+
+                <span class="n">image_dist</span><span class="p">,</span> <span class="n">ads_list</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">image_dist</span><span class="p">,</span> <span class="n">ads_list</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pair</span><span class="p">:</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="k">return</span> <span class="n">ads_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">ads_bond</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bind_bidentate</span><span class="p">(</span><span class="n">ads</span><span class="o">=</span><span class="n">ads</span><span class="p">,</span> <span class="n">ads_bond</span><span class="o">=</span><span class="n">ads_bond</span><span class="p">,</span> <span class="n">ads_site</span><span class="o">=</span><span class="n">ads_site</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;More than 2 bonds detected! Only monodentate/bidentate binding is allowed&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_bind_monodentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads</span><span class="p">,</span> <span class="n">ads_bond</span><span class="p">,</span> <span class="n">ads_site</span><span class="p">,</span> <span class="n">rotation</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns the adsorbate after monodentate binding to the slab. &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexMonodentateBuilder</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="n">ads</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="n">ads_bond</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">rotation</span><span class="p">)</span>
+        <span class="nb">complex</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">adsorb_monodentate_on_site</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="n">ads_site</span><span class="p">)</span>
+        <span class="n">complex_atoms</span> <span class="o">=</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="nb">complex</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="n">adsorbate</span> <span class="o">=</span> <span class="n">complex_atoms</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="p">):]</span>
+        <span class="k">return</span> <span class="n">adsorbate</span>
+
+    <span class="k">def</span> <span class="nf">_bind_bidentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ads</span><span class="p">,</span> <span class="n">ads_bond</span><span class="p">,</span> <span class="n">ads_site</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Returns the adsorbate structure after bidentate binding to the slab. &quot;&quot;&quot;</span>
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">ComplexBidentateBuilder</span><span class="p">(</span><span class="n">slab</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="p">,</span> <span class="n">adsorbate</span><span class="o">=</span><span class="n">ads</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="n">ads_bond</span><span class="p">)</span>
+        <span class="nb">complex</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">adsorb_bidentate_on_edge</span><span class="p">(</span><span class="n">edge</span><span class="o">=</span><span class="n">ads_site</span><span class="p">)</span>
+        <span class="n">complex_atoms</span> <span class="o">=</span> <span class="n">AtomsWrapper</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="nb">complex</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="n">adsorbate</span> <span class="o">=</span> <span class="n">complex_atoms</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slab</span><span class="p">):]</span>
+        <span class="k">return</span> <span class="n">adsorbate</span>
+
+    <span class="k">def</span> <span class="nf">_get_ts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">final_state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Derives the transition state guess structure using pyatoms.io.ase.neb.NEBCreator. Atoms are interpolated with &#39;idpp&#39;. </span>
+<span class="sd">        Difference in bond distance between TS and IS and can be set with self.zoom and self.ts_tol (default=0.5)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            initial_state (AtomsWrapper): Structure of initial state.</span>
+<span class="sd">            final_state (AtomsWrapper): Structure of final state.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            if self.zoom:</span>
+<span class="sd">                AtomsWrapper: Structure of initial state, AtomsWrapper: Structure of transition state, AtomsWrapper: Structure of final state</span>
+
+<span class="sd">            if not self.zoom:</span>
+<span class="sd">                AtomsWrapper: Structure of transition state</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">creator</span> <span class="o">=</span> <span class="n">NEBCreator</span><span class="o">.</span><span class="n">from_initial_and_final_images</span><span class="p">(</span><span class="n">initial</span><span class="o">=</span><span class="n">initial_state</span><span class="p">,</span>
+                                                           <span class="n">final</span><span class="o">=</span><span class="n">final_state</span><span class="p">,</span>
+                                                           <span class="n">nimages</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+                                                           <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;idpp&#39;</span><span class="p">)</span>
+
+        <span class="n">neb</span> <span class="o">=</span> <span class="n">creator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">()</span>
+
+        <span class="n">bond_length</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">get_distance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">diss_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">neb</span><span class="o">.</span><span class="n">images</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom</span><span class="p">:</span>
+            <span class="n">is_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">bond_length</span> <span class="o">-</span> <span class="n">bond_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_tol</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom_tol</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">ts_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">bond_length</span> <span class="o">-</span> <span class="n">bond_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_tol</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">fs_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">bond_length</span> <span class="o">-</span> <span class="n">bond_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_tol</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom_tol</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">fs_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># use final image if fs distance too short</span>
+
+            <span class="n">initial_state</span><span class="p">,</span> <span class="n">transition_state</span><span class="p">,</span> <span class="n">final_state</span> <span class="o">=</span> <span class="n">neb</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">is_index</span><span class="p">],</span> <span class="n">neb</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">ts_index</span><span class="p">],</span> <span class="n">neb</span><span class="o">.</span><span class="n">images</span><span class="p">[</span>
+                <span class="n">fs_index</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">initial_state</span><span class="p">,</span> <span class="n">transition_state</span><span class="p">,</span> <span class="n">final_state</span>
+
+        <span class="n">ts_index</span> <span class="o">=</span> <span class="n">ts_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">bond_length</span> <span class="o">-</span> <span class="n">bond_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ts_tol</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">transition_state</span> <span class="o">=</span> <span class="n">neb</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">ts_index</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">transition_state</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

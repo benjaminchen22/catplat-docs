@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>catplat.tests.test_comparator &mdash; catplat 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="author" title="About these documents" href="../../../about.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">catplat</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">catplat.tests.test_comparator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for catplat.tests.test_comparator</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">operator</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">catplat.settings.constants</span> <span class="kn">import</span> <span class="n">MACHINE_EPSILON</span>
+<span class="kn">from</span> <span class="nn">catplat.utils</span> <span class="kn">import</span> <span class="n">Comparator</span>
+
+
+<div class="viewcode-block" id="TestComparator">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator">[docs]</a>
+<span class="k">class</span> <span class="nc">TestComparator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Test for Comparator class &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestComparator.test_invalid_inputs">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_invalid_inputs">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;bad_inputs&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">],</span> <span class="s1">&#39;5.a&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">test_invalid_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bad_inputs</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">bad_inputs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_callable">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_callable">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value, lt, eq, gt&#39;</span><span class="p">,</span> <span class="p">((</span><span class="s1">&#39;&lt;5&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                                                   <span class="p">(</span><span class="s1">&#39;&lt;=5&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                                                   <span class="p">(</span><span class="s1">&#39;&gt;5&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                                                   <span class="p">(</span><span class="s1">&#39;&gt;=5&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                                                   <span class="p">(</span><span class="s1">&#39;==5&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_callable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">lt</span><span class="p">,</span> <span class="n">eq</span><span class="p">,</span> <span class="n">gt</span><span class="p">):</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="p">(</span><span class="mf">4.9</span><span class="p">)</span> <span class="ow">is</span> <span class="n">lt</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="ow">is</span> <span class="n">eq</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="p">(</span><span class="mf">5.1</span><span class="p">)</span> <span class="ow">is</span> <span class="n">gt</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_equal_tol">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_equal_tol">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value, expected&#39;</span><span class="p">,</span> <span class="p">([</span><span class="s1">&#39;&lt;5&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)],</span>
+                                                 <span class="p">[</span><span class="s1">&#39;&lt;=5&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)],</span>
+                                                 <span class="p">[</span><span class="s1">&#39;&gt;5&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)],</span>
+                                                 <span class="p">[</span><span class="s1">&#39;&gt;=5&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)],</span>
+                                                 <span class="p">[</span><span class="s1">&#39;==5&#39;</span><span class="p">,</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)]))</span>
+    <span class="k">def</span> <span class="nf">test_equal_tol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test comparator tolerance&quot;&quot;&quot;</span>
+        <span class="n">equal_tol</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">equal_tol</span><span class="o">=</span><span class="n">equal_tol</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">comp</span><span class="p">(</span><span class="mf">4.8</span><span class="p">)</span> <span class="ow">is</span> <span class="n">expected</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="p">(</span><span class="mf">4.9</span><span class="p">)</span> <span class="ow">is</span> <span class="n">expected</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="ow">is</span> <span class="n">expected</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="p">(</span><span class="mf">5.1</span><span class="p">)</span> <span class="ow">is</span> <span class="n">expected</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="p">(</span><span class="mf">5.2</span><span class="p">)</span> <span class="ow">is</span> <span class="n">expected</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_filtering">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_filtering">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value, operator&#39;</span><span class="p">,</span> <span class="p">((</span><span class="s1">&#39;&lt;5&#39;</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">lt</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;&lt;=5&#39;</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">le</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;&gt;5&#39;</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">gt</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;&gt;=5&#39;</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">ge</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;==5&#39;</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">eq</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_filtering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">operator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test filter function returns incides of an array&quot;&quot;&quot;</span>
+        <span class="n">test_array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">result1</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">filtered_indices</span><span class="p">(</span><span class="n">test_array</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">result1</span> <span class="o">==</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">test_array</span><span class="p">)</span> <span class="k">if</span> <span class="n">operator</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">5</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_is_comparator_true">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_is_comparator_true">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;&lt;5&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=5&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;5&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt; 5&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=5&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;5.0&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=5.0&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;5.0&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=5.0&#39;</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">test_is_comparator_true</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test is_comparator function (true) &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">is_comparator</span><span class="p">(</span><span class="n">string</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_is_comparator_false">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_is_comparator_false">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="s1">&#39;=5&#39;</span><span class="p">,</span> <span class="s1">&#39;=&gt;5&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;abc&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;5..0&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=6.0ee-5&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=6.0e-5&#39;</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">test_is_comparator_false</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test is_comparator function (false) &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">is_comparator</span><span class="p">(</span><span class="n">string</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_get_tuple">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_get_tuple">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value, expected&#39;</span><span class="p">,</span> <span class="p">((</span><span class="s1">&#39;&lt;5&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">1e100</span><span class="p">,</span> <span class="mi">5</span> <span class="o">-</span> <span class="n">MACHINE_EPSILON</span><span class="p">)),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;&lt;=5&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">1e100</span><span class="p">,</span> <span class="mi">5</span> <span class="o">+</span> <span class="n">MACHINE_EPSILON</span><span class="p">)),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;&gt;5&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span> <span class="o">+</span> <span class="n">MACHINE_EPSILON</span><span class="p">,</span> <span class="mf">1e100</span><span class="p">)),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;&gt;=5&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span> <span class="o">-</span> <span class="n">MACHINE_EPSILON</span><span class="p">,</span> <span class="mf">1e100</span><span class="p">)),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;==5&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span> <span class="o">-</span> <span class="n">MACHINE_EPSILON</span><span class="p">,</span> <span class="mi">5</span> <span class="o">+</span> <span class="n">MACHINE_EPSILON</span><span class="p">))))</span>
+    <span class="k">def</span> <span class="nf">test_get_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Test get_tuple function. upper_limit: 1e100, lower_limit: -1e100, &quot;&quot;&quot;</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">equal_tol</span><span class="o">=</span><span class="n">MACHINE_EPSILON</span><span class="p">)</span>
+        <span class="n">comp_tuple</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_tuple</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">comp_tuple</span> <span class="o">==</span> <span class="n">expected</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_initialize_from_str">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_initialize_from_str">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;string, min_val, min_inclusive, max_val, max_inclusive&#39;</span><span class="p">,</span>
+                             <span class="p">((</span><span class="s1">&#39;&gt;=-10&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;&gt;10&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;&lt;=-10.123&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.123</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;&lt;10.123&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">10.123</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;==0&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;(-10,10]&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;[-10,10)&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;(0,1.23)&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mf">1.23</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;[-1.23,0]&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.23</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;&gt;0,&lt;=10&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;&gt;-10,&lt;10&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                              <span class="p">(</span><span class="s1">&#39;&gt;=-10.123,&lt;=10.123&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.123</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="mf">10.123</span><span class="p">,</span> <span class="kc">True</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_initialize_from_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">min_val</span><span class="p">,</span> <span class="n">min_inclusive</span><span class="p">,</span> <span class="n">max_val</span><span class="p">,</span> <span class="n">max_inclusive</span><span class="p">):</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">equal_tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">comp</span><span class="o">.</span><span class="n">equal_tol</span> <span class="o">==</span> <span class="mf">1e-5</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="o">.</span><span class="n">min_val</span> <span class="o">==</span> <span class="n">min_val</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="o">.</span><span class="n">max_val</span> <span class="o">==</span> <span class="n">max_val</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="o">.</span><span class="n">min_inclusive</span> <span class="o">==</span> <span class="n">min_inclusive</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="o">.</span><span class="n">max_inclusive</span> <span class="o">==</span> <span class="n">max_inclusive</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_equality">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_equality">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;string, expected&#39;</span><span class="p">,</span> <span class="p">((</span><span class="s1">&#39;&gt;0,&lt;=10&#39;</span><span class="p">,</span> <span class="s1">&#39;(0,10]&#39;</span><span class="p">),</span>
+                                                  <span class="p">(</span><span class="s1">&#39;&gt;-10,&lt;10&#39;</span><span class="p">,</span> <span class="s1">&#39;(-10,10)&#39;</span><span class="p">),</span>
+                                                  <span class="p">(</span><span class="s1">&#39;&gt;=-10.123,&lt;=10.123&#39;</span><span class="p">,</span> <span class="s1">&#39;[-10.123,10.123]&#39;</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_equality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">comp</span> <span class="o">==</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_addition">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_addition">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;comp_1, comp_2, expected&#39;</span><span class="p">,</span> <span class="p">((</span><span class="s1">&#39;&gt;0&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=10&#39;</span><span class="p">,</span> <span class="s1">&#39;(0,10]&#39;</span><span class="p">),</span>
+                                                          <span class="p">(</span><span class="s1">&#39;(-10,10)&#39;</span><span class="p">,</span> <span class="s1">&#39;(-5,5)&#39;</span><span class="p">,</span> <span class="s1">&#39;(-5,5)&#39;</span><span class="p">),</span>
+                                                          <span class="p">(</span><span class="s1">&#39;&gt;0&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=10&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=10&#39;</span><span class="p">),</span>
+                                                          <span class="p">(</span><span class="s1">&#39;&gt;10&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=10&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;10&#39;</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_addition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comp_1</span><span class="p">,</span> <span class="n">comp_2</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">comp_1</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">comp_1</span><span class="p">)</span>
+        <span class="n">comp_2</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">comp_2</span><span class="p">)</span>
+        <span class="n">comp_3</span> <span class="o">=</span> <span class="n">comp_1</span> <span class="o">+</span> <span class="n">comp_2</span>
+
+        <span class="k">assert</span> <span class="n">comp_3</span> <span class="o">==</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_addition_error">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_addition_error">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;comp_1, comp_2&#39;</span><span class="p">,</span> <span class="p">(({</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;0&#39;</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;0&#39;</span><span class="p">}),</span>  <span class="c1"># no overlap</span>
+                                                <span class="p">({</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;0&#39;</span><span class="p">,</span> <span class="s1">&#39;equal_tol&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+                                                 <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;=10&#39;</span><span class="p">,</span> <span class="s1">&#39;equal_tol&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">})))</span>  <span class="c1"># diff tol</span>
+    <span class="k">def</span> <span class="nf">test_addition_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comp_1</span><span class="p">,</span> <span class="n">comp_2</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">**</span><span class="n">comp_1</span><span class="p">)</span> <span class="o">+</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">**</span><span class="n">comp_2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_str">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_str">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;&gt;0.0&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=0.0&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;0.0&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=0.0&#39;</span><span class="p">,</span> <span class="s1">&#39;==0.0&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;0.0,&lt;=10.0&#39;</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">test_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="TestComparator.test_to_sql_query">
+<a class="viewcode-back" href="../../../catplat.tests.html#catplat.tests.test_comparator.TestComparator.test_to_sql_query">[docs]</a>
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;value, expected&#39;</span><span class="p">,</span> <span class="p">((</span><span class="s1">&#39;&gt;5&#39;</span><span class="p">,</span> <span class="s1">&#39;attr&gt;5.0&#39;</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;&gt;=5&#39;</span><span class="p">,</span> <span class="s1">&#39;attr&gt;=4.9&#39;</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;&lt;5&#39;</span><span class="p">,</span> <span class="s1">&#39;attr&lt;5.0&#39;</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;&lt;=5&#39;</span><span class="p">,</span> <span class="s1">&#39;attr&lt;=5.1&#39;</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;==5&#39;</span><span class="p">,</span> <span class="s1">&#39;4.9&lt;=attr&lt;=5.1&#39;</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;(5,10)&#39;</span><span class="p">,</span> <span class="s1">&#39;5.0&lt;attr&lt;10.0&#39;</span><span class="p">),</span>
+                                                 <span class="p">(</span><span class="s1">&#39;[5,10]&#39;</span><span class="p">,</span> <span class="s1">&#39;4.9&lt;=attr&lt;=10.1&#39;</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">test_to_sql_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">Comparator</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">equal_tol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">comp</span><span class="o">.</span><span class="n">to_sql_query</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="s1">&#39;attr&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, catplat team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
